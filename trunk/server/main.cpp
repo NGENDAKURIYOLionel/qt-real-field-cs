@@ -1,8 +1,8 @@
-//#include <QtCore/QCoreApplication>
+#include "imagerecognitionhelper.h"
+//#include <iostream>
 
 int main(int argc, char *argv[])
 {
-	//QCoreApplication a(argc, argv);
-	//return a.exec();
-	// put test code for your class here
+	ImageRecognitionHelper irh;
+	irh.post();
 }
