@@ -16,5 +16,12 @@
 	python proto
 2011-03-07 01:00-06:30
 	python proto
-2011-03-08 21:15-
+2011-03-08 21:15-22:00
 	setup server project into svn repo
+2011-03-19 14:45-
+	implementation in qt cpp
+2011-03-19 22:45-06:00
+	switched from qt to libcurl
+2011-03-20 22:00-
+	libcurl
+	json
