@@ -1,0 +1,19 @@
+First Read this.
+http://watzmann.net/categories/deltacloud.html
+http://watzmann.net/categories/augeas.html
+
+
+representation of configuration info for deploying images in a cloud environment.
+http://www.aeolusproject.org/page/Audrey_Specification
+
+Oz- automatic installation of guest operating systems.
+http://www.aeolusproject.org/oz-architecture.html
+
+Aeolus Project presentation outline
+http://www.aeolusproject.org/page/FUDCon_2011_Aeolus_outline
+Diagrams
+http://www.aeolusproject.org/page/FUDCon_2011_Presentation
+
+Read about steam cannon
+http://steamcannon.org/
+http://groups.google.com/group/steamcannon-dev

@@ -1,0 +1,18 @@
+Problem signature:
+  Problem Event Name:	BlueScreen
+  OS Version:	6.1.7600.2.0.0.256.1
+  Locale ID:	1033
+
+Additional information about the problem:
+  BCCode:	d1
+  BCP1:	0000000000000064
+  BCP2:	0000000000000002
+  BCP3:	0000000000000000
+  BCP4:	FFFFF88005947BBE
+  OS Version:	6_1_7600
+  Service Pack:	0_0
+  Product:	256_1
+
+Files that help describe the problem:
+  C:\Windows\Minidump\032511-49280-01.dmp
+  C:\Users\karthik\AppData\Local\Temp\WER-88842-0.sysdata.xml
