@@ -1,7 +1,0 @@
-game_id startgame(vector of images)
-	- index of each image gives the player ID
-	- throws no_such_id
-void endgame(game_id)
-	- throws no_such_id
-result match(image, game_id)
-	- throws no_such_id
