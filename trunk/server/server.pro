@@ -17,7 +17,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-	imagerecognitionhelper.cpp
+	imagerecognitionhelper.cpp \
+    json/json_value.cpp \
+    json/json_reader.cpp \
+    json/json_writer.cpp
 
 HEADERS += \
 	imagerecognitionhelper.h
