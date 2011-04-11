@@ -11,7 +11,8 @@ QT += declarative network
     }
 }
 
-SOURCES += $$PWD/qmlcamera.cpp
+SOURCES += $$PWD/qmlcamera.cpp \
+    client.cpp
 !mac:TARGET = qml_camera
 else:TARGET = QmlCamera
 
@@ -23,7 +24,6 @@ symbian {
     TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
 }
 
-
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/bin
@@ -32,3 +32,6 @@ unix:!symbian {
     }
     INSTALLS += target
 }
+
+HEADERS += \
+    client.h
