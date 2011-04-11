@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     // Make application better looking and more usable on small screen
     client.showMaximized();
 #else
-    client.show();
+   // client.show();
 #endif
-    return client.exec();
+   // return client.exec();
 }
