@@ -16,6 +16,9 @@ int main(int argc, char *argv[])
     if (server.listen()) {
         std::cout << "port:" << server.serverPort() <<"\n";
     }
+    else {
+        std::cout << "server port is unkown\n";
+    }
 
     return app.exec();
 }
