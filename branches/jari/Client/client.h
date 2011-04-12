@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QTcpSocket>
+#include <QtCore>
 
 class QDialogButtonBox;
 class QLabel;
@@ -20,9 +21,21 @@ public:
     void sendMessage(QString message);
 
 
+public slots:
+    void readMessage();
+    void sendMessageSlot();
+
+signals:
+    void login(QString errorMessage);
+    void login();
+    void gameList(QString gameList,QString errorMessage);
+    void gameList(QString gameList);
+    void lobby(QString gameInformation,QString errorMessage);
+    void lobby(QString gameInformation);
+    void gameState(QString gameState);
+    void update(QString gameUpdate);
+
 private slots:
-    void readLine();
-    void sendLine();
     void connectto();
     void displayError(QAbstractSocket::SocketError socketError);
     void enablereadLineButton();

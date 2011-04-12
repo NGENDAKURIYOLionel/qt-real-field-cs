@@ -1,5 +1,6 @@
 #include <QtGui>
 #include <QtNetwork>
+#include <QtCore>
 
 #include "client.h"
 
@@ -67,9 +68,9 @@ Client::Client(QWidget *parent)
 //    connect(portLineEdit, SIGNAL(textChanged(QString)),
 //            this, SLOT(enablesendLineButton()));
     connect(readLineButton, SIGNAL(clicked()),
-            this, SLOT(readLine()));
+            this, SLOT(readMessage()));
     connect(sendLineButton, SIGNAL(clicked()),
-            this, SLOT(sendLine()));
+            this, SLOT(sendMessageSlot()));
     connect(connectButton, SIGNAL(clicked()),
             this, SLOT(connectto()));
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -129,19 +130,55 @@ void Client::connected()
     statusLabel->setText("connected");
 }
 
-void Client::readLine()
+void Client::readMessage()
 {
     QTextStream in(tcpSocket);
-
     QString newMessage;
-    newMessage=in.readAll();
-    readLineButton->setEnabled(false);
+    QStringList messageParts;
 
+    newMessage=in.readAll();
+    messageParts=newMessage.split(";");
+
+    if (messageParts[0]=="LOGINSCREEN"){
+        if (messageParts.length()==2){
+            emit login(messageParts[1]);
+        }
+        emit login(messageParts[0]);
+    }
+    if (messageParts[0]=="GAMELIST"){
+        if (messageParts.length()==3){
+            emit gameList(messageParts[1],messageParts[2]);
+        }
+        if (messageParts.length()==2){
+            emit gameList(messageParts[1]);
+        }
+    }
+    if (messageParts[0]=="LOBBY"){
+        if (messageParts.length()==3){
+            emit lobby(messageParts[1],messageParts[2]);
+        }
+        if (messageParts.length()==2){
+            emit lobby(messageParts[1]);
+        }
+    }
+    if (messageParts[0]=="GAME"){
+        if (messageParts.length()==2){
+            emit gameState(messageParts[1]);
+        }
+    }
+    if (messageParts[0]=="UPDATE"){
+        if (messageParts.length()==2){
+            emit update(messageParts[1]);
+        }
+    }
+
+
+    readLineButton->setEnabled(false);
     currentMessage = newMessage;
     statusLabel->setText(currentMessage);
 }
 
-void Client::sendLine()
+void Client::sendMessageSlot()
 {
     sendMessage(QString("change"));
 }
