@@ -1,24 +1,70 @@
 #ifndef CLIENT_H
 #define CLIENT_H
-#include <QString>
-#include <QDebug>
+
+//#include <QDialog>
+#include <QTcpSocket>
+#include <QtCore>
+
+//class QDialogButtonBox;
+//class QLabel;
+//class QLineEdit;
+//class QPushButton;
+class QTcpSocket;
+class QNetworkSession;
 
 class Client : public QObject
 {
     Q_OBJECT
+
 public:
     Client();
+    Q_INVOKABLE void sendMessage(const QString &msg);
+    Q_INVOKABLE QString loadPhoto();
 
-    Q_INVOKABLE void sendMessage();
-signals:
-        void loginFailed();
 
 public slots:
-void send();
-//    void stop();
+    void readMessage();
+    void sendMessageSlot();
+
+signals:
+    void login(QString errorMessage);
+    void loginSuccess();
+    void loginFailed();
+    void gameList(QString gameList,QString errorMessage);
+    void gameList(QString gameList);
+    void lobby(QString gameInformation,QString errorMessage);
+    void lobby(QString gameInformation);
+    void gameState(QString gameState);
+    void update(QString gameUpdate);
+
+private slots:
+    //void connectto();
+    void displayError(QAbstractSocket::SocketError socketError);
+    void enablereadLineButton();
+    void enablesendLineButton();
+    void enableconnectButton();
+    void sessionOpened();
+    void connected();
 
 private:
-    bool m_running;
+    /*QLabel *hostLabel;
+    QLabel *portLabel;
+    QLineEdit *hostLineEdit;
+    QLineEdit *portLineEdit;
+    QLabel *statusLabel;
+    QPushButton *connectButton;
+    QPushButton *readLineButton;
+    QPushButton *sendLineButton;
+    QPushButton *quitButton;
+    QDialogButtonBox *buttonBox;*/
+
+    QTcpSocket *tcpSocket;
+    QString currentMessage;
+    quint16 blockSize;
+    QByteArray photo;
+    void connectto();
+
+    QNetworkSession *networkSession;
 };
 
-#endif // CLIENT_H
+#endif

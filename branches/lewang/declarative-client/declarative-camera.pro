@@ -12,7 +12,8 @@ QT += declarative network
 }
 
 SOURCES += $$PWD/qmlcamera.cpp \
-    client.cpp
+    client.cpp \
+    cli.cpp
 !mac:TARGET = qml_camera
 else:TARGET = QmlCamera
 
@@ -34,4 +35,5 @@ unix:!symbian {
 }
 
 HEADERS += \
-    client.h
+    client.h \
+    cli.h
