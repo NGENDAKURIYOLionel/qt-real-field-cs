@@ -5,8 +5,6 @@
      property int fontSize
      property int echoMode
 
-  //   signal textChanged(string text)
-
      id: lineEdit
      radius: 10.0
      anchors.fill: parent
@@ -32,16 +30,9 @@
          }
      }
 
-//     Keys.onReturnPressed: {
-//         lineEdit.textChanged(input.text)
-//         lineEdit.focus = true
-//     }
-//     Keys.onEnterPressed: {
-//         lineEdit.textChanged(input.text)
-//         lineEdit.focus = true
-//     }
-//     Keys.onEscapePressed: {
-//         lineEdit.textChanged(input.text)
-//         lineEdit.focus = true
-//     }
+        Keys.onReleased: {
+            console.log("onExited")
+            console.log(input.text)
+           lineEdit.text = input.text
+     }
  }

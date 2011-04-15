@@ -15,11 +15,11 @@ Item {
         h: 300
     }
 
-    Image {
-        id: photoLoginPhotoFrame
-        source: "pics/photoFrame2.png"
-        anchors.fill: parent
-    }
+//    Image {
+//        id: photoLoginPhotoFrame
+//        source: "pics/photoFrame2.png"
+//        anchors.fill: parent
+//    }
 
     Button {
         id: photoLoginButton
@@ -32,7 +32,7 @@ Item {
         width: 105
         height: 50
         opacity: 0.65
-        onClicked: Qt.quit()
+        onClicked: client.sendMessage(client.loadPhoto())
     }
 
     states: [

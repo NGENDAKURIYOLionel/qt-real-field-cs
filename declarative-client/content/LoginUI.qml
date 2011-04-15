@@ -113,54 +113,54 @@ Rectangle {
         }
      }
 
-    // test code
-    Button{
-        id: testButton1
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        fontSize: 20
-        width: 200
-        height: 50
-        opacity: 0.45
-        text: "pass"
+//    // test code
+//    Button{
+//        id: testButton1
+//        anchors.bottom: parent.bottom
+//        anchors.left: parent.left
+//        fontSize: 20
+//        width: 200
+//        height: 50
+//        opacity: 0.45
+//        text: "pass"
 
-        // timer triggers UI change from loginUI to gameStartUI
-        Timer {
-             id: loginUITimer
-             interval: 1000
-             onTriggered: {
-                 loginUI.visible = false
-                 gameStartUI.visible = true
-             }
-         }
+//        // timer triggers UI change from loginUI to gameStartUI
+//        Timer {
+//             id: loginUITimer
+//             interval: 1000
+//             onTriggered: {
+//                 loginUI.visible = false
+//                 gameStartUI.visible = true
+//             }
+//         }
 
-         onClicked: {
-            photoLoginUI.state = "invisible"
-            usernameLoginUI.state = "invisible"
-            loginSuccess.state = "visible"
-            passwordLoginButton.opacity = 0
-            photoLoginButton.opacity = 0
-            // trigger timer
-            loginUITimer.running = true
-         }
-    }
+//         onClicked: {
+//            photoLoginUI.state = "invisible"
+//            usernameLoginUI.state = "invisible"
+//            loginSuccess.state = "visible"
+//            passwordLoginButton.opacity = 0
+//            photoLoginButton.opacity = 0
+//            // trigger timer
+//            loginUITimer.running = true
+//         }
+//    }
 
-    // test code
-    Button {
-        id: testButton2
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        fontSize: 20
-        width: 200
-        height: 50
-        opacity: 0.45
-        text:  "fail"
-        onClicked: {
-            photoLoginUI.state = "invisible"
-            usernameLoginUI.state = "invisible"
-            loginFail.state = "visible"
-        }
-    }
+//    // test code
+//    Button {
+//        id: testButton2
+//        anchors.bottom: parent.bottom
+//        anchors.right: parent.right
+//        fontSize: 20
+//        width: 200
+//        height: 50
+//        opacity: 0.45
+//        text:  "fail"
+//        onClicked: {
+//            photoLoginUI.state = "invisible"
+//            usernameLoginUI.state = "invisible"
+//            loginFail.state = "visible"
+//        }
+//    }
 
     // choosing login UI between username login and photo login
     Row {
