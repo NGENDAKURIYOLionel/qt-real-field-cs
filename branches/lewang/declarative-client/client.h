@@ -19,7 +19,9 @@ class Client : public QObject
 public:
     Client();
     Q_INVOKABLE void sendMessage(const QString &msg);
-    Q_INVOKABLE QString loadPhoto();
+    Q_INVOKABLE void sendImage(const QByteArray &image);
+    Q_INVOKABLE QByteArray loadPhoto(const QString &uName);
+    //Q_INVOKABLE int getListSize(const QStringList &list);
 
 
 public slots:
@@ -30,8 +32,14 @@ signals:
     void login(QString errorMessage);
     void loginSuccess();
     void loginFailed();
-    void gameList(QString gameList,QString errorMessage);
-    void gameList(QString gameList);
+    void gameList(QStringList list, int size);
+
+
+
+
+
+   // void gameList(QString gameList,QString errorMessage);
+   // void gameList(QString gameList);
     void lobby(QString gameInformation,QString errorMessage);
     void lobby(QString gameInformation);
     void gameState(QString gameState);
@@ -63,8 +71,8 @@ private:
     quint16 blockSize;
     QByteArray photo;
     void connectto();
-
     QNetworkSession *networkSession;
+    QString userName;
 };
 
 #endif

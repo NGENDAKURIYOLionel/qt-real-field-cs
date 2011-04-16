@@ -113,7 +113,7 @@ Rectangle {
         }
      }
 
-//    // test code
+    // test code
 //    Button{
 //        id: testButton1
 //        anchors.bottom: parent.bottom
@@ -161,6 +161,37 @@ Rectangle {
 //            loginFail.state = "visible"
 //        }
 //    }
+
+    Timer {
+         id: loginUITimer
+         interval: 1000
+         onTriggered: {
+             loginUI.visible = false
+             gameStartUI.visible = true
+             client.sendMessage(";GAMELIST;");
+         }
+     }
+
+    Connections {
+            target: client
+            onLoginSuccess: {
+                photoLoginUI.state = "invisible"
+                usernameLoginUI.state = "invisible"
+                loginSuccess.state = "visible"
+                passwordLoginButton.opacity = 0
+                photoLoginButton.opacity = 0
+                // trigger timer
+                loginUITimer.running = true
+            }
+    }
+
+    Connections {
+            target: client
+            onLoginFailed: {
+                photoLoginUI.state = "invisible"
+                usernameLoginUI.state = "invisible"
+                loginFail.state = "visible"}
+    }
 
     // choosing login UI between username login and photo login
     Row {
