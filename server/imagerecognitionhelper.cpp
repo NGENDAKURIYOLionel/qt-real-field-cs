@@ -38,10 +38,9 @@ static size_t response_callback(void* buffer, size_t size, size_t nmemb, void *u
 	return size*nmemb;
 }
 
-void ImageRecognitionHelper::post(
-		std::string& post_data,
-		std::string& post_url,
-		Json::Value& decoded_response) {
+void ImageRecognitionHelper::post(std::string& post_data,
+								  std::string& post_url,
+								  Json::Value& decoded_response) {
 	CURL* easy_handle = curl_easy_init();
 	if (!easy_handle) throw CURL_ERROR;
 	std::string response;
@@ -56,10 +55,9 @@ void ImageRecognitionHelper::post(
 	if (!json_reader.parse(response, decoded_response, false)) throw JSON_ERROR;
 }
 
-void ImageRecognitionHelper::post_multipart(
-		curl_httppost* post_data,
-		std::string& post_url,
-		Json::Value& decoded_response) {
+void ImageRecognitionHelper::post_multipart(curl_httppost* post_data,
+											std::string& post_url,
+											Json::Value& decoded_response) {
 	CURL* easy_handle = curl_easy_init();
 	if (!easy_handle) throw CURL_ERROR;
 	curl_slist* headers = NULL;
@@ -73,11 +71,10 @@ void ImageRecognitionHelper::post_multipart(
 //	clock_t start = clock();
 	if (curl_easy_perform(easy_handle) != CURLE_OK) throw CURL_ERROR;
 //	clock_t end = clock();
-//	std::cout
-//			<< "request: "
-//			<< (end-start)/(CLOCKS_PER_SEC/1000)
-//			<< " ms"
-//			<< std::endl;
+//	std::cout << "request: "
+//	          << (end-start)/(CLOCKS_PER_SEC/1000)
+//	          << " ms"
+//	          << std::endl;
 	if (easy_handle) curl_easy_cleanup(easy_handle);
 	curl_formfree(post_data);
 	curl_slist_free_all(headers);
@@ -193,6 +190,19 @@ void ImageRecognitionHelper::faces_train(uid_t& uid) {
 	std::cout << decoded_response << std::endl;
 }
 
+void ImageRecognitionHelper::register_player(uid_t& new_player, jpeg_image_t& picture) {
+	tid_t new_face;
+	faces_detect(picture, new_face);
+	tags_save(new_face, new_player);
+	faces_train(new_player);
+}
+
+void ImageRecognitionHelper::match(uid_t& response, jpeg_image_t& pic, uids_t& players) {
+	faces_recognize();
+}
+
+// deprecated stuff
+
 game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
 //	std::cout << x.size() << std::endl;
 	if (x.size() < 1) throw NOT_ENOUGH_PLAYERS;
@@ -206,11 +216,10 @@ game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
 		clock_t start = clock();
 		faces_detect(x[i], current_tid);
 		clock_t end = clock();
-		std::cout
-				<< "faces_detect: "
-				<< (end-start)/(CLOCKS_PER_SEC/1000)
-				<< " ms"
-				<< std::endl;
+		std::cout << "faces_detect: "
+				  << (end-start)/(CLOCKS_PER_SEC/1000)
+				  << " ms"
+				  << std::endl;
 		// create temp uid for player
 		std::string player_uid;
 #define LONG_STR_SIZE 128
@@ -233,20 +242,18 @@ game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
 		start = clock();
 		tags_save(current_tid, player_uid);
 		end = clock();
-		std::cout
-				<< "tags_save: "
-				<< (end-start)/(CLOCKS_PER_SEC/1000)
-				<< " ms"
-				<< std::endl;
+		std::cout << "tags_save: "
+				  << (end-start)/(CLOCKS_PER_SEC/1000)
+				  << " ms"
+				  << std::endl;
 		// train index
 		start = clock();
 		faces_train(player_uid);
 		end = clock();
-		std::cout
-				<< "faces_train: "
-				<< (end-start)/(CLOCKS_PER_SEC/1000)
-				<< " ms"
-				<< std::endl;
+		std::cout << "faces_train: "
+				  << (end-start)/(CLOCKS_PER_SEC/1000)
+				  << " ms"
+				  << std::endl;
 	}
 	return g; // placeholder
 }
