@@ -31,8 +31,6 @@
      }
 
         Keys.onReleased: {
-            console.log("onExited")
-            console.log(input.text)
            lineEdit.text = input.text
      }
  }

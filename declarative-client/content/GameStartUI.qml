@@ -23,18 +23,33 @@ Item {
         height: 70
     }
 
+    Connections {
+            target: client
+            onGameList: {
+            console.log("onGameList");
+            console.log(size);
+           // var list = new Array();
+            for (var i =0; i < size; i++)
+           // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile")
+            appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
+            }
+    }
+
     // coverflow
     Item {
+        id:listModel
         width: parent.width; height: 400
         anchors.verticalCenter: parent.verticalCenter
 
+
+
         ListModel {
             id: appModel
-            ListElement { name: "4";  icon: "pics/numberIcon.png" }
-            ListElement { name: "10"; icon: "pics/numberIcon.png" }
-            ListElement { name: "8";  icon: "pics/numberIcon.png" }
-            ListElement { name: "12"; icon: "pics/numberIcon.png" }
-            ListElement { name: "0";  icon: "pics/numberIcon.png" }
+           ListElement { name: "4"  ; icon: "pics/numberIcon.png" }
+//            ListElement { name: "10"; icon: "pics/numberIcon.png" }
+//            ListElement { name: "8";  icon: "pics/numberIcon.png" }
+//            ListElement { name: "12"; icon: "pics/numberIcon.png" }
+//            ListElement { name: "0";  icon: "pics/numberIcon.png" }
         }
 
         CoverFlow {

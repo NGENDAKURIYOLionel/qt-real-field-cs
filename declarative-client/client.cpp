@@ -1,6 +1,7 @@
 //#include <QtGui>
 #include <QtNetwork>
 #include <QtCore>
+#include <QImage>
 
 #include "client.h"
 
@@ -8,7 +9,8 @@
 QWidget *Additional;
 QWidget *p;*/
 Client::Client()
-: networkSession(0)
+: networkSession(0),
+  userName("")
 {
    // hostLabel = new QLabel(tr("&Server name:"));
    // portLabel = new QLabel(tr("S&erver port:"));
@@ -42,7 +44,7 @@ Client::Client()
     connectButton->setEnabled(true);
 
     sendLineButton = new QPushButton(tr("send line"));
-    sendLineButton->setDefault(true);
+    sendLineButton->setDefault(true);    //qDebug("sendMessage(QByteArray);");
     sendLineButton->setEnabled(false);
 
     readLineButton = new QPushButton(tr("read line"));
@@ -76,7 +78,7 @@ Client::Client()
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(enablereadLineButton()));
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(enablesendLineButton()));
-
+    //qDebug("sendMessage(QByteArray);");
 
 
     mainLayout = new QGridLayout;
@@ -144,38 +146,38 @@ void Client::readMessage()
     newMessage=in.readAll();
     messageParts=newMessage.split(";");
 
-    if (messageParts[0]=="LOGINSCREEN"){
-        if (messageParts.length()==2){
-            emit login(messageParts[1]);
-        }
-        emit login(messageParts[0]);
-    }
-    if (messageParts[0]=="GAMELIST"){
-        if (messageParts.length()==3){
-            emit gameList(messageParts[1],messageParts[2]);
-        }
-        if (messageParts.length()==2){
-            emit gameList(messageParts[1]);
-        }
-    }
-    if (messageParts[0]=="LOBBY"){
-        if (messageParts.length()==3){
-            emit lobby(messageParts[1],messageParts[2]);
-        }
-        if (messageParts.length()==2){
-            emit lobby(messageParts[1]);
-        }
-    }
-    if (messageParts[0]=="GAME"){
-        if (messageParts.length()==2){
-            emit gameState(messageParts[1]);
-        }
-    }
-    if (messageParts[0]=="UPDATE"){
-        if (messageParts.length()==2){
-            emit update(messageParts[1]);
-        }
-    }
+//    if (messageParts[0]=="LOGINSCREEN"){
+//        if (messageParts.length()==2){
+//            emit login(messageParts[1]);
+//        }
+//        emit login(messageParts[0]);
+//    }
+//    if (messageParts[0]=="GAMELIST"){
+//        if (messageParts.length()==3){
+//            emit gameList(messageParts[1],messageParts[2]);
+//        }
+//        if (messageParts.length()==2){
+//            emit gameList(messageParts[1]);
+//        }
+//    }
+//    if (messageParts[0]=="LOBBY"){
+//        if (messageParts.length()==3){
+//            emit lobby(messageParts[1],messageParts[2]);
+//        }
+//        if (messageParts.length()==2){
+//            emit lobby(messageParts[1]);
+//        }
+//    }
+//    if (messageParts[0]=="GAME"){
+//        if (messageParts.length()==2){
+//            emit gameState(messageParts[1]);
+//        }
+//    }
+//    if (messageParts[0]=="UPDATE"){
+//        if (messageParts.length()==2){
+//            emit update(messageParts[1]);
+//        }
+//    }
 
 
     //readLineButton->setEnabled(false);
@@ -188,11 +190,86 @@ void Client::sendMessageSlot()
     sendMessage(QString("login"));
 }
 
+
+void Client::sendImage(const QByteArray &image){
+
+    QByteArray buf1 = image.left(image.indexOf(";"));//userName
+    QByteArray buf2 = image.right(image.size() - image.indexOf(";") - 1);
+    QByteArray buf3 = buf2.left(buf2.indexOf(";")); //LOGINPHOTO
+    QByteArray buf4 = buf2.right(buf2.size() - buf2.indexOf(";") - 1); //Image
+
+    //qDebug() << buf1 << buf3;
+
+    if(QString(buf3) == "LOGINPHOTO") {
+        QFile file("/home/user/MyDocs/DCIM/test.jpg");
+        if (!file.open(QIODevice::WriteOnly))
+            qDebug("can not save photo image");
+        file.write(buf4);
+        file.close();
+        emit loginSuccess();
+    }
+    else {
+     // should be replaced by message sent from server to see if it is correct login or not
+        emit loginFailed();
+    }
+}
+
 void Client::sendMessage(const QString &msg){
-    if (!tcpSocket->isWritable())
-         this->connectto();
-   tcpSocket->write(msg.toAscii());
-   emit loginSuccess();
+//    if (!tcpSocket->isWritable())
+//         this->connectto();
+//   tcpSocket->write(msg.toAscii());
+
+ // for debugging
+ qDebug() << msg;
+ QStringList message = msg.split(";");
+ qDebug() << message[0];
+ qDebug() << message[1];
+ qDebug() << message[2];
+if (!message[0].isEmpty())
+    userName = message[0];
+
+// message[0] is always the USERNAME
+// the following code is for test purpose
+   if (message[1]=="LOGINPASSWD"){
+       if (message[2] == "aaa"){
+           emit loginSuccess();
+       }
+       else
+           emit loginFailed();
+   }
+  else if (message[1]=="GAMELIST"){
+       //fake game list
+       QStringList list;
+       list << "game1" << "game2" << "game3" << "game4";
+       //qDebug("gamelist");
+       emit gameList(list,list.size());
+   }
+//   if (messageParts[0]=="GAMELIST"){
+//       if (messageParts.length()==3){
+//           emit gameList(messageParts[1],messageParts[2]);
+//       }
+//       if (messageParts.length()==2){
+//           emit gameList(messageParts[1]);
+//       }
+//   }
+//   if (messageParts[0]=="LOBBY"){
+//       if (messageParts.length()==3){
+//           emit lobby(messageParts[1],messageParts[2]);
+//       }
+//       if (messageParts.length()==2){
+//           emit lobby(messageParts[1]);
+//       }
+//   }
+//   if (messageParts[0]=="GAME"){
+//       if (messageParts.length()==2){
+//           emit gameState(messageParts[1]);
+//       }
+//   }
+//   if (messageParts[0]=="UPDATE"){
+//       if (messageParts.length()==2){
+//           emit update(messageParts[1]);
+//       }
+//   }
 
 }
 
@@ -256,7 +333,7 @@ void Client::sessionOpened()
 
 
 // Will be tested after client connects to the server
-QString Client::loadPhoto()
+QByteArray Client::loadPhoto(const QString &uName)
 {
     QString path("/home/user/MyDocs/DCIM/");
     QDir folder = QDir(path);
@@ -264,11 +341,18 @@ QString Client::loadPhoto()
     folder.setSorting(QDir::Time);
     QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
     filename = path.append(filename);
-
+    userName = uName;
+    QByteArray buf(userName.toUtf8());
+    QByteArray buf1(";LOGINPHOTO;");
+    buf.append(buf1);
     QFile file(filename);
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug("Error: open file");
-    }
-    photo = file.readAll();
-    return QString(photo);
+    if (!file.open(QIODevice::ReadOnly))
+        qDebug("Can not open photo image");
+    QByteArray buf2 = file.readAll();
+    buf.append(buf2);
+    return buf;
 }
+
+//int getListSize(const QStringList &list) {
+//    return list.size();
+//}

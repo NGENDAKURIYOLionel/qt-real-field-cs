@@ -8,23 +8,9 @@ Column {
 
     spacing: 5
 
-    Connections {
-            target: client
-            onLoginFailed: {  photoLoginUI.state = "invisible"
-                usernameLoginUI.state = "invisible"
-                loginFail.state = "visible"}
-        }
-    Connections {
-            target: client
-            onLoginSuccess: {
-                photoLoginUI.state = "invisible"
-                usernameLoginUI.state = "invisible"
-                loginSuccess.state = "visible"
-                passwordLoginButton.opacity = 0
-                photoLoginButton.opacity = 0
-                // trigger timer
-                loginUITimer.running = true}
-        }
+
+
+
     Rectangle { radius: 10.0; opacity:  0.75
                 width: 250; height: 48
                 LineEdit {
@@ -58,7 +44,6 @@ Column {
                     height: 50
                     opacity: 0.65
                     onClicked: {
-                        emailLineEdit
                         client.sendMessage(emailLineEdit.text + ";LOGINPASSWD;" + passwordLineEdit.text)
                     }
                 }

@@ -25,7 +25,9 @@
       <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">qmake</value>
       <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
       <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">QtProjectManager.QMakeBuildStep</value>
-      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList"/>
+      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList">
+       <value type="QString">QMLJSDEBUGGER_PATH=/home/pkliang/QtSDK/QtCreator/share/qtcreator/qml/qmljsdebugger</value>
+      </valuelist>
       <value key="QtProjectManager.QMakeBuildStep.QMakeForced" type="bool">false</value>
      </valuemap>
      <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
@@ -75,7 +77,9 @@
       <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">qmake</value>
       <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
       <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">QtProjectManager.QMakeBuildStep</value>
-      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList"/>
+      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList">
+       <value type="QString">QMLJSDEBUGGER_PATH=/home/pkliang/QtSDK/QtCreator/share/qtcreator/qml/qmljsdebugger</value>
+      </valuelist>
       <value key="QtProjectManager.QMakeBuildStep.QMakeForced" type="bool">false</value>
      </valuemap>
      <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
@@ -119,107 +123,7 @@
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">9</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
    </valuemap>
-   <valuemap key="ProjectExplorer.Target.BuildConfiguration.2" type="QVariantMap">
-    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.0" type="QVariantMap">
-     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">qmake</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">QtProjectManager.QMakeBuildStep</value>
-      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList"/>
-      <value key="QtProjectManager.QMakeBuildStep.QMakeForced" type="bool">false</value>
-     </valuemap>
-     <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Make</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.MakeStep</value>
-      <value key="Qt4ProjectManager.MakeStep.Clean" type="bool">false</value>
-      <valuelist key="Qt4ProjectManager.MakeStep.MakeArguments" type="QVariantList"/>
-      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
-     </valuemap>
-     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Build</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Build</value>
-    </valuemap>
-    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.1" type="QVariantMap">
-     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Make</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.MakeStep</value>
-      <value key="Qt4ProjectManager.MakeStep.Clean" type="bool">true</value>
-      <valuelist key="Qt4ProjectManager.MakeStep.MakeArguments" type="QVariantList">
-       <value type="QString">clean</value>
-      </valuelist>
-      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
-     </valuemap>
-     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">1</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Clean</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Clean</value>
-    </valuemap>
-    <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">2</value>
-    <value key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
-    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
-    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Qt for Fremantle PR1.3 Devices (Qt SDK) Debug</value>
-    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">/home/pkliang/qt-real-field-cs/branches/lewang/declarative-camera-build-maemo</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">9</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
-   </valuemap>
-   <valuemap key="ProjectExplorer.Target.BuildConfiguration.3" type="QVariantMap">
-    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.0" type="QVariantMap">
-     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">qmake</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">QtProjectManager.QMakeBuildStep</value>
-      <valuelist key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QVariantList"/>
-      <value key="QtProjectManager.QMakeBuildStep.QMakeForced" type="bool">false</value>
-     </valuemap>
-     <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Make</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.MakeStep</value>
-      <value key="Qt4ProjectManager.MakeStep.Clean" type="bool">false</value>
-      <valuelist key="Qt4ProjectManager.MakeStep.MakeArguments" type="QVariantList"/>
-      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
-     </valuemap>
-     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Build</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Build</value>
-    </valuemap>
-    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.1" type="QVariantMap">
-     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
-      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Make</value>
-      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.MakeStep</value>
-      <value key="Qt4ProjectManager.MakeStep.Clean" type="bool">true</value>
-      <valuelist key="Qt4ProjectManager.MakeStep.MakeArguments" type="QVariantList">
-       <value type="QString">clean</value>
-      </valuelist>
-      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
-     </valuemap>
-     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">1</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Clean</value>
-     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Clean</value>
-    </valuemap>
-    <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">2</value>
-    <value key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
-    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
-    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Qt for Fremantle PR1.3 Devices (Qt SDK) Release</value>
-    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
-    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">/home/pkliang/qt-real-field-cs/branches/lewang/declarative-camera-build-maemo</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">9</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
-   </valuemap>
-   <value key="ProjectExplorer.Target.BuildConfigurationCount" type="int">4</value>
+   <value key="ProjectExplorer.Target.BuildConfigurationCount" type="int">2</value>
    <valuemap key="ProjectExplorer.Target.DeployConfiguration.0" type="QVariantMap">
     <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.0" type="QVariantMap">
      <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
@@ -233,26 +137,22 @@
       <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
       <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.MaemoDeployStep</value>
       <value key="Qt4ProjectManager.MaemoRunConfiguration.DeployToSysroot" type="bool">false</value>
-      <value key="Qt4ProjectManager.MaemoRunConfiguration.DeviceId" type="qulonglong">3</value>
+      <value key="Qt4ProjectManager.MaemoRunConfiguration.DeviceId" type="qulonglong">1</value>
       <valuelist key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles" type="QVariantList">
-       <value type="QString">/home/pkliang/qt-real-field-cs/branches/lewang/declarative-camera-build-maemo/declarative-camera_0.0.1_armel.deb</value>
        <value type="QString">/home/pkliang/qt-real-field-cs/branches/lewang/declarative-camera-build-maemo/declarative-camera_0.0.1_armel.deb</value>
        <value type="QString">/home/pkliang/qt-real-field-cs/branches/lewang/declarative-camera-build-maemo/declarative-camera_0.0.1_armel.deb</value>
       </valuelist>
       <valuelist key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts" type="QVariantList">
+       <value type="QString">130.233.238.51</value>
        <value type="QString">82.130.26.30</value>
-       <value type="QString">localhost</value>
-       <value type="QString">82.130.26.10</value>
       </valuelist>
       <valuelist key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths" type="QVariantList">
        <value type="QString"></value>
        <value type="QString"></value>
-       <value type="QString"></value>
       </valuelist>
       <valuelist key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes" type="QVariantList">
-       <value type="QDateTime">2011-04-11T22:34:46</value>
-       <value type="QDateTime">2011-04-03T22:11:27</value>
-       <value type="QDateTime">2011-04-04T14:17:34</value>
+       <value type="QDateTime">2011-04-16T23:06:07</value>
+       <value type="QDateTime">2011-04-12T00:38:54</value>
       </valuelist>
      </valuemap>
      <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>
@@ -290,7 +190,7 @@
  </data>
  <data>
   <variable>ProjectExplorer.Project.Updater.EnvironmentId</variable>
-  <value type="QString">{00000000-0000-0000-0000-000000000000}</value>
+  <value type="QString">{3dcc04dd-5fad-4c0c-9ab8-3e5814c33bdd}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.Updater.FileVersion</variable>

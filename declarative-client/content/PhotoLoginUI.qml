@@ -8,11 +8,25 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     anchors.verticalCenterOffset: -70
 
-
     CameraUI {
         anchors.fill: parent
-        w: 300
-        h: 300
+        anchors.top: parent.top
+        anchors.topMargin: -50
+        w: 280
+        h: 280
+    }
+
+    Rectangle { radius: 10.0; opacity:  0.75
+                width: 250; height: 48
+                anchors.top: parent.top
+                anchors.topMargin: 210
+                anchors.horizontalCenter: parent.horizontalCenter
+               LineEdit {
+                   id: userNameLineEdit
+                   fontSize: 22
+                   text: "    Your Email"
+                   echoMode: TextInput.Normal
+               }
     }
 
 //    Image {
@@ -32,7 +46,7 @@ Item {
         width: 105
         height: 50
         opacity: 0.65
-        onClicked: client.sendMessage(client.loadPhoto())
+        onClicked: client.sendImage(client.loadPhoto(userNameLineEdit.text))
     }
 
     states: [
