@@ -27,6 +27,10 @@ public:
 	~ImageRecognitionHelper();
 
 	// "the API"
+	void register_player(uid_t&, jpeg_image_t&);
+	void match(uid_t& response, jpeg_image_t&, uids_t&);
+
+	// deprecated
 	game_id_t start_game(jpeg_images_t&); // image index in vector = player_id
 	player_id_t match(jpeg_image_t&, game_id_t);
 	void end_game(game_id_t);
