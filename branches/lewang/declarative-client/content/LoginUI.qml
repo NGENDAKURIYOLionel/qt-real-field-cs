@@ -190,7 +190,8 @@ Rectangle {
             onLoginFailed: {
                 photoLoginUI.state = "invisible"
                 usernameLoginUI.state = "invisible"
-                loginFail.state = "visible"}
+                loginFail.state = "visible"
+            }
     }
 
     // choosing login UI between username login and photo login

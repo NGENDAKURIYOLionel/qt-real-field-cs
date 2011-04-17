@@ -244,14 +244,38 @@ if (!message[0].isEmpty())
        //qDebug("gamelist");
        emit gameList(list,list.size());
    }
-//   if (messageParts[0]=="GAMELIST"){
-//       if (messageParts.length()==3){
-//           emit gameList(messageParts[1],messageParts[2]);
-//       }
-//       if (messageParts.length()==2){
-//           emit gameList(messageParts[1]);
-//       }
-//   }
+   if (message[1]=="CREATEGAME"){
+       QString error = "";
+       if (message[2].size() > 6)
+           error = error + "GameID is no more than 6 characters\n";
+       int time = message[3].toInt();
+       if (time <= 60 || time >= 6000)
+           error = error + "Time is no less than 60 seconds and larger than 6000 seconds\n";
+       int noOfTeamA =  message[4].toInt();
+       if (noOfTeamA <= 0 || noOfTeamA > 20)
+           error = error + "Number of team A is no less than 0 and more than 20\n";
+       int noOfTeamB = message[5].toInt();
+       if (noOfTeamB <= 0 || noOfTeamB > 20)
+           error = error + "Number of team B is no less than 0 and more than 20\n";
+
+       // success or fail should be decided by server side as well
+       if (error.isEmpty())
+            emit gameCreateSuccess();
+       else{
+           qDebug() << error;
+            emit gameCreateFailed(error);
+       }
+
+   }
+
+   if (message[1] == "JOINGAME") {
+       qDebug("in joingame");
+    QString gameId= message[2];
+    int gameTime = 100;
+    int noOfTeamA = 11;
+    int noOfTeamB = 10;
+    emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB);
+   }
 //   if (messageParts[0]=="LOBBY"){
 //       if (messageParts.length()==3){
 //           emit lobby(messageParts[1],messageParts[2]);
