@@ -37,3 +37,6 @@ unix:!symbian {
 HEADERS += \
     client.h \
     cli.h
+
+OTHER_FILES += \
+    content/RadioButton.qml

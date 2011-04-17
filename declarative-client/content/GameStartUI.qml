@@ -14,7 +14,7 @@ Item {
 
 
     Button {
-        text: "Choose a Game to Join"
+        text: "Create a New Game or Choose a Game to Join"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         source: "pics/toolbutton1.png"
@@ -26,12 +26,10 @@ Item {
     Connections {
             target: client
             onGameList: {
-            console.log("onGameList");
-            console.log(size);
            // var list = new Array();
             for (var i =0; i < size; i++)
-           // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile")
-            appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
+             // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile")
+              appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
             }
     }
 
@@ -41,32 +39,15 @@ Item {
         width: parent.width; height: 400
         anchors.verticalCenter: parent.verticalCenter
 
-
-
         ListModel {
             id: appModel
-           ListElement { name: "4"  ; icon: "pics/numberIcon.png" }
-//            ListElement { name: "10"; icon: "pics/numberIcon.png" }
-//            ListElement { name: "8";  icon: "pics/numberIcon.png" }
-//            ListElement { name: "12"; icon: "pics/numberIcon.png" }
-//            ListElement { name: "0";  icon: "pics/numberIcon.png" }
+            ListElement { name: "New"  ; icon: "pics/numberIcon.png" }
         }
 
         CoverFlow {
             listModel: appModel
             color: "transparent"
             anchors.fill:  parent
-
-//            Text {
-//                id: myText
-//                anchors.bottom: parent.bottom
-//                text: "current"
-//                anchors.horizontalCenter: parent.horizontalCenter
-//            }
-//            onIndexChanged: {
-//                myText.text = "Current index: " + index
-//            }
-
             itemWidth: 250
             itemHeight: 250
         }

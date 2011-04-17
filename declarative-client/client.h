@@ -33,6 +33,9 @@ signals:
     void loginSuccess();
     void loginFailed();
     void gameList(QStringList list, int size);
+    void gameCreateSuccess();
+    void gameCreateFailed(QString error);
+    void joinGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
 
 
 
