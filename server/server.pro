@@ -14,7 +14,7 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
+SOURCES += \
 	imagerecognitionhelper.cpp \
     json/json_value.cpp \
     json/json_reader.cpp \
