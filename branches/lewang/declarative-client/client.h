@@ -33,20 +33,14 @@ signals:
     void loginSuccess();
     void loginFailed();
     void gameList(QStringList list, int size);
-    void gameCreateSuccess();
+    void gameCreateSuccess(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
     void gameCreateFailed(QString error);
     void joinGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
+    void teamJoined(QString gameId);
+    void startGame();
+    void leaveGame();
+    void gameAbort();
 
-
-
-
-
-   // void gameList(QString gameList,QString errorMessage);
-   // void gameList(QString gameList);
-    void lobby(QString gameInformation,QString errorMessage);
-    void lobby(QString gameInformation);
-    void gameState(QString gameState);
-    void update(QString gameUpdate);
 
 private slots:
     //void connectto();
@@ -76,6 +70,11 @@ private:
     void connectto();
     QNetworkSession *networkSession;
     QString userName;
+
+    QString gameId;
+    int noOfTeamA;
+    int noOfTeamB;
+    int gameTime;
 };
 
 #endif

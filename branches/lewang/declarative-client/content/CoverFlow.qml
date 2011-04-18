@@ -105,25 +105,16 @@ Rectangle {
                         PropertyChanges {target: hostGameView; visible: true}
                         PropertyChanges {target: listGameView; visible: false}
                     }
-//                    State {
-//                        name:  "joinGame"
-//                        when:  frontName.text != "New"
-//                        StateChangeScript {
-//                            name: "sendJoinMessage"
-//                            script: client.sendMessage(";JOINGAME;" + frontName.text);
-//                        }
-//                    }
                 ]
 
                 Connections {
                         target: client
                         onJoinGameInfo: {
                             if (frontName.text == gameId)
-                            console.log("onJoinGameInfo:" + gameId + gameTime + noOfTeamA + noOfTeamB)
-                            listGameId.text = "Game: " + gameId
-                            listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
-                            listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
-                            listGameTime.text = "Time(s): " + gameTime
+                                listGameId.text = "Game: " + gameId
+                                listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
+                                listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
+                                listGameTime.text = "Time(s): " + gameTime
                         }
                 }
 
@@ -142,7 +133,13 @@ Rectangle {
                         target: client
                         onGameCreateSuccess: {
                             if (frontName.text == "New") {
+                                listGameIdForCreator.text = "Game: " + gameId
+                                listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
+                                listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
+                                listGameTimeForCreator.text = "Time(s): " + gameTime
+
                                 listGameViewForCreator.visible = true
+                                hostGameView.visible = false
                             }
                         }
                 }
@@ -180,54 +177,155 @@ Rectangle {
                     id: listGameViewForCreator
                     visible: false
                     anchors.fill: parent
-                    Text {
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        anchors.fill: parent
-                        color: "white"
-                        text: "Game information and setting will be here " + name
+                    Column {
+                        spacing: 10
+                        anchors.centerIn: parent
+                        anchors.horizontalCenterOffset: -50
+                        anchors.verticalCenterOffset: -60
+
+
+                        Text {
+                            id: listGameIdForCreator
+                            color: "white"
+                        }
+
+                        Text {
+                            id: listGameTimeForCreator
+                            color: "white"
+                        }
+
+                        Text {
+                            id: listGameNoOfTeamAForCreator
+                            color: "white"
+                        }
+
+                        Text {
+                            id: listGameNoOfTeamBForCreator
+                            color: "white"
+                        }
                     }
 
                     Row {
-                    spacing: 50
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: 140
+                        spacing: 50
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: 70
 
-                    Button {
-                        id :gameCratorReady
-                        text: "Join"
-                        source: "pics/toolbutton1.png"
-                        fontSize: 20
-                        width: 150
-                        height: 100
-                        onClicked: console.log("in flickable back clicked")
-                    }
+                        Button {
+                            id :joinTeamAForCreator
+                            text: "Join Team A"
+                            source: "pics/toolbutton1.png"
+                            fontSize: 20
+                            width: 150
+                            height: 100
 
-                    Button {
-                        id: gameCratorStart
-                        text: "Start"
-                        source: "pics/toolbutton1.png"
-                        fontSize: 20
-                        width: 150
-                        height: 100
-                        onClicked: {
-                            gameStartUI.visible = false
-                            gameUI.visible = true
+                            onClicked: {
+                                console.log("joinTeamA")
+                                joinTeamAForCreator.enabled = false
+                                joinTeamAForCreator.opacity = 0.5
+
+                                joinTeamBForCreator.enabled = true
+                                joinTeamBForCreator.opacity = 1
+
+                                gameReadyForCreator.enabled = true
+                                gameReadyForCreator.opacity = 1.0
+                            }
                         }
+
+                        Button {
+                            id: joinTeamBForCreator
+                            text: "Join Team B"
+                            source: "pics/toolbutton1.png"
+                            fontSize: 20
+                            width: 150
+                            height: 100
+
+                            onClicked: {
+                                console.log("joinTeamB")
+                                joinTeamBForCreator.enabled = false
+                                joinTeamBForCreator.opacity = 0.5
+
+                                joinTeamAForCreator.enabled = true
+                                joinTeamAForCreator.opacity = 1
+
+                                gameReadyForCreator.enabled = true
+                                gameReadyForCreator.opacity = 1.0
+                            }
+                        }
+
                     }
 
-                    Button {
-                        text: "Back"
-                        source: "pics/toolbutton1.png"
-                        fontSize: 20
-                        width: 150
-                        height: 100
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: itemClicked()
+                    Row {
+                        spacing: 25
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: 140
+
+                        Button {
+                            id :gameReadyForCreator
+                            enabled: false
+                            opacity: 0.25
+                            text: "Ready"
+                            source: "pics/toolbutton1.png"
+                            fontSize: 20
+                            width: 150
+                            height: 100
+                            onClicked: {
+                                console.log("ready")
+                                if (joinTeamAForCreator.enabled)
+                                    client.sendMessage(";JOINTEAM;teamB")
+
+                                else
+                                    client.sendMessage(";JOINTEAM;teamA")
+                            }
                         }
-                    }
-                }
+
+                        Button {
+                            id: gameStartForCreator
+                            text: "Start"
+                            source: "pics/toolbutton1.png"
+                            fontSize: 20
+                            width: 150
+                            height: 100
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    itemClicked()
+                                    client.sendMessage(";GAMESTART;")
+                                }
+                        }
+
+                        Button {
+                            text: "Back"
+                            source: "pics/toolbutton1.png"
+                            fontSize: 20
+                            width: 150
+                            height: 100
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    listGameViewForCreator.visible = false
+                                    hostGameView.visible = true
+                                    joinTeamAForCreator.enabled = true
+                                    joinTeamAForCreator.opacity = 1
+                                    joinTeamBForCreator.enabled = true
+                                    joinTeamBForCreator.opacity = 1
+                                    gameReadyForCreator.enabled = true
+                                    gameReadyForCreator.opacity = 1
+                                    itemClicked()
+                                }
+                            }
+                        }
+                   }
+                 }
+
+                    Connections {
+                        target: client
+                        onTeamJoined: {
+                            if (frontName.text == "New") {
+                                gameReadyForCreator.enabled = false
+                                gameReadyForCreator.opacity = 0.5
+                            }
+                        }
+                     }
                 }
 
                 // hostGameView
@@ -425,15 +523,6 @@ Rectangle {
                             width: 150
                             height: 100
 
-//                            states: State {
-//                                         name: "down"; when: mouseArea.pressed == true
-//                                         PropertyChanges { target: joinTeamA; color: "red"
-//                                         }
-//                                         PropertyChanges { target: joinTeamB; color: "white"
-//                                         }
-//                                     }
-
-
                             onClicked: {
                                 console.log("joinTeamA")
                                 joinTeamA.enabled = false
@@ -455,14 +544,6 @@ Rectangle {
                             width: 150
                             height: 100
 
-//                            states: State {
-//                                         name: "down"; when: mouseArea.pressed == true
-//                                         PropertyChanges { target: joinTeamB; color: "red"
-//                                         }
-//                                         PropertyChanges { target: joinTeamA; color: "white"
-//                                         }
-//                                     }
-
                             onClicked: {
                                 console.log("joinTeamB")
                                 joinTeamB.enabled = false
@@ -480,19 +561,15 @@ Rectangle {
 
                     }
 
-
-
-
-
                     Row {
-                    spacing: 50
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: 140
+                        spacing: 50
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: 140
 
                         Button {
                             id :gameReady
                             enabled: false
-                            opacity: 0.1
+                            opacity: 0.25
                             text: "Ready"
                             source: "pics/toolbutton1.png"
                             fontSize: 20
@@ -519,7 +596,20 @@ Rectangle {
                                 onClicked: itemClicked()
                             }
                         }
-                   }
+
+                        Connections {
+                            target: client
+                            onTeamJoined: {
+                                console.log(frontName.text)
+                                console.log(gameId)
+                                if (frontName.text == gameId) {
+
+                                    gameReady.enabled = false
+                                    gameReady.opacity = 0.5
+                                }
+                            }
+                         }
+                    }
                 }
             }
         }
