@@ -7,8 +7,6 @@
 QT       += core
 QT       += network
 
-QT       -= gui
-
 TARGET = server
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -20,10 +18,18 @@ SOURCES += main.cpp \
 	imagerecognitionhelper.cpp \
     json/json_value.cpp \
     json/json_reader.cpp \
-    json/json_writer.cpp
+    json/json_writer.cpp \
+    server.cpp \
+    playerconnectionthread.cpp \
+    messagehandler.cpp
+
 
 HEADERS += \
-	imagerecognitionhelper.h
+	imagerecognitionhelper.h \
+    server.h \
+    playerconnectionthread.h \
+    messagehandler.h
+
 
 #win32:LIBS += -L../server/curl -lcurldll
 win32 {
