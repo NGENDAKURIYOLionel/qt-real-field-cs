@@ -13,15 +13,16 @@
 // use compile time concatenation with these
 #define API_URL "http://api.face.com"
 #define ACCOUNT_LIMITS_URL "/account/limits.json"
+#define ACCOUNT_USERS_URL "/account/users.json"
 #define FACES_DETECT_URL "/faces/detect.json"
 #define FACES_RECOGNIZE_URL "/faces/recognize.json"
 #define FACES_TRAIN_URL "/faces/train.json"
 #define TAGS_REMOVE_URL "/tags/remove.json"
 #define TAGS_SAVE_URL "/tags/save.json"
 
-ImageRecognitionHelper::ImageRecognitionHelper(namespace_t& n) {
-	if (n.empty()) throw;
-	current_namespace = namespace_t(n);
+ImageRecognitionHelper::ImageRecognitionHelper(std::string& api_namespace) {
+	if (api_namespace.empty()) throw;
+	current_namespace = std::string(api_namespace);
 	curl_global_init(CURL_GLOBAL_ALL);
 	games = 0;
 }
@@ -90,7 +91,20 @@ void ImageRecognitionHelper::account_limits() {
 	std::cout << decoded_response << std::endl;
 }
 
-void ImageRecognitionHelper::tags_save(tid_t& tid, uid_t& uid) {
+void ImageRecognitionHelper::account_users(std::vector<std::string>& response) {
+	std::string post_data("api_key=" API_KEY "&api_secret=" API_SECRET "&namespaces=");
+	post_data.append(current_namespace);
+	std::string post_url(API_URL ACCOUNT_USERS_URL);
+	Json::Value decoded_response;
+	post(post_data, post_url, decoded_response);
+	std::string asdf;
+	if (decoded_response["status"].asString().compare("success"))
+		throw;
+	else std::cout << decoded_response;
+	//for (unsigned i = 0; i < decoded_response.)
+}
+
+void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {
 	std::string post_data("api_key=" API_KEY "&api_secret=" API_SECRET "&uid=");
 	post_data += uid;
 	post_data += "&tids=";
@@ -101,7 +115,7 @@ void ImageRecognitionHelper::tags_save(tid_t& tid, uid_t& uid) {
 	std::cout << decoded_response << std::endl;
 }
 
-void ImageRecognitionHelper::faces_detect(jpeg_image_t& x, tid_t& y) {
+void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& tid_response) {
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
 	curl_formadd(&post_data, &last,
@@ -116,8 +130,8 @@ void ImageRecognitionHelper::faces_detect(jpeg_image_t& x, tid_t& y) {
 				 CURLFORM_COPYNAME, "file",
 				 CURLFORM_CONTENTTYPE, "image/jpeg",
 				 CURLFORM_BUFFER, "file",
-				 CURLFORM_BUFFERPTR, x.data(),
-				 CURLFORM_BUFFERLENGTH, x.size(),
+				 CURLFORM_BUFFERPTR, jpeg_image.data(),
+				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
 				 CURLFORM_END);
 	std::string post_url(API_URL FACES_DETECT_URL);
 	Json::Value decoded_response;
@@ -142,10 +156,12 @@ void ImageRecognitionHelper::faces_detect(jpeg_image_t& x, tid_t& y) {
 	// pick first face found in photo
 	// TODO: check if face recognizable
 	// TODO: if more than one face, pick the most likely (center of picture, best confidence, etc)
-	y.assign(decoded_response["photos"][0u]["tags"][0u]["tid"].asString());
+	tid_response.assign(decoded_response["photos"][0u]["tags"][0u]["tid"].asString());
 }
 
-void ImageRecognitionHelper::faces_recognize(uids_t& uids, jpeg_image_t image) {
+void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
+											 std::string jpeg_image,
+											 std::string& response) {
 	std::string uids_comma_separated;
 	if (uids.size() < 1) throw;
 	uids_comma_separated += uids[0];
@@ -173,15 +189,15 @@ void ImageRecognitionHelper::faces_recognize(uids_t& uids, jpeg_image_t image) {
 				 CURLFORM_COPYNAME, "file",
 				 CURLFORM_CONTENTTYPE, "image/jpeg",
 				 CURLFORM_BUFFER, "file",
-				 CURLFORM_BUFFERPTR, image.data(),
-				 CURLFORM_BUFFERLENGTH, image.size(),
+				 CURLFORM_BUFFERPTR, jpeg_image.data(),
+				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
 				 CURLFORM_END);
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
 }
 
-void ImageRecognitionHelper::faces_train(uid_t& uid) {
+void ImageRecognitionHelper::faces_train(std::string& uid) {
 	std::string post_data("api_key=" API_KEY "&api_secret=" API_SECRET "&uids=");
 	post_data += uid;
 	std::string post_url(API_URL FACES_TRAIN_URL);
@@ -190,20 +206,23 @@ void ImageRecognitionHelper::faces_train(uid_t& uid) {
 	std::cout << decoded_response << std::endl;
 }
 
-void ImageRecognitionHelper::register_player(uid_t& new_player, jpeg_image_t& picture) {
-	tid_t new_face;
-	faces_detect(picture, new_face);
-	tags_save(new_face, new_player);
-	faces_train(new_player);
+void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg_image) {
+	std::string new_face;
+	std::string player(uid);
+	faces_detect(jpeg_image, new_face);
+	tags_save(new_face, uid);
+	faces_train(uid);
 }
 
-void ImageRecognitionHelper::match(uid_t& response, jpeg_image_t& pic, uids_t& players) {
-	faces_recognize();
+void ImageRecognitionHelper::match(std::string& response,
+								   std::string& jpeg_image,
+								   std::vector<std::string>& uids) {
+//	faces_recognize();
 }
 
 // deprecated stuff
 
-game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
+game_id_t ImageRecognitionHelper::start_game(std::vector<std::string>& x) {
 //	std::cout << x.size() << std::endl;
 	if (x.size() < 1) throw NOT_ENOUGH_PLAYERS;
 	// detect all images
@@ -212,7 +231,7 @@ game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
 	for (unsigned i = 0; i < x.size(); i++) {
 //		std::cout << i->size() << std::endl;
 		// detect
-		tid_t current_tid;
+		std::string current_tid;
 		clock_t start = clock();
 		faces_detect(x[i], current_tid);
 		clock_t end = clock();
@@ -258,7 +277,7 @@ game_id_t ImageRecognitionHelper::start_game(jpeg_images_t& x) {
 	return g; // placeholder
 }
 
-player_id_t ImageRecognitionHelper::match(jpeg_image_t& x, game_id_t) {
+player_id_t ImageRecognitionHelper::match(std::string& x, game_id_t) {
 
 	return (player_id_t)0; // placeholder
 }
