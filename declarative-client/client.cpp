@@ -251,44 +251,41 @@ if (!message[0].isEmpty())
        int time = message[3].toInt();
        if (time <= 60 || time >= 6000)
            error = error + "Time is no less than 60 seconds and larger than 6000 seconds\n";
-       int noOfTeamA =  message[4].toInt();
-       if (noOfTeamA <= 0 || noOfTeamA > 20)
+       int noTeamA =  message[4].toInt();
+       if (noTeamA <= 0 || noTeamA > 20)
            error = error + "Number of team A is no less than 0 and more than 20\n";
-       int noOfTeamB = message[5].toInt();
-       if (noOfTeamB <= 0 || noOfTeamB > 20)
+       int noTeamB = message[5].toInt();
+       if (noTeamB <= 0 || noTeamB > 20)
            error = error + "Number of team B is no less than 0 and more than 20\n";
 
        // success or fail should be decided by server side as well
-       if (error.isEmpty())
-            emit gameCreateSuccess();
+       if (error.isEmpty()) {
+           gameId = message[2];
+           gameTime = time;
+           noOfTeamA = noTeamA;
+           noOfTeamB = noTeamB;
+           emit gameCreateSuccess(gameId, gameTime, noOfTeamA, noOfTeamB);
+       }
        else{
            qDebug() << error;
             emit gameCreateFailed(error);
        }
 
    }
-
    if (message[1] == "JOINGAME") {
-       qDebug("in joingame");
-    QString gameId= message[2];
-    int gameTime = 100;
-    int noOfTeamA = 11;
-    int noOfTeamB = 10;
-    emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB);
+        qDebug("in joingame");
+        QString gameId= message[2];
+        int gameTime = 100;
+        int noOfTeamA = 11;
+        int noOfTeamB = 10;
+        emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB);
    }
-//   if (messageParts[0]=="LOBBY"){
-//       if (messageParts.length()==3){
-//           emit lobby(messageParts[1],messageParts[2]);
-//       }
-//       if (messageParts.length()==2){
-//           emit lobby(messageParts[1]);
-//       }
-//   }
-//   if (messageParts[0]=="GAME"){
-//       if (messageParts.length()==2){
-//           emit gameState(messageParts[1]);
-//       }
-//   }
+   if (message[1] == "JOINTEAM") {
+        emit teamJoined(gameId);
+   }
+   if (message[1] == "GAMESTART") {
+        emit startGame();
+   }
 //   if (messageParts[0]=="UPDATE"){
 //       if (messageParts.length()==2){
 //           emit update(messageParts[1]);
