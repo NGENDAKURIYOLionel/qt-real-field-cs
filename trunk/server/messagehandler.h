@@ -23,14 +23,14 @@ signals:
     void loginWithPicture(QString uname,QImage picture);
     void logout(QString uname);
     void gamelist(QString uname);
-    void createGame(QString uname);
+    void createGame(QString uname, QString gameId, int duration);
     void setTime(QString uname,QDate date);
     void setDuration(QString uname,int duration);
     void setPlayers(QString uname,int players);
     void setTeams(QString uname,int teams);
     void invite(QString uname,QString targetName,int gameId);
-    void joinGame(QString uname,int gameId);
-    void joinTeam(QString uname,int gameId);
+    void joinGame(QString uname,QString gameId);
+    void joinTeam(QString uname,QString teamId);
     void leave(QString uname);
     void cancel(QString uname);
     void shoot(QString uname,QImage picture);
