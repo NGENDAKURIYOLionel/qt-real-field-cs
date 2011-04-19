@@ -9,7 +9,7 @@ QT       += network
 
 TARGET = server
 CONFIG   += console
-#CONFIG   -= app_bundle
+CONFIG   -= app_bundle
 
 TEMPLATE = app
 
@@ -22,7 +22,8 @@ SOURCES += \
 	server.cpp \
 	playerconnectionthread.cpp \
 	messagehandler.cpp \
-	main.cpp
+	main.cpp \
+    test_irh.cpp
 
 
 HEADERS += \
