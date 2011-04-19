@@ -172,6 +172,27 @@ Rectangle {
                         }
                 }
 
+                Connections {
+                    target: client
+                    onTeamJoined: {
+                        if (frontName.text == "New") {
+                            console.log("creator teamJoined")
+                            console.log(frontName.text)
+                            console.log(gameId)
+                            gameReadyForCreator.enabled = false
+                            gameReadyForCreator.opacity = 0.5
+                        }
+                        if (frontName.text == gameId) {
+                            console.log("normal user teamJoined")
+                            console.log(frontName.text)
+                            console.log(gameId)
+
+                            gameReady.enabled = false
+                            gameReady.opacity = 0.5
+                        }
+                    }
+                 }
+
                 // game create failed view
                 Rectangle {
                     id: gameCreateFailedArea
@@ -353,19 +374,7 @@ Rectangle {
                             }
                         }
 
-                 }
-
-                    Connections {
-                        target: client
-                        onTeamJoined: {
-                            if (frontName.text == "New") {
-                                console.log(frontName.text)
-                                console.log(gameId)
-                                gameReadyForCreator.enabled = false
-                                gameReadyForCreator.opacity = 0.5
-                            }
-                        }
-                     }
+                   }
                 }
 
                 // hostGameView
@@ -574,6 +583,7 @@ Rectangle {
 
                                 gameReady.enabled = true
                                 gameReady.opacity = 1.0
+
                             }
                         }
 
@@ -639,19 +649,6 @@ Rectangle {
                                     client.sendMessage(";LEAVEGAME;" + frontName.text)
                                 }
                         }
-
-                        Connections {
-                            target: client
-                            onTeamJoined: {
-
-                                if (frontName.text == gameId) {
-                                    console.log(frontName.text)
-                                    console.log(gameId)
-                                    gameReady.enabled = false
-                                    gameReady.opacity = 0.5
-                                }
-                            }
-                         }
                     }
                 }
             }
