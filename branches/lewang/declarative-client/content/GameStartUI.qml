@@ -7,7 +7,7 @@ Item {
 
     //set backgroud image
     BorderImage {
-        id: lgameStartUIViewImage
+        id: gameStartUIViewImage
         source: "pics/gameStartBackGround.jpg"
         width: gameStartUI.width; height: gameStartUI.height
     }
@@ -53,6 +53,16 @@ Item {
         }
 
     }
+
+    Connections {
+            target: client
+            onStartGame: {
+                gameStartUI.visible = false
+                gameUI.visible = true
+
+            }
+    }
+
 
     // minimize button
     Button {

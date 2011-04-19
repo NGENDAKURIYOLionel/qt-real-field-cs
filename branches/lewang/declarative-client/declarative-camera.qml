@@ -22,7 +22,7 @@ Rectangle {
     }
 
     GameEndUI {
-        id: gameEenUI
+        id: gameEndUI
         visible: false
     }
 

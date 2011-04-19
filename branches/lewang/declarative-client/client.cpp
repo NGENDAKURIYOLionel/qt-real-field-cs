@@ -30,68 +30,10 @@ Client::Client()
     if (ipAddress.isEmpty())
         ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
 
-    /*hostLineEdit = new QLineEdit(ipAddress);
-    portLineEdit = new QLineEdit;
-    portLineEdit->setValidator(new QIntValidator(1, 65535, this));
 
-    hostLabel->setBuddy(hostLineEdit);
-    portLabel->setBuddy(portLineEdit);
-
-    statusLabel = new QLabel(tr("Waiting for connection"));
-
-    connectButton = new QPushButton(tr("connect"));
-    connectButton->setDefault(true);
-    connectButton->setEnabled(true);
-
-    sendLineButton = new QPushButton(tr("send line"));
-    sendLineButton->setDefault(true);    //qDebug("sendMessage(QByteArray);");
-    sendLineButton->setEnabled(false);
-
-    readLineButton = new QPushButton(tr("read line"));
-    readLineButton->setDefault(true);
-    readLineButton->setEnabled(false);
-
-    quitButton = new QPushButton(tr("Quit"));
-
-    buttonBox = new QDialogButtonBox;
-    buttonBox->addButton(readLineButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(sendLineButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(connectButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);*/
 
     tcpSocket = new QTcpSocket(this);
 
-//    connect(hostLineEdit, SIGNAL(textChanged(QString)),
-//            this, SLOT(enablereadLineButton()));
-//    connect(portLineEdit, SIGNAL(textChanged(QString)),
-//            this, SLOT(enablereadLineButton()));
-//    connect(hostLineEdit, SIGNAL(textChanged(QString)),
-//            this, SLOT(enablesendLineButton()));
-//    connect(portLineEdit, SIGNAL(textChanged(QString)),
-//            this, SLOT(enablesendLineButton()));
-   /* connect(readLineButton, SIGNAL(clicked()),
-            this, SLOT(readMessage()));
-    connect(sendLineButton, SIGNAL(clicked()),
-            this, SLOT(sendMessageSlot()));
-    connect(connectButton, SIGNAL(clicked()),
-            this, SLOT(connectto()));
-    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(enablereadLineButton()));
-    connect(tcpSocket, SIGNAL(connected()), this, SLOT(enablesendLineButton()));
-    //qDebug("sendMessage(QByteArray);");
-
-
-    mainLayout = new QGridLayout;
-    mainLayout->addWidget(hostLabel, 0, 0);
-    mainLayout->addWidget(hostLineEdit, 0, 1);
-    mainLayout->addWidget(portLabel, 1, 0);
-    mainLayout->addWidget(portLineEdit, 1, 1);
-    mainLayout->addWidget(statusLabel, 2, 0, 1, 2);
-    mainLayout->addWidget(buttonBox, 3, 0, 1, 2);
-    setLayout(mainLayout);
-
-    setWindowTitle(tr("Test Client"));
-    portLineEdit->setFocus();*/
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(displayError(QAbstractSocket::SocketError)));
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
@@ -273,18 +215,25 @@ if (!message[0].isEmpty())
 
    }
    if (message[1] == "JOINGAME") {
-        qDebug("in joingame");
         QString gameId= message[2];
         int gameTime = 100;
         int noOfTeamA = 11;
         int noOfTeamB = 10;
-        emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB);
+        QString joinUserName("test");
+        emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB, joinUserName);
    }
    if (message[1] == "JOINTEAM") {
         emit teamJoined(gameId);
    }
    if (message[1] == "GAMESTART") {
         emit startGame();
+
+   }
+
+   if (message[1] == "SHOOT") {
+
+       qDebug("Shoot");
+       emit gameEnd(";GAMEEND;TeamA;Liang;16;Le;10");
    }
 //   if (messageParts[0]=="UPDATE"){
 //       if (messageParts.length()==2){
@@ -374,6 +323,21 @@ QByteArray Client::loadPhoto(const QString &uName)
     return buf;
 }
 
-//int getListSize(const QStringList &list) {
-//    return list.size();
-//}
+QByteArray Client::loadImage()
+{
+    QString path("/home/user/MyDocs/DCIM/");
+    QDir folder = QDir(path);
+    folder.setFilter(QDir::Files | QDir::NoSymLinks);
+    folder.setSorting(QDir::Time);
+    QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
+    filename = path.append(filename);
+    QByteArray buf(userName.toUtf8());
+    QByteArray buf1(";SHOOT;");
+    buf.append(buf1);
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly))
+        qDebug("Can not open photo image");
+    QByteArray buf2 = file.readAll();
+    buf.append(buf2);
+    return buf;
+}

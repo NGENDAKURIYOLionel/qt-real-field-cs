@@ -113,58 +113,9 @@ Rectangle {
         }
      }
 
-    // test code
-//    Button{
-//        id: testButton1
-//        anchors.bottom: parent.bottom
-//        anchors.left: parent.left
-//        fontSize: 20
-//        width: 200
-//        height: 50
-//        opacity: 0.45
-//        text: "pass"
-
-//        // timer triggers UI change from loginUI to gameStartUI
-//        Timer {
-//             id: loginUITimer
-//             interval: 1000
-//             onTriggered: {
-//                 loginUI.visible = false
-//                 gameStartUI.visible = true
-//             }
-//         }
-
-//         onClicked: {
-//            photoLoginUI.state = "invisible"
-//            usernameLoginUI.state = "invisible"
-//            loginSuccess.state = "visible"
-//            passwordLoginButton.opacity = 0
-//            photoLoginButton.opacity = 0
-//            // trigger timer
-//            loginUITimer.running = true
-//         }
-//    }
-
-//    // test code
-//    Button {
-//        id: testButton2
-//        anchors.bottom: parent.bottom
-//        anchors.right: parent.right
-//        fontSize: 20
-//        width: 200
-//        height: 50
-//        opacity: 0.45
-//        text:  "fail"
-//        onClicked: {
-//            photoLoginUI.state = "invisible"
-//            usernameLoginUI.state = "invisible"
-//            loginFail.state = "visible"
-//        }
-//    }
-
     Timer {
          id: loginUITimer
-         interval: 1000
+         interval: 500
          onTriggered: {
              loginUI.visible = false
              gameStartUI.visible = true
@@ -220,8 +171,14 @@ Rectangle {
             width: 200
             height: 50
             opacity: 0.45
-            onClicked: photoLoginUI.toggle()
+            onClicked: {
+                //var photoLoginObject = Qt.createQmlObject('import QtQuick 1.0; PhotoLoginUI { id: photoLoginUI}', loginUI, "dynamicSnippet1");
+                photoLoginUI.toggle();
+                //photoLoginObject.destroy(1000);
+
+            }
         }
     }
 }
+
 

@@ -66,10 +66,12 @@ Item {
         if (state == "visible") {
             state = "invisible";
             usernameLoginUI.state = "invisible";
+            loginFail.state = "invisible"
         }
         else {
             state = "visible";
             usernameLoginUI.state = "invisible";
+            loginFail.state = "invisible"
         }
     }
 

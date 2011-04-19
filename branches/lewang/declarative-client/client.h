@@ -21,7 +21,7 @@ public:
     Q_INVOKABLE void sendMessage(const QString &msg);
     Q_INVOKABLE void sendImage(const QByteArray &image);
     Q_INVOKABLE QByteArray loadPhoto(const QString &uName);
-    //Q_INVOKABLE int getListSize(const QStringList &list);
+    Q_INVOKABLE QByteArray loadImage();
 
 
 public slots:
@@ -32,14 +32,23 @@ signals:
     void login(QString errorMessage);
     void loginSuccess();
     void loginFailed();
+
     void gameList(QStringList list, int size);
     void gameCreateSuccess(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
     void gameCreateFailed(QString error);
-    void joinGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
+    void joinGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB, QString joinUserName);
+    void leaveGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB, QString leaveUserName);
     void teamJoined(QString gameId);
     void startGame();
     void leaveGame();
     void gameAbort();
+
+    void gameEnd(QString winner);
+    void gameUpdate(QString gameId, int gameTime, int noOfTeamALeft, int noOfTeamBLeft,
+                    QString killer, QString beKilledOne, bool isSelfKilled);
+    void onTarget(bool isShot, QString uName);
+
+
 
 
 private slots:
