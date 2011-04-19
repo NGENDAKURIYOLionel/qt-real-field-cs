@@ -97,7 +97,6 @@ void ImageRecognitionHelper::account_users(std::vector<std::string>& response) {
 	std::string post_url(API_URL ACCOUNT_USERS_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-	std::string asdf;
 	if (decoded_response["status"].asString().compare("success"))
 		throw;
 	else std::cout << decoded_response;
@@ -113,29 +112,33 @@ void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
 	std::cout << decoded_response << std::endl;
+	if (decoded_response["status"].asString().compare("success"))
+		throw MALFORMED_RESPONSE;
 }
 
 void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& tid_response) {
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "api_key",
-				 CURLFORM_COPYCONTENTS, API_KEY,
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "api_key",
+	             CURLFORM_COPYCONTENTS, API_KEY,
+	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "api_secret",
-				 CURLFORM_COPYCONTENTS, API_SECRET,
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "api_secret",
+	             CURLFORM_COPYCONTENTS, API_SECRET,
+	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "file",
-				 CURLFORM_CONTENTTYPE, "image/jpeg",
-				 CURLFORM_BUFFER, "file",
-				 CURLFORM_BUFFERPTR, jpeg_image.data(),
-				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "file",
+	             CURLFORM_CONTENTTYPE, "image/jpeg",
+	             CURLFORM_BUFFER, "file",
+	             CURLFORM_BUFFERPTR, jpeg_image.data(),
+	             CURLFORM_BUFFERLENGTH, jpeg_image.size(),
+	             CURLFORM_END);
 	std::string post_url(API_URL FACES_DETECT_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
+	if (decoded_response["status"].asString().compare("success"))
+		throw MALFORMED_RESPONSE;
 
 	// are values returned by reference supposed to be freed at some point?
 //	Json::Value& photos_array = decoded_response["photos"];
@@ -160,8 +163,8 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 }
 
 void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
-											 std::string jpeg_image,
-											 std::string& response) {
+                                             std::string jpeg_image,
+                                             std::string& response) {
 	std::string uids_comma_separated;
 	if (uids.size() < 1) throw;
 	uids_comma_separated += uids[0];
@@ -174,27 +177,28 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "api_key",
-				 CURLFORM_COPYCONTENTS, API_KEY,
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "api_key",
+	             CURLFORM_COPYCONTENTS, API_KEY,
+	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "api_secret",
-				 CURLFORM_COPYCONTENTS, API_SECRET,
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "api_secret",
+	             CURLFORM_COPYCONTENTS, API_SECRET,
+	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "uids",
-				 CURLFORM_COPYCONTENTS, uids_comma_separated.c_str(),
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "uids",
+	             CURLFORM_COPYCONTENTS, uids_comma_separated.c_str(),
+	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-				 CURLFORM_COPYNAME, "file",
-				 CURLFORM_CONTENTTYPE, "image/jpeg",
-				 CURLFORM_BUFFER, "file",
-				 CURLFORM_BUFFERPTR, jpeg_image.data(),
-				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
-				 CURLFORM_END);
+	             CURLFORM_COPYNAME, "file",
+	             CURLFORM_CONTENTTYPE, "image/jpeg",
+	             CURLFORM_BUFFER, "file",
+	             CURLFORM_BUFFERPTR, jpeg_image.data(),
+	             CURLFORM_BUFFERLENGTH, jpeg_image.size(),
+	             CURLFORM_END);
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
+	std::cout << decoded_response << std::endl;
 }
 
 void ImageRecognitionHelper::faces_train(std::string& uid) {
@@ -204,20 +208,31 @@ void ImageRecognitionHelper::faces_train(std::string& uid) {
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
 	std::cout << decoded_response << std::endl;
+	if (decoded_response["status"].asString().compare("success"))
+		throw MALFORMED_RESPONSE;
 }
 
 void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg_image) {
 	std::string new_face;
-	std::string player(uid);
+	std::string uid_with_namespace(uid);
+	uid_with_namespace += "@" + current_namespace;
 	faces_detect(jpeg_image, new_face);
-	tags_save(new_face, uid);
-	faces_train(uid);
+	tags_save(new_face, uid_with_namespace);
+	faces_train(uid_with_namespace);
 }
 
+// TODO: ignore users from other namespaces
 void ImageRecognitionHelper::match(std::string& response,
-								   std::string& jpeg_image,
-								   std::vector<std::string>& uids) {
-//	faces_recognize();
+                                   std::string& jpeg_image,
+                                   std::vector<std::string>& uids) {
+	if (uids.size() < 1) throw;
+	if (jpeg_image.size() < 1) throw;
+	std::vector<std::string> uids_with_namespace(uids);
+	for (unsigned i = 0; i < uids_with_namespace.size(); i++) {
+		uids_with_namespace[i] += "@" + current_namespace;
+	}
+	std::string temp_response;
+	faces_recognize(uids_with_namespace, jpeg_image, temp_response);
 }
 
 // deprecated stuff
@@ -236,9 +251,9 @@ game_id_t ImageRecognitionHelper::start_game(std::vector<std::string>& x) {
 		faces_detect(x[i], current_tid);
 		clock_t end = clock();
 		std::cout << "faces_detect: "
-				  << (end-start)/(CLOCKS_PER_SEC/1000)
-				  << " ms"
-				  << std::endl;
+		          << (end-start)/(CLOCKS_PER_SEC/1000)
+		          << " ms"
+		          << std::endl;
 		// create temp uid for player
 		std::string player_uid;
 #define LONG_STR_SIZE 128
@@ -262,17 +277,17 @@ game_id_t ImageRecognitionHelper::start_game(std::vector<std::string>& x) {
 		tags_save(current_tid, player_uid);
 		end = clock();
 		std::cout << "tags_save: "
-				  << (end-start)/(CLOCKS_PER_SEC/1000)
-				  << " ms"
-				  << std::endl;
+		          << (end-start)/(CLOCKS_PER_SEC/1000)
+		          << " ms"
+		          << std::endl;
 		// train index
 		start = clock();
 		faces_train(player_uid);
 		end = clock();
 		std::cout << "faces_train: "
-				  << (end-start)/(CLOCKS_PER_SEC/1000)
-				  << " ms"
-				  << std::endl;
+		          << (end-start)/(CLOCKS_PER_SEC/1000)
+		          << " ms"
+		          << std::endl;
 	}
 	return g; // placeholder
 }

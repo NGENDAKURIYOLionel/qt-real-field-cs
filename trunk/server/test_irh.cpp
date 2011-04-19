@@ -4,7 +4,7 @@
 //#include <fstream>
 #include <cstdio>
 #include <ctime>
-#define NAMESPACE_NAME "20110415"
+#define NAMESPACE_NAME "20110419_2"
 
 std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
@@ -28,6 +28,7 @@ void read_file(const char* src, std::string& target) {
 
 void register_test(std::string& uid, std::string& picture) {
 	clock_t start = clock();
+	std::cout << "registering user " << uid << std::endl;
 	std::string jpeg_picture_data;
 	try {
 		read_file(picture.c_str(), jpeg_picture_data);
@@ -35,7 +36,12 @@ void register_test(std::string& uid, std::string& picture) {
 		std::cout << "error reading image" << std::endl;
 		return;
 	}
-	irh.register_player(uid, jpeg_picture_data);
+	try {
+		irh.register_player(uid, jpeg_picture_data);
+	} catch(...) {
+		std::cout << "error registering player" << std::endl;
+	}
+
 	clock_t end = clock();
 	std::cout << "register: "
 			  << (end-start)/(CLOCKS_PER_SEC/1000)
@@ -55,15 +61,27 @@ void users_test() {
 }
 
 void match_test(std::string& picture, std::vector<std::string>& uids) {
-
+	std::cout << "matching picture to users" << std::endl;
+//	for (unsigned i = 0; i < uids.size(); i++) {
+//		std::cout << uids[i] << std::endl;
+//	}
+	std::string jpeg_picture_data;
+	try {
+		read_file(picture.c_str(), jpeg_picture_data);
+	} catch(...) {
+		std::cout << "error reading image" << std::endl;
+		return;
+	}
+	std::string response;
+	irh.match(response, jpeg_picture_data, uids);
 }
 
-int main(int argc, char *argv[])
+int dummy(int argc, char *argv[])
+//int main(int argc, char *argv[])
 {
 	if (argc > 1) {
 		std::string argv1(argv[1]);
 		if (!argv1.compare("register")) {
-			std::cout << "registering user" << std::endl;
 			if (argc != 4) {
 				std::cout << "usage: register uid face.jpg" << std::endl;
 				return 0;
@@ -73,7 +91,27 @@ int main(int argc, char *argv[])
 			register_test(uid, picture);
 			return 0;
 		} else if (!argv1.compare("match")) {
-			std::cout << "matching user" << std::endl;
+			if (argc < 4) {
+				std::cout << "usage: match face.jpg uid1 uid2 ..." << std::endl;
+				return 0;
+			}
+			std::string picture(argv[2]);
+			if (picture.size() < 1) {
+				std::cout << "invalid picture" << std::endl;
+				return 0;
+			}
+			std::vector<std::string> uids;
+			unsigned players = argc - 3;
+			for (unsigned i = 0; i < players; i++) {
+//				std::cout << "player1: " << argv[i + 3] << std::endl;
+				std::string temp_uid(argv[i + 3]);
+				if (temp_uid.size() < 1) {
+					std::cout << "error in uid" << std::endl;
+					return 0;
+				}
+				uids.push_back(temp_uid);
+			}
+			match_test(picture, uids);
 			return 0;
 		} else if (!argv1.compare("users")) {
 			users_test();
@@ -83,6 +121,7 @@ int main(int argc, char *argv[])
 	std::cout << "valid command line arguments: register, match" << std::endl;
 	return 0;
 
+	// deprecated stuff
 	std::vector<std::string> users_response;
 	irh.account_users(users_response);
 	std::string user1_reg;
