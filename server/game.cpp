@@ -1,25 +1,26 @@
 #include "game.h"
 
-game::game(QObject *parent) :
+game::game(QString *id, QObject *parent) :
         QObject(parent)
 {
     _duration = -1; //marked as not set
     _start = NULL;
     _max_players = 10;
     _ended = false;
-    _players = new QHash<QString,PlayerEntry*>();
+    _players = new QHash<QString*,QString*>();
+    _teams = new QSet<QString*>();
     _timer = new QTimer(this);
-    _timer.setSingleShot(true);
+    _timer->setSingleShot(true);
+    _game_id = id;
     connect(_timer,SIGNAL(timeout()), this, SLOT(endGame()));
     this->setImageRecognitionHelper(NULL);
     this->setDataBaseHelper(NULL);
+    connect(this,SIGNAL(durationChanged()),this,SLOT(onGameChange()));
+    connect(this,SIGNAL(joined(QString*,QString*)),this,SLOT(onGameChange()));
+    connect(this, SIGNAL(left(QString*,QString*)),this,SLOT(onGameChange()));
 }
 
-game::~game(){
-    //TODO auto generated destructor stub
-}
-
-time_t game::getStartTime(){
+QDate* game::getStartTime(){
     return _start;
 }
 
@@ -32,10 +33,10 @@ int game::getMaxPlayers(){
 }
 
 int game::getNumberOfTeams(){
-    return _teams;
+    return _teams->size();
 }
 
-bool game::setStartTime(time_t time){
+bool game::setStartTime(QDate* time){
     _start = time;
     return true;
 }
@@ -43,7 +44,7 @@ bool game::setStartTime(time_t time){
 bool game::setDuration(int duration){
     _duration = duration;
     //adjust the timer to the new duration
-    _timer.setInterval(duration * 1000); //duration in milliseconds
+    _timer->setInterval(duration * 1000); //duration in milliseconds
     emit durationChanged();
     return true;
 }
@@ -54,83 +55,56 @@ bool game::setMaxPlayers(int players){
     return true;
 }
 
-bool game::setNumberOfTeams(int teams){
-    _teams = teams;
-    emit numberOfTeamsChanged();
-    return true;
+void game::addTeam(QString *team){
+    _teams->insert(team);
 }
 
 /*
  Join a team in this game
  */
-bool game::joinTeam(int team, PlayerInfo* player){
-    //check that a team with the given index exists and that the player isn't NULL
-    if(team >= _teams || player == NULL){
-        return false;
-    }else{
-        //return false if the player is already in this game
-        if(_players->contains(player->getUID())){
-            return false;
-        }else{
-            //create a new entry for the player and reset values in it
-            PlayerEntry *entry = new PlayerEntry(player);
-            entry->_death_count = 0;
-            entry->_kill_count = 0;
-            entry->_miss_count = 0;
-            entry->_team = team;
-            //add the player entry to the hash
-            _players->insert(player->getUID(),entry);
-            //emit a signal
-            emit(joined(team,player));
-            //return success
-            return true;
-        }
+void game::joinTeam(QString* player,QString* team){
+    if(*player == NULL || *team == NULL){
+        return;
+    }
+    if(_players->keys().size() < getMaxPlayers()){
+        _players->insert(player,team);
+        emit joined(player,team);
+    }
+}
+/*
+ Leave the game
+ */
+void game::leaveGame(QString *id){
+    QString *team = _players->value(id);
+    if(_players->remove(id) > 0){
+        emit left(id,team, _game_id);
     }
 }
 
 /*
- Leave a currently joined game
- Returns false also if the player isn't currently in this game
+ Return the number of players in the given team or -1 if no such team
  */
-bool game::leaveGame(PlayerInfo* player){
-    if(player == NULL){
-        return false;
-    }else{
-        if(_players->remove(player->getUID()) > 0){
-            emit left(player);
-            return true;
-        }else{
-            return false;
+int game::playersInTeam(QString *team){
+    if(_teams->contains(team)){
+        return -1;
+    }
+    //get the values as a list from the QHash
+    QList<QString*> list = _players->values();
+    int size = list.size(), count = 0;
+    //go through the values
+    for(int i = 0; i < size; i++){
+        //if the team index is the same up the count
+        if(list.at(i)->compare(team)){
+            count++;
         }
     }
-}
-
-/*
- Return the number of players in the given team
- */
-int game::playersInTeam(int team){
-    //no such team so can't have any players in it either
-    if(team >= _teams){
-        return 0;
-    }else{
-        //get the values as a list from the QHash
-        QList<PlayerEntry*> list = _players->values();
-        int size = list.size(), count = 0;
-        //go through the values
-        for(int i = 0; i < size; i++){
-            //if the team index is the same up the count
-            if(list.at(i)->_team == team){
-                count++;
-            }
-        }
-        return count;
-    }
+    return count;
 }
 /*
  Starts this game
  */
 void game::startGame(){
-    _timer.start();
+    _timer->start();
     _ended = false;
     emit gameStarted();
 }
@@ -138,16 +112,18 @@ void game::startGame(){
  Ends this game
  */
 void game::endGame(){
-    _timer.stop();
+    _timer->stop();
     _ended = true;
-    emit gameEnded();
+    QString* win_team = getWinningTeam();
+    QList<QString*> players = _players->keys();
+    emit gameEnded(win_team,&players);
 }
 /*
  Cancels/aborts the ongoing game and emits a corresponding signal
  Game also ends if it's canceled
  */
 void game::cancelGame(){
-    _timer.stop();
+    _timer->stop();
     _ended = true;
     emit gameCanceled();
 }
@@ -172,22 +148,47 @@ void game::setImageRecognitionHelper(ImageRecognitionHelper *helper){
     _IRH = helper;
 }
 
-bool game::shot(QImage* image, PlayerInfo* player){
-    if(image == NULL || player == NULL){
-        return false;
-    }
+void game::shot(QImage* image, QString* id){
     if(1/*TODO match with imageRecognition */){
-        QString hit_player_id = NULL;
-        //TODO currently just kill_count the player
+        QString *hit_player_id = NULL;
+        //TODO currently just kills the player
         int amount = 100;
-        emit hit(player, hit_player_id, amount);
-        PlayerEntry *entry = _players->value(player->getUID());
-        entry->_kill_count = entry->_kill_count + 1;
-        return true;
+        emit hit(id, hit_player_id, amount);
+        //TODO update player kill count
     }else{
-        PlayerEntry *entry = _players->value(player->getUID());
-        entry->_miss_count = entry->_miss_count + 1;
-        emit miss(player);
-        return false;
+        //TODO update player miss count
+        emit miss(id);
     }
+}
+
+QString* game::getGameId(){
+    return _game_id;
+}
+
+void game::onGameChange(){
+    QHash<QString*, int> *hash = new QHash<QString*, int>();
+    for(QSet<QString*>::const_iterator i = _teams->begin();i != _teams->end();i++){
+        hash->insert((*i),this->playersInTeam((*i)));
+    }
+    emit gameInfo(_game_id,getDuration(),hash);
+}
+
+QString* game::getWinningTeam(){
+    QHash<QString*, int> *hash= new QHash<QString*, int>();
+    QList<QString*> list = _players->values();
+    for(QList<QString*>::const_iterator i = list.begin(); i != list.end();i++){
+        int val = hash->value((*i));
+        hash->insert((*i), (val+ 1));
+    }
+    list = hash->keys();
+    int alive = 0;
+    QString* team;
+    for(QList<QString*>::const_iterator i = list.begin();i != list.end();i++){
+        int tmp = hash->value((*i));
+        if(tmp > alive){
+            alive = tmp;
+            team = (*i);
+        }
+    }
+    return team;
 }
