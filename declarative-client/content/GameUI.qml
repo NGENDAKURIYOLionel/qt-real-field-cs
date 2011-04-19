@@ -46,18 +46,28 @@ Item {
         height: 100
     }
 
-    Rectangle {
-        id: battleInfo
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        width: 120
-        height: parent
-        color: "transparent"
-        Text {
-            font.pixelSize: 15
-            text: "battle info or map"
-        }
+    Connections {
+            target: client
+            onGameEnd: {
+                gameUI.visible = false
+                gameEndUI.visible = true
+                console.log(winner)
+                // list gameEnd info to gameEndUI where needs to create a text filed
+            }
     }
+
+//    Rectangle {
+//        id: battleInfo
+//        anchors.bottom: parent.bottom
+//        anchors.left: parent.left
+//        width: 100
+//        height: parent
+//        color: "transparent"
+//        Text {
+//            font.pixelSize: 15
+//            text: "battle info or map"
+//        }
+//    }
 
     Button {
         id: aiming
@@ -90,6 +100,7 @@ Item {
         opacity: 1
         onClicked: {
                 camera.captureImage();
+                client.sendMessage(client.loadImage())
                 trigger.visible = false;
                 aiming.visible = true;
         }

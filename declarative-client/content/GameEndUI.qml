@@ -1,7 +1,7 @@
 import Qt 4.7
 
 Item {
-    id: gameEndtUI
+    //id: gameEndtUI
     anchors.fill: parent
     visible: false
 
@@ -20,6 +20,30 @@ Item {
         fontSize: 25
         width: 200
         height: 70
+        onClicked: {
+            console.log(winner);
+        }
+    }
+
+    Button {
+        text: "Back To Game Lobby"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        source: "pics/toolbutton1.png"
+        fontSize: 25
+        width: 200
+        height: 70
+        onClicked: {
+            gameEndUI.visible = false
+            //usernameLoginUI.state = "invisible"
+            loginSuccess.state = "visible"
+            //passwordLoginButton.opacity = 0
+            //photoLoginButton.opacity = 0
+            // trigger timer
+            loginUITimer.running = true
+
+
+        }
     }
 
    // minimize button

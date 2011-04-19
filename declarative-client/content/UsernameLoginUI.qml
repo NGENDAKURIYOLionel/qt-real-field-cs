@@ -8,9 +8,6 @@ Column {
 
     spacing: 5
 
-
-
-
     Rectangle { radius: 10.0; opacity:  0.75
                 width: 250; height: 48
                 LineEdit {
@@ -52,11 +49,11 @@ Column {
     states: [
         State {
             name: "invisible"
-            PropertyChanges { target: usernameLoginUI; opacity: 0 }
+            PropertyChanges { target: usernameLoginUI; visible: false }
         },
         State {
             name: "visible"
-            PropertyChanges { target: usernameLoginUI; opacity: 1.0 }
+            PropertyChanges { target: usernameLoginUI; visible: true }
         }
     ]
     transitions: Transition {
@@ -66,10 +63,12 @@ Column {
         if (state == "visible") {
             state = "invisible";
             photoLoginUI.state = "invisible";
+            loginFail.state = "invisible"
         }
         else {
             state = "visible";
             photoLoginUI.state = "invisible";
+            loginFail.state = "invisible"
         }
     }
 }
