@@ -5,7 +5,7 @@
  */
 
 #include "PlayerInfo.h"
-#include<algorithm>
+//#include<algorithm>
 using namespace std;
 
 
@@ -20,9 +20,9 @@ PlayerInfo::PlayerInfo(string uid,string passwd) {
 	//invites = 0;
 }
 
-int PlayerInfo::setScore(int value) {
+void PlayerInfo::setScore(int value) {
 	score +=value;
-	return 0;
+
 }
 
 string PlayerInfo::getUID() {
