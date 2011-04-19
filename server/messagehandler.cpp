@@ -48,7 +48,9 @@ void MessageHandler::readMessage(){
             emit gamelist(messageParts[0]);
         }
         if (messageParts[1]=="CREATEGAME"){
-            emit createGame(messageParts[0]);
+	    if (messageParts.length()==4){
+               emit createGame(messageParts[0],messageParts[2],messageParts[3].toInt());
+	    }
         }
         if (messageParts[1]=="SETSTARTTIME"){
             if (messageParts.length()==3){
@@ -78,12 +80,12 @@ void MessageHandler::readMessage(){
         }
         if (messageParts[1]=="JOINGAME"){
             if (messageParts.length()==3){
-                emit joinGame(messageParts[0],messageParts[2].toInt());
+                emit joinGame(messageParts[0],messageParts[2]);
             }
         }
         if (messageParts[1]=="JOINTEAM"){
             if (messageParts.length()==3){
-                emit joinTeam(messageParts[0],messageParts[2].toInt());
+                emit joinTeam(messageParts[0],messageParts[2]);
             }
         }
         if (messageParts[1]=="LEAVEGAME"){
