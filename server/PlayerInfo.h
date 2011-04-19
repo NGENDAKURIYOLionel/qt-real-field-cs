@@ -17,7 +17,7 @@ class PlayerInfo {
 public:
 	PlayerInfo(string,string);
 	virtual ~PlayerInfo();
-	int setScore(int);
+        void setScore(int);
 	string getUID();
 	string getPassword();
 	void addKill();
@@ -36,7 +36,7 @@ private:
 	int numberOfDeaths;
 	int numberOfKills;
 	int numberOfInvites;
-	uint64_t score;
+        int score;
 	vector<uint64_t> invites;
 
 
