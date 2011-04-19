@@ -164,9 +164,11 @@ void Client::sendMessage(const QString &msg){
  // for debugging
  qDebug() << msg;
  QStringList message = msg.split(";");
+ qDebug() << "---Debugging messages from cpp---";
  qDebug() << message[0];
  qDebug() << message[1];
  qDebug() << message[2];
+ qDebug() << "---Debugging messages from cpp---";
 if (!message[0].isEmpty())
     userName = message[0];
 
@@ -215,7 +217,7 @@ if (!message[0].isEmpty())
 
    }
    if (message[1] == "JOINGAME") {
-        QString gameId= message[2];
+        gameId= message[2];
         int gameTime = 100;
         int noOfTeamA = 11;
         int noOfTeamB = 10;
@@ -223,6 +225,7 @@ if (!message[0].isEmpty())
         emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB, joinUserName);
    }
    if (message[1] == "JOINTEAM") {
+        qDebug() << "--cpp--" << gameId << "--cpp--";
         emit teamJoined(gameId);
    }
    if (message[1] == "GAMESTART") {
@@ -332,7 +335,7 @@ QByteArray Client::loadImage()
     QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
     filename = path.append(filename);
     QByteArray buf(userName.toUtf8());
-    QByteArray buf1(";SHOOT;");
+    QByteArray buf1(";LOGINPHOTO;");
     buf.append(buf1);
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly))
