@@ -9,26 +9,27 @@ QT       += network
 
 TARGET = server
 CONFIG   += console
-CONFIG   -= app_bundle
+#CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
 SOURCES += \
 	imagerecognitionhelper.cpp \
-    json/json_value.cpp \
-    json/json_reader.cpp \
-    json/json_writer.cpp \
-    server.cpp \
-    playerconnectionthread.cpp \
-    messagehandler.cpp
+	json/json_value.cpp \
+	json/json_reader.cpp \
+	json/json_writer.cpp \
+	server.cpp \
+	playerconnectionthread.cpp \
+	messagehandler.cpp \
+	main.cpp
 
 
 HEADERS += \
 	imagerecognitionhelper.h \
-    server.h \
-    playerconnectionthread.h \
-    messagehandler.h
+	server.h \
+	playerconnectionthread.h \
+	messagehandler.h
 
 
 #win32:LIBS += -L../server/curl -lcurldll
