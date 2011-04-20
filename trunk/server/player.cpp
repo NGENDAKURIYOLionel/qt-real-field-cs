@@ -49,7 +49,7 @@ void Player::setTime(QString *game_id, QDate *date){
 
 void Player::setDuration(QString *game_id, int duration){
     if(GameFactory::exists(game_id)){
-        game* game = GameFactory::get()->getGame(game_id);
+        game* game = GameFactory::getGame(game_id);
         if(game->getCreator()->compare(_name) == 0){
             game->setDuration(duration);
         }
@@ -57,30 +57,34 @@ void Player::setDuration(QString *game_id, int duration){
 }
 
 void Player::invite(QString* uname,QString* target_name,QString* game_id){
+    //TODO invites to database and emit to players
     //bool res = DataBaseHelper::sendInvite(uname, target_name, game_id);
-   // emit playerInvitedSignal(res);
+    //if(res){
+    //  emit playerInvitedSignal(uname,target, game);
+    //}
 }
 
 void Player::joinGame(QString* uname,QString* game_id){
-    GameFactory *factory = GameFactory::get();
-    game* game = factory->getGame(game_id);
-    connect(this, SIGNAL(abortGameSignal()),game,SLOT(cancelGame()));
-    connect(this, SIGNAL(endGameSignal()),game,SLOT(endGame()));
-    connect(this, SIGNAL(startGameSignal()),game,SLOT(startGame()));
-    connect(this, SIGNAL(joinTeamSignal(QString*,QString*)),game,SLOT(joinTeam(QString*,QString*)));
-    connect(this, SIGNAL(leaveGameSignal(QString*)),game,SLOT(leaveGame(QString*)));
-    connect(this, SIGNAL(shotSignal(QImage*,QString*)),game,SLOT(shot(QImage*,QString*)));
+    if(GameFactory::exists(game_id)){
+        game* game = GameFactory::getGame(game_id);
+        connect(this, SIGNAL(abortGameSignal()),game,SLOT(cancelGame()));
+        connect(this, SIGNAL(endGameSignal()),game,SLOT(endGame()));
+        connect(this, SIGNAL(startGameSignal()),game,SLOT(startGame()));
+        connect(this, SIGNAL(joinTeamSignal(QString*,QString*)),game,SLOT(joinTeam(QString*,QString*)));
+        connect(this, SIGNAL(leaveGameSignal(QString*)),game,SLOT(leaveGame(QString*)));
+        connect(this, SIGNAL(shotSignal(QImage*,QString*)),game,SLOT(shot(QImage*,QString*)));
 
-    connect(game,SIGNAL(gameStarted()),this,SLOT(gameStarted()));
-    connect(game, SIGNAL(gameEnded(QString*, QList<Player*>*)),this, SLOT(gameEnded()));
-    connect(game,SIGNAL(gameCanceled()), this, SLOT(gameAborted()));
-    connect(game,SIGNAL(joined(QString*,QString*)), this, SLOT(joined(QString*, QString*)));
-    connect(game,SIGNAL(miss(QString*)), this, SLOT(miss(QString*)));
-    connect(game,SIGNAL(hit(QString*,QString*,int)), this, SLOT(hit(QString*,QString*,int)));
-    connect(game, SIGNAL(destroyed()), this, SLOT(clearGameData()));
-    connect(game, SIGNAL(left(QString*,QString*)), this, SLOT(left()));
+        connect(game,SIGNAL(gameStarted()),this,SLOT(gameStarted()));
+        connect(game, SIGNAL(gameEnded(QString*, QList<Player*>*)),this, SLOT(gameEnded()));
+        connect(game,SIGNAL(gameCanceled()), this, SLOT(gameAborted()));
+        connect(game,SIGNAL(joined(QString*,QString*)), this, SLOT(joined(QString*, QString*)));
+        connect(game,SIGNAL(miss(QString*)), this, SLOT(miss(QString*)));
+        connect(game,SIGNAL(hit(QString*,QString*,int)), this, SLOT(hit(QString*,QString*,int)));
+        connect(game, SIGNAL(destroyed()), this, SLOT(clearGameData()));
+        connect(game, SIGNAL(left(QString*,QString*)), this, SLOT(left()));
 
-    _in_game = true;
+        _in_game = true;
+    }
 }
 
 void Player::joinTeam(QString* uname,QString* teamId){
@@ -138,7 +142,7 @@ void Player::joined(QString* player, QString* team){
 void Player::left(QString *player, QString *team, QString *game_id){
     if(player->compare(_name) == 0){
         clearGameData();
-        game* game = GameFactory::get()->getGame(game_id);
+        game* game = GameFactory::getGame(game_id);
         this->disconnect(game);
         game->disconnect(this);
     }
