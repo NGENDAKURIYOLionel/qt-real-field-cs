@@ -1,7 +1,6 @@
 import Qt 4.7
 
 Item {
-    id: gameStartUI
     anchors.fill: parent
     visible: false
 
@@ -59,7 +58,6 @@ Item {
             onStartGame: {
                 gameStartUI.visible = false
                 gameUI.visible = true
-
             }
     }
 

@@ -1,7 +1,6 @@
 import Qt 4.7
 
 Item {
-    //id: gameEndtUI
     anchors.fill: parent
     visible: false
 
@@ -9,6 +8,7 @@ Item {
     BorderImage {
         id: lgameStartUIViewImage
         source: "pics/gameStartBackGround.jpg"
+        opacity: 0.75
         width: gameStartUI.width; height: gameStartUI.height
     }
 
@@ -20,9 +20,23 @@ Item {
         fontSize: 25
         width: 200
         height: 70
-        onClicked: {
-            console.log(winner);
-        }
+    }
+
+    Connections {
+            target: client
+            onShowResult: {
+                result.text = winner + " Won"
+            }
+    }
+
+    Text {
+        id: result
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 20
+        color: "#EEEEEE"
+        font.pixelSize: 90; font.bold: true
+        style: Text.Raised; styleColor: "black"
     }
 
     Button {
@@ -35,14 +49,7 @@ Item {
         height: 70
         onClicked: {
             gameEndUI.visible = false
-            //usernameLoginUI.state = "invisible"
-            loginSuccess.state = "visible"
-            //passwordLoginButton.opacity = 0
-            //photoLoginButton.opacity = 0
-            // trigger timer
-            loginUITimer.running = true
-
-
+            gameStartUI.visible = true
         }
     }
 
@@ -68,26 +75,5 @@ Item {
         height: 60
         opacity: 0.25
         onClicked: Qt.quit()
-    }
-
-
-
-    Button {
-        text: "Choose a New Game"
-        source: "pics/toolbutton1.png"
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        fontSize: 20
-        width: 200
-        height: 70
-        //onClicked: photoLoginUI.toggle()
-    }
-
-
-
-    LineEdit {
-        fontSize: 22
-        text: " bla bla"
-        echoMode: TextInput.Normal
     }
 }
