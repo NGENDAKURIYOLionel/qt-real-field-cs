@@ -20,8 +20,8 @@ Rectangle {
         source: "pics/minimize.png"
         width: 60
         height: 60
-        opacity: 0.25
-        //onClicked: mainWindows.minimizeWindow()
+        opacity: 0.45
+        onClicked: client.minimize()
     }
 
     // quit button
@@ -33,7 +33,7 @@ Rectangle {
         source: "pics/exit.png"
         width: 60
         height: 60
-        opacity: 0.25
+        opacity: 0.45
         onClicked: Qt.quit()
     }
 
@@ -172,10 +172,11 @@ Rectangle {
             height: 50
             opacity: 0.45
             onClicked: {
-                //var photoLoginObject = Qt.createQmlObject('import QtQuick 1.0; PhotoLoginUI { id: photoLoginUI}', loginUI, "dynamicSnippet1");
-                photoLoginUI.toggle();
-                //photoLoginObject.destroy(1000);
-
+                 photoLoginUI.toggle();
+//                console.log ("single click accepted")
+//               var newObject = Qt.createQmlObject('import QtQuick 1.0; PhotoLoginUI {id: photoLoginUI}',
+//                    test, "dynamicSnippet1");
+//                newObject.destroy(30000);
             }
         }
     }

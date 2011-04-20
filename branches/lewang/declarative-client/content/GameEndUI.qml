@@ -8,7 +8,7 @@ Item {
     BorderImage {
         id: lgameStartUIViewImage
         source: "pics/gameStartBackGround.jpg"
-        opacity: 0.75
+        opacity: 0.9
         width: gameStartUI.width; height: gameStartUI.height
     }
 
@@ -61,8 +61,8 @@ Item {
         source: "pics/minimize.png"
         width: 60
         height: 60
-        opacity: 0.25
-        //onClicked: mainWindows.minimizeWindow()
+        opacity: 0.55
+        onClicked: client.minimize()
     }
 
     // quit button
@@ -73,7 +73,7 @@ Item {
         source: "pics/exit.png"
         width: 60
         height: 60
-        opacity: 0.25
+        opacity: 0.55
         onClicked: Qt.quit()
     }
 }
