@@ -30,7 +30,8 @@ SOURCES += \
     gamefactory.cpp \
     playerfactory.cpp \
     main.cpp \
-    player.cpp
+    player.cpp \
+    test_irh.cpp
 
 
 HEADERS += \
