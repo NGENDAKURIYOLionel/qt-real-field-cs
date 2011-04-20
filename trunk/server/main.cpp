@@ -3,6 +3,11 @@
 #include <QApplication>
 #include <QtCore>
 #include "server.h"
+#include "imagerecognitionhelper.h"
+
+#define NAMESPACE_NAME "20110419_2"
+std::string current_namespace(NAMESPACE_NAME);
+ImageRecognitionHelper irh(current_namespace);
 
 int main(int argc, char *argv[])
 //int dummy(int argc, char *argv[])
