@@ -9,6 +9,7 @@
 #include <QString>
 #include <QImage>
 #include <QVector>
+#
 
 #define API_KEY "5f7a9cbd46993f8672eab2f8e2eb516b"
 #define API_SECRET "a88ae67f870e64c3e7abebee10585552"
@@ -231,7 +232,7 @@ void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg
 }
 
 // TODO: ignore users from other namespaces
-void ImageRecognitionHelper::match(std::string& response,
+int ImageRecognitionHelper::match(std::string& response,
                                    std::string& jpeg_image,
                                    std::vector<std::string>& uids) {
 	if (uids.size() < 1) throw;
@@ -242,17 +243,18 @@ void ImageRecognitionHelper::match(std::string& response,
 	}
 	std::string temp_response;
 	faces_recognize(uids_with_namespace, jpeg_image, temp_response);
+	return -1; // placeholder
 }
 
-void ImageRecognitionHelper::match(QString& response,
+int ImageRecognitionHelper::match(QString& response,
                                    QImage& jpeg_image,
                                    QVector<QString>& uids) {
-	// dummy
+	return -1; // placeholder
 }
 
-void ImageRecognitionHelper::match(QString& response,
+int ImageRecognitionHelper::match(QString& response,
                                    QImage& jpeg_image) {
-	// dummy
+	return -1; // placeholder
 }
 
 // deprecated stuff
