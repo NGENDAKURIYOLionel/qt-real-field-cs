@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QDate>
 #include <QHash>
+#define _PLAYER_KILL_DAMAGE 100
 
 class Player : public QObject
 {
@@ -23,7 +24,8 @@ signals:
     void leaveGameSignal(QString* player);
     //MessageHandler side
     void loggedInSignal(bool);
-    void gameCreatedSignal();
+    void loggedOutSignal();
+    void gameCreatedSignal(bool);
     void gameInfoSignal(QString* gameid, int duration, QHash<QString*, int> *teams);
     void joinedSignal(bool);
     void gameStartedSignal();
@@ -32,6 +34,7 @@ signals:
     void hitSignal(bool value, int damage, QString* target);
     void updateSignal(QString *game, int time_left, QHash<QString*, int> *teams, int kills, bool alive);
     void updatePlayerStatusSignal(QString *killer, QString *killed);
+    void playerInvitedSignal(bool);
 
 public slots:
     void loginWithPassword(QString* uname,QString* password);
@@ -39,9 +42,9 @@ public slots:
     void logout(QString* uname);
     void gamelist(QString* uname);
     void createGame(QString* uname, QString* gameId, int duration);
-    void setTime(QString* uname,QDate* date);
-    void setDuration(QString* uname,int duration);
-    void invite(QString* uname,QString* targetName,int gameId);
+    void setTime(QString* gameId, QDate* date);
+    void setDuration(QString* gameId, int duration);
+    void invite(QString* uname,QString* targetName,QString *gameId);
     void joinGame(QString* uname,QString* gameId);
     void joinTeam(QString* uname,QString* teamId);
     void leave(QString* uname);
