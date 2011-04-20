@@ -21,7 +21,6 @@ public:
     Q_INVOKABLE void sendMessage(const QString &msg);
     Q_INVOKABLE void sendImage(const QByteArray &image);
     Q_INVOKABLE QByteArray loadPhoto(const QString &uName);
-    Q_INVOKABLE QByteArray loadImage();
 
 
 public slots:
@@ -36,17 +35,19 @@ signals:
     void gameList(QStringList list, int size);
     void gameCreateSuccess(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
     void gameCreateFailed(QString error);
-    void joinGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB, QString joinUserName);
-    void leaveGameInfo(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB, QString leaveUserName);
-    void teamJoined(QString gameId);
+    void joinGameInfo(QString gameId, int gameTime, QString noOfTeamA, QString noOfTeamB, QString joinUserName, bool isGameInList);
+    void leaveGameInfo(QString gameId, int gameTime, QString noOfTeamA, QString noOfTeamB, QString leaveUserName, bool isGameInList);
+    void teamJoined(QString gameId, bool isGameInList);
     void startGame();
     void leaveGame();
     void gameAbort();
 
-    void gameEnd(QString winner);
-    void gameUpdate(QString gameId, int gameTime, int noOfTeamALeft, int noOfTeamBLeft,
-                    QString killer, QString beKilledOne, bool isSelfKilled);
-    void onTarget(bool isShot, QString uName);
+    void gameEnd();
+    void showResult(QString winner);
+    void gameUpdate(QString gameId, int gameTime, QString noOfTeamALeft, QString noOfTeamBLeft,
+                    QString shooter, QString beShotOne, int health, bool isSelfKilled);
+    void onTarget(bool hit, QString uName);
+
 
 
 
@@ -75,15 +76,17 @@ private:
     QTcpSocket *tcpSocket;
     QString currentMessage;
     quint16 blockSize;
-    QByteArray photo;
+
     void connectto();
     QNetworkSession *networkSession;
-    QString userName;
 
-    QString gameId;
-    int noOfTeamA;
-    int noOfTeamB;
-    int gameTime;
+
+    QString _userName;
+    QString _gameId;
+    int _noOfTeamA;
+    int _noOfTeamB;
+    int _gameTime;
+    QStringList _gameList;
 };
 
 #endif

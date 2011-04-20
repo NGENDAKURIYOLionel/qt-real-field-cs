@@ -10,7 +10,8 @@ QWidget *Additional;
 QWidget *p;*/
 Client::Client()
 : networkSession(0),
-  userName("")
+  _userName(""),
+  _gameId("")
 {
    // hostLabel = new QLabel(tr("&Server name:"));
    // portLabel = new QLabel(tr("S&erver port:"));
@@ -88,40 +89,6 @@ void Client::readMessage()
     newMessage=in.readAll();
     messageParts=newMessage.split(";");
 
-//    if (messageParts[0]=="LOGINSCREEN"){
-//        if (messageParts.length()==2){
-//            emit login(messageParts[1]);
-//        }
-//        emit login(messageParts[0]);
-//    }
-//    if (messageParts[0]=="GAMELIST"){
-//        if (messageParts.length()==3){
-//            emit gameList(messageParts[1],messageParts[2]);
-//        }
-//        if (messageParts.length()==2){
-//            emit gameList(messageParts[1]);
-//        }
-//    }
-//    if (messageParts[0]=="LOBBY"){
-//        if (messageParts.length()==3){
-//            emit lobby(messageParts[1],messageParts[2]);
-//        }
-//        if (messageParts.length()==2){
-//            emit lobby(messageParts[1]);
-//        }
-//    }
-//    if (messageParts[0]=="GAME"){
-//        if (messageParts.length()==2){
-//            emit gameState(messageParts[1]);
-//        }
-//    }
-//    if (messageParts[0]=="UPDATE"){
-//        if (messageParts.length()==2){
-//            emit update(messageParts[1]);
-//        }
-//    }
-
-
     //readLineButton->setEnabled(false);
     currentMessage = newMessage;
     //statusLabel->setText(currentMessage);
@@ -154,6 +121,14 @@ void Client::sendImage(const QByteArray &image){
      // should be replaced by message sent from server to see if it is correct login or not
         emit loginFailed();
     }
+
+    if(QString(buf3) == "SHOOT") {
+        QFile file("/home/user/MyDocs/DCIM/shoot.jpg");
+        if (!file.open(QIODevice::WriteOnly))
+            qDebug("can not save photo image");
+        file.write(buf4);
+        file.close();
+    }
 }
 
 void Client::sendMessage(const QString &msg){
@@ -170,7 +145,7 @@ void Client::sendMessage(const QString &msg){
  qDebug() << message[2];
  qDebug() << "---Debugging messages from cpp---";
 if (!message[0].isEmpty())
-    userName = message[0];
+    _userName = message[0];
 
 // message[0] is always the USERNAME
 // the following code is for test purpose
@@ -183,10 +158,9 @@ if (!message[0].isEmpty())
    }
   else if (message[1]=="GAMELIST"){
        //fake game list
-       QStringList list;
-       list << "game1" << "game2" << "game3" << "game4";
+       _gameList << "game1" << "game2" << "game3" << "game4";
        //qDebug("gamelist");
-       emit gameList(list,list.size());
+       emit gameList(_gameList,_gameList.size());
    }
    if (message[1]=="CREATEGAME"){
        QString error = "";
@@ -204,45 +178,59 @@ if (!message[0].isEmpty())
 
        // success or fail should be decided by server side as well
        if (error.isEmpty()) {
-           gameId = message[2];
-           gameTime = time;
-           noOfTeamA = noTeamA;
-           noOfTeamB = noTeamB;
-           emit gameCreateSuccess(gameId, gameTime, noOfTeamA, noOfTeamB);
+           _gameId = message[2];
+           _gameTime = time;
+           _noOfTeamA = noTeamA;
+           _noOfTeamB = noTeamB;
+           emit gameCreateSuccess(_gameId, _gameTime, _noOfTeamA, _noOfTeamB);
        }
        else{
            qDebug() << error;
             emit gameCreateFailed(error);
        }
-
    }
    if (message[1] == "JOINGAME") {
-        gameId= message[2];
-        int gameTime = 100;
-        int noOfTeamA = 11;
-        int noOfTeamB = 10;
+        _gameId= message[2];
+        _gameTime = 100;
+        _noOfTeamA = 11;
+        _noOfTeamB = 10;
         QString joinUserName("test");
-        emit joinGameInfo(gameId, gameTime, noOfTeamA, noOfTeamB, joinUserName);
+        emit joinGameInfo(_gameId, _gameTime, "0/5", "0/5", joinUserName,  _gameList.contains(_gameId));
+   }
+   if (message[1] == "LEAVEGAME") {
+        _gameId = "";
    }
    if (message[1] == "JOINTEAM") {
-        qDebug() << "--cpp--" << gameId << "--cpp--";
-        emit teamJoined(gameId);
+        qDebug() << "--cpp--" << _gameId << "--cpp--";
+        emit teamJoined(_gameId, _gameList.contains(_gameId));
+
+          qDebug() << "a user joins game";
+          emit joinGameInfo(_gameId, 100, "4/5", "4/5", "Liang", _gameList.contains(_gameId));
+         // sleep(3);
+          qDebug() << "a user leaves game";
+          emit leaveGameInfo(_gameId, 100, "4/4", "4/5", "Le", _gameList.contains(_gameId));
+          //sleep(3);
+          //qDebug() << "game abort";
+          //emit gameAbort();
+
    }
    if (message[1] == "GAMESTART") {
         emit startGame();
-
    }
 
-   if (message[1] == "SHOOT") {
-
-       qDebug("Shoot");
-       emit gameEnd(";GAMEEND;TeamA;Liang;16;Le;10");
+   //test code
+   if (message[1] == "GAMEUPDATE1")
+       emit gameUpdate(_gameId, 100, "4/5", "4/5", "Tim", "Ali", 70, true);
+   if (message[1] == "GAMEUPDATE2")
+       emit gameUpdate(_gameId, 100, "3/5", "2/5", "Alice", "Bob", 80, false);
+   if (message[1] == "ONTARGET1")
+       emit onTarget(true, "Liang");
+   if (message[1] == "ONTARGET2")
+       emit onTarget(false, "");
+   if (message[1] == "ENDGAME"){
+       emit gameEnd();
+       emit showResult("TeamA");
    }
-//   if (messageParts[0]=="UPDATE"){
-//       if (messageParts.length()==2){
-//           emit update(messageParts[1]);
-//       }
-//   }
 
 }
 
@@ -308,14 +296,16 @@ void Client::sessionOpened()
 // Will be tested after client connects to the server
 QByteArray Client::loadPhoto(const QString &uName)
 {
+    if (!uName.isEmpty())
+        _userName = uName;
+
     QString path("/home/user/MyDocs/DCIM/");
     QDir folder = QDir(path);
     folder.setFilter(QDir::Files | QDir::NoSymLinks);
     folder.setSorting(QDir::Time);
     QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
     filename = path.append(filename);
-    userName = uName;
-    QByteArray buf(userName.toUtf8());
+    QByteArray buf(_userName.toUtf8());
     QByteArray buf1(";LOGINPHOTO;");
     buf.append(buf1);
     QFile file(filename);
@@ -326,21 +316,3 @@ QByteArray Client::loadPhoto(const QString &uName)
     return buf;
 }
 
-QByteArray Client::loadImage()
-{
-    QString path("/home/user/MyDocs/DCIM/");
-    QDir folder = QDir(path);
-    folder.setFilter(QDir::Files | QDir::NoSymLinks);
-    folder.setSorting(QDir::Time);
-    QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
-    filename = path.append(filename);
-    QByteArray buf(userName.toUtf8());
-    QByteArray buf1(";LOGINPHOTO;");
-    buf.append(buf1);
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly))
-        qDebug("Can not open photo image");
-    QByteArray buf2 = file.readAll();
-    buf.append(buf2);
-    return buf;
-}
