@@ -111,24 +111,40 @@ Rectangle {
                 Connections {
                         target: client
                         onJoinGameInfo: {
-                            if (frontName.text == gameId)
+                            if (frontName.text == "New" && !isGameInList) {
+                                listGameIdForCreator.text = "Game: " + gameId
+                                listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
+                                listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
+                                listGameTimeForCreator.text = "Time(s): " + gameTime
+                                listUserForCreator.text = joinUserName + " joins this game"
+                            }
+                            if (frontName.text == gameId) {
                                 listGameId.text = "Game: " + gameId
                                 listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
                                 listGameTime.text = "Time(s): " + gameTime
-                                listUser.text = "User" + joinUserName + "joins this game"
+                                listUser.text = joinUserName + " joins this game"
+                            }
                         }
                 }
 
                 Connections {
                         target: client
                         onLeaveGameInfo: {
-                            if (frontName.text == gameId)
+                            if (frontName.text == "New" && !isGameInList) {
+                                listGameIdForCreator.text = "Game: " + gameId
+                                listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
+                                listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
+                                listGameTimeForCreator.text = "Time(s): " + gameTime
+                                listUserForCreator.text = leaveUserName + " leaves this game"
+                            }
+                            if (frontName.text == gameId) {
                                 listGameId.text = "Game: " + gameId
                                 listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
                                 listGameTime.text = "Time(s): " + gameTime
-                                listUser.text = "User" + leaveUserName + "leaves this game"
+                                listUser.text = leaveUserName + " leaves this game"
+                            }
                         }
                 }
 
@@ -158,27 +174,29 @@ Rectangle {
                         }
                 }
 
-                Connections {
-                        target: client
-                        onGameAbort: {
-                                listGameViewForCreator.visible = false
-                                hostGameView.visible = true
-                                joinTeamAForCreator.enabled = true
-                                joinTeamAForCreator.opacity = 1
-                                joinTeamBForCreator.enabled = true
-                                joinTeamBForCreator.opacity = 1
-                                gameReadyForCreator.enabled = true
-                                gameReadyForCreator.opacity = 1
-                        }
-                }
+//                Connections {
+//                        target: client
+//                        onGameAbort: {
+//                                listGameViewForCreator.visible = false
+//                                hostGameView.visible = false
+//                                joinTeamAForCreator.enabled = true
+//                                joinTeamAForCreator.opacity = 1
+//                                joinTeamBForCreator.enabled = true
+//                                joinTeamBForCreator.opacity = 1
+//                                gameReadyForCreator.enabled = true
+//                                gameReadyForCreator.opacity = 1
+//                                itemClicked()
+//                        }
+//                }
 
                 Connections {
                     target: client
                     onTeamJoined: {
-                        if (frontName.text == "New") {
+                        if (frontName.text == "New" && !isGameInList) {
                             console.log("creator teamJoined")
                             console.log(frontName.text)
                             console.log(gameId)
+
                             gameReadyForCreator.enabled = false
                             gameReadyForCreator.opacity = 0.5
                         }
@@ -192,6 +210,7 @@ Rectangle {
                         }
                     }
                  }
+
 
                 // game create failed view
                 Rectangle {
@@ -345,6 +364,17 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked: {
                                     itemClicked()
+                                    listGameViewForCreator.visible = false
+                                    hostGameView.visible = true
+                                    joinTeamAForCreator.enabled = true
+                                    joinTeamAForCreator.opacity = 1
+                                    joinTeamBForCreator.enabled = true
+                                    joinTeamBForCreator.opacity = 1
+                                    gameReadyForCreator.enabled = false
+                                    gameReadyForCreator.opacity = 0.25
+                                    gameStartForCreator.enabled = false
+                                    gameStartForCreator.opacity = 0.25
+                                    listUserForCreator.text = ""
                                     client.sendMessage(";GAMESTART;")
                                 }
                         }
@@ -365,10 +395,12 @@ Rectangle {
                                     joinTeamAForCreator.opacity = 1
                                     joinTeamBForCreator.enabled = true
                                     joinTeamBForCreator.opacity = 1
-                                    gameReadyForCreator.enabled = true
-                                    gameReadyForCreator.opacity = 1
+                                    gameReadyForCreator.enabled = false
+                                    gameReadyForCreator.opacity = 0.25
+                                    gameStartForCreator.enabled = false
+                                    gameStartForCreator.opacity = 0.25
                                     itemClicked()
-
+                                    listUserForCreator.text = ""
                                     client.sendMessage(";LEAVEGAME;" + frontName.text)
                                 }
                             }
@@ -545,17 +577,17 @@ Rectangle {
                         }
 
                         Text {
-                            id: listUser
-                            color: "white"
-                        }
-
-                        Text {
                             id: listGameNoOfTeamA
                             color: "white"
                         }
 
                         Text {
                             id: listGameNoOfTeamB
+                            color: "white"
+                        }
+
+                        Text {
+                            id: listUser
                             color: "white"
                         }
                     }
@@ -630,7 +662,6 @@ Rectangle {
                                 console.log("ready")
                                 if (joinTeamA.enabled)
                                     client.sendMessage(";JOINTEAM;teamB")
-
                                 else
                                     client.sendMessage(";JOINTEAM;teamA")
                             }
@@ -646,6 +677,13 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked: {
                                     itemClicked()
+                                    listUser.text = ""
+                                    gameReady.enabled = false
+                                    gameReady.opacity = 0.25
+                                    joinTeamA.enabled = true
+                                    joinTeamA.opacity = 1.0
+                                    joinTeamB.enabled = true
+                                    joinTeamB.opacity = 1.0
                                     client.sendMessage(";LEAVEGAME;" + frontName.text)
                                 }
                         }
