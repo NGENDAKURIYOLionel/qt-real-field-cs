@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+#QMAKE_CXXFLAGS += -save-temps
+
 QT       += core
 QT       += network
 QT       += sql
@@ -24,7 +26,6 @@ SOURCES += \
     playerconnectionthread.cpp \
     messagehandler.cpp \
     DataBaseHelper.cpp \
-    PlayerInfo.cpp \
     game.cpp \
     PlayerInfo.cpp \
     gamefactory.cpp \

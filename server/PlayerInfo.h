@@ -8,18 +8,18 @@
 #define PLAYERINFO_H_
 
 #include<string>
-#include<stdio.h>
+#include<cstdio>
 #include<iostream>
 #include<vector>
-#include<stdint.h>
-using namespace std;
+#include<tr1/cstdint>
+
 class PlayerInfo {
 public:
-	PlayerInfo(string,string);
+	PlayerInfo(std::string,std::string);
 	virtual ~PlayerInfo();
         void setScore(int);
-	string getUID();
-	string getPassword();
+	std::string getUID();
+	std::string getPassword();
 	void addKill();
 	void addDeath();
 	int getScore();
@@ -27,17 +27,17 @@ public:
 	int getKills();
 	bool addInvite(uint64_t);
 	bool removeInvite(uint64_t);
-	vector<uint64_t> getInvites();
+	std::vector<uint64_t> getInvites();
 	void printInvite();
 
 private:
-	string UID;
-	string password;
+	std::string UID;
+	std::string password;
 	int numberOfDeaths;
 	int numberOfKills;
 	int numberOfInvites;
         int score;
-	vector<uint64_t> invites;
+	std::vector<uint64_t> invites;
 
 
 };
