@@ -26,7 +26,7 @@ signals:
     void loggedInSignal(bool);
     void loggedOutSignal();
     void gameCreatedSignal(bool);
-    void gameInfoSignal(QString* gameid, int duration, QHash<QString*, int> *teams);
+    void gameInfoSignal(QString* game_id, int duration, QHash<QString*, int> *teams);
     void joinedSignal(bool);
     void gameStartedSignal();
     void gameAbortedSignal();
@@ -34,19 +34,18 @@ signals:
     void hitSignal(bool value, int damage, QString* target);
     void updateSignal(QString *game, int time_left, QHash<QString*, int> *teams, int kills, bool alive);
     void updatePlayerStatusSignal(QString *killer, QString *killed);
-    void playerInvitedSignal(bool);
+    void playerInvitedSignal(QString *inviter, QString* invited, QString* game_id);
 
 public slots:
     void loginWithPassword(QString* uname,QString* password);
     void loginWithPicture(QString* uname,QImage* picture);
     void logout(QString* uname);
-    void gamelist(QString* uname);
-    void createGame(QString* uname, QString* gameId, int duration);
-    void setTime(QString* gameId, QDate* date);
-    void setDuration(QString* gameId, int duration);
-    void invite(QString* uname,QString* targetName,QString *gameId);
-    void joinGame(QString* uname,QString* gameId);
-    void joinTeam(QString* uname,QString* teamId);
+    void createGame(QString* uname, QString* game_id, int duration);
+    void setTime(QString* game_id, QDate* date);
+    void setDuration(QString* game_id, int duration);
+    void invite(QString* uname,QString* targetName,QString *game_id);
+    void joinGame(QString* uname,QString* game_id);
+    void joinTeam(QString* uname,QString* team_id);
     void leave(QString* uname);
     void cancel(QString* uname);
     void shoot(QString* uname,QImage* picture);
