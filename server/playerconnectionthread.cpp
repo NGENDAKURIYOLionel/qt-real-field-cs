@@ -23,5 +23,4 @@ void PlayerConnectionThread::run()
     handler.sendMessage(message.toAscii());
 
     tcpSocket.waitForDisconnected();
-    //std::cout << "disconnected" ;
 }
