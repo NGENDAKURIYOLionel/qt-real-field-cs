@@ -12,6 +12,9 @@ TARGET = Client
 CONFIG   += console
 CONFIG   -= app_bundle
 
+CONFIG += mobility
+MOBILITY = bearer
+
 TEMPLATE = app
 
 

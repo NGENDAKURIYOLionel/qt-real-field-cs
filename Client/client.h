@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QTcpSocket>
 #include <QtCore>
+#include <QNetworkConfigurationManager>
+
+
 
 class QDialogButtonBox;
 class QLabel;
