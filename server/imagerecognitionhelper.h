@@ -8,10 +8,13 @@
 typedef unsigned game_id_t;
 typedef unsigned player_id_t;
 typedef enum {
-	NOT_ENOUGH_PLAYERS,
-	CURL_ERROR,
-	JSON_ERROR,
-	MALFORMED_RESPONSE
+	IRH_ERROR_NOT_ENOUGH_PLAYERS, // deprecated
+	IRH_ERROR_CURL,
+	IRH_ERROR_JSON,
+	IRH_ERROR_MALFORMED_RESPONSE, // deprecated
+	IRH_ERROR_FACE_DOT_COM, // face.com api returned other than status: success
+	IRH_ERROR_PHOTO_HAS_NO_FACES,
+	IRH_ERROR_PHOTO_HAS_NO_RECOGNIZABLE_FACE, // face.com says the face isn't recognizable
 } errors_e;
 
 class ImageRecognitionHelper

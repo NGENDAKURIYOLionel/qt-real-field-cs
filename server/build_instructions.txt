@@ -9,3 +9,9 @@ the same directory where the executable gets built (or at least
 somewhere where Windows will find them when running the executable).
 
 * http://www.gknw.net/mirror/curl/win32/curl-7.21.4-devel-mingw32.zip
+
+
+On Ubuntu Linux, you need to install some packages:
+libcurl3-dev
+libcurl3 (maybe)
+curl (maybe)
