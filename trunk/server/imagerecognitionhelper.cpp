@@ -6,6 +6,9 @@
 #include "json/json.h"
 #include <cstdio> // debug
 #include <ctime> // debug
+#include <QString>
+#include <QImage>
+#include <QVector>
 
 #define API_KEY "5f7a9cbd46993f8672eab2f8e2eb516b"
 #define API_SECRET "a88ae67f870e64c3e7abebee10585552"
@@ -163,7 +166,7 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	std::cout << decoded_response << std::endl;
 	if (decoded_response["photos"][0u]["tags"].size() < 1) throw IRH_ERROR_PHOTO_HAS_NO_FACES;
 	// TODO: if more than one face, pick the most likely (center of picture, best confidence, etc)
-	if (!decoded_response["photos"][0u]["tags"][0u]["recognizable"].asBoolean())
+	if (!decoded_response["photos"][0u]["tags"][0u]["recognizable"].asBool())
 		throw IRH_ERROR_PHOTO_HAS_NO_RECOGNIZABLE_FACE;
 	tid_response.assign(decoded_response["photos"][0u]["tags"][0u]["tid"].asString());
 }
@@ -239,6 +242,17 @@ void ImageRecognitionHelper::match(std::string& response,
 	}
 	std::string temp_response;
 	faces_recognize(uids_with_namespace, jpeg_image, temp_response);
+}
+
+void ImageRecognitionHelper::match(QString& response,
+                                   QImage& jpeg_image,
+                                   QVector<QString>& uids) {
+	// dummy
+}
+
+void ImageRecognitionHelper::match(QString& response,
+                                   QImage& jpeg_image) {
+	// dummy
 }
 
 // deprecated stuff
