@@ -9,6 +9,9 @@
 #include <QVariant>
 #include <QDebug>
 #include <QSqlRecord>
+#include <string>
+#include <vector>
+using namespace std;
 
 DataBaseHelper::DataBaseHelper() {
 	// TODO Auto-generated constructor stub

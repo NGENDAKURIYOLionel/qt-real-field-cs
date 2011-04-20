@@ -16,24 +16,26 @@
 #include <QSqlQuery>
 
 #include "PlayerInfo.h"
-#include<stdint.h>
+#include<tr1/cstdint>
 #include<sys/stat.h>
+#include <string>
+#include <vector>
 
 class DataBaseHelper {
 public:
 	DataBaseHelper();
-	string getPassword(string);
-	bool sendInvite(string,uint64_t);
-	bool addKill(string);
-	bool addDeath(string);
-	vector<uint64_t> getInvites(string);
-	bool removeInvite(string,uint64_t);
-	bool addPlayer(string,string);
-	bool removePlayer(string);
-        bool setScore(string userId,int value);
-        int getDeaths(string userId);
-        int getScore(string userId);
-        int getKills(string userId);
+	std::string getPassword(std::string);
+	bool sendInvite(std::string,uint64_t);
+	bool addKill(std::string);
+	bool addDeath(std::string);
+	std::vector<uint64_t> getInvites(std::string);
+	bool removeInvite(std::string,uint64_t);
+	bool addPlayer(std::string,std::string);
+	bool removePlayer(std::string);
+        bool setScore(std::string userId,int value);
+        int getDeaths(std::string userId);
+        int getScore(std::string userId);
+        int getKills(std::string userId);
         bool readFromDataBase();
         bool writeToDataBase();
         bool openDataBase();
@@ -42,9 +44,9 @@ public:
 
 private:
 
-	vector<PlayerInfo *> playerVector;
+	std::vector<PlayerInfo *> playerVector;
 	virtual ~DataBaseHelper();
-	vector<uint64_t> playerInvites;
+	std::vector<uint64_t> playerInvites;
         QSqlDatabase db;
 
 

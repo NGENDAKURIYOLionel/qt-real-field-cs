@@ -6,8 +6,8 @@
 #include <ctime>
 #define NAMESPACE_NAME "20110419_2"
 
-std::string current_namespace(NAMESPACE_NAME);
-ImageRecognitionHelper irh(current_namespace);
+static std::string test_namespace(NAMESPACE_NAME);
+static ImageRecognitionHelper test_irh(test_namespace);
 
 typedef enum {
 	FILE_NOT_FOUND
@@ -37,7 +37,7 @@ void register_test(std::string& uid, std::string& picture) {
 		return;
 	}
 	try {
-		irh.register_player(uid, jpeg_picture_data);
+		test_irh.register_player(uid, jpeg_picture_data);
 	} catch(...) {
 		std::cout << "error registering player" << std::endl;
 	}
@@ -52,7 +52,7 @@ void register_test(std::string& uid, std::string& picture) {
 void users_test() {
 	clock_t start = clock();
 	std::vector<std::string> r;
-	irh.account_users(r);
+	test_irh.account_users(r);
 	clock_t end = clock();
 	std::cout << "register: "
 			  << (end-start)/(CLOCKS_PER_SEC/1000)
@@ -73,7 +73,7 @@ void match_test(std::string& picture, std::vector<std::string>& uids) {
 		return;
 	}
 	std::string response;
-	irh.match(response, jpeg_picture_data, uids);
+	test_irh.match(response, jpeg_picture_data, uids);
 }
 
 int dummy(int argc, char *argv[])
@@ -123,7 +123,7 @@ int dummy(int argc, char *argv[])
 
 	// deprecated stuff
 	std::vector<std::string> users_response;
-	irh.account_users(users_response);
+	test_irh.account_users(users_response);
 	std::string user1_reg;
 	std::string user1_detect;
 	std::string user2_reg;
