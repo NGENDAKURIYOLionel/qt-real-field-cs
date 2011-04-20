@@ -4,6 +4,9 @@
 #include <vector>
 #include "curl/curl.h"
 #include "json/json.h"
+#include <QImage>
+#include <QString>
+#include <QVector>
 
 typedef unsigned game_id_t;
 typedef unsigned player_id_t;
@@ -26,6 +29,8 @@ public:
 	// "the API"
 	void register_player(std::string& uid, std::string& jpeg_image);
 	void match(std::string& response, std::string& jpeg_image, std::vector<std::string>& uids);
+	void match(QString& response, QImage& jpeg_image, QVector<QString>& uids);
+	void match(QString& response, QImage& jpeg_image);
 	void account_users(std::vector<std::string>& response);
 
 	// deprecated
