@@ -14,21 +14,56 @@ Player::Player(QString* id,QObject *parent) :
 }
 
 void Player::loginWithPassword(QString* uname,QString* password){
-
+    //TODO match in database
 }
 
-void loginWithPicture(QString* uname,QImage* picture);
-void logout(QString* uname);
-void gamelist(QString* uname);
-void createGame(QString* uname, QString* gameId, int duration);
-void setTime(QString* uname,QDate* date);
-void setDuration(QString* uname,int duration);
-void setPlayers(QString* uname,int players);
-void setTeams(QString* uname,int teams);
-void invite(QString* uname,QString* targetName,int gameId);
-void Player::joinGame(QString* uname,QString* gameId){
+void Player::loginWithPicture(QString* uname, QImage* picture){
+    //TODO recognize and login
+}
+
+void Player::logout(QString* uname){
+    _logged = false;
+    emit loggedOutSignal();
+}
+
+void Player::createGame(QString* uname, QString* game_id, int duration){
+    if(GameFactory::exists(game_id)){
+        emit gameCreatedSignal(false);
+        return;
+    }else{
+        game* game = GameFactory::getGame(game_id);
+        game->setCreator(uname);
+        game->setDuration(duration);
+        return;
+    }
+}
+
+void Player::setTime(QString *game_id, QDate *date){
+    if(GameFactory::exists(game_id)){
+        game* game = GameFactory::getGame(game_id);
+        if(game->getCreator()->compare(_name) == 0){
+            game->setStartTime(date);
+        }
+    }
+}
+
+void Player::setDuration(QString *game_id, int duration){
+    if(GameFactory::exists(game_id)){
+        game* game = GameFactory::get()->getGame(game_id);
+        if(game->getCreator()->compare(_name) == 0){
+            game->setDuration(duration);
+        }
+    }
+}
+
+void Player::invite(QString* uname,QString* target_name,QString* game_id){
+    //bool res = DataBaseHelper::sendInvite(uname, target_name, game_id);
+   // emit playerInvitedSignal(res);
+}
+
+void Player::joinGame(QString* uname,QString* game_id){
     GameFactory *factory = GameFactory::get();
-    game* game = factory->getGame(gameId);
+    game* game = factory->getGame(game_id);
     connect(this, SIGNAL(abortGameSignal()),game,SLOT(cancelGame()));
     connect(this, SIGNAL(endGameSignal()),game,SLOT(endGame()));
     connect(this, SIGNAL(startGameSignal()),game,SLOT(startGame()));
@@ -100,10 +135,10 @@ void Player::joined(QString* player, QString* team){
     }
 }
 
-void Player::left(QString *player, QString *team, QString *gameid){
+void Player::left(QString *player, QString *team, QString *game_id){
     if(player->compare(_name) == 0){
         clearGameData();
-        game* game = GameFactory::get()->getGame(gameid);
+        game* game = GameFactory::get()->getGame(game_id);
         this->disconnect(game);
         game->disconnect(this);
     }
@@ -117,8 +152,13 @@ void Player::miss(QString* shooter){
 
 void Player::hit(QString* shooter, QString* target, int damage){
     if(shooter->compare(_name) == 0){
+        if(damage >= _PLAYER_KILL_DAMAGE){
+            (this->_kills)++;
+        }
         emit hitSignal(true, damage, target);
+    }else if(target->compare(_name) == 0){
+        if(damage >= _PLAYER_KILL_DAMAGE){
+            (this->_deaths)++;
+        }
     }
 }
-
-
