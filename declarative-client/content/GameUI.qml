@@ -128,10 +128,10 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 10
         source: "pics/minimize.png"
-        width: 60
-        height: 60
-        opacity: 0.25
-        //onClicked: mainWindows.minimizeWindow()
+        width: 40
+        height: 40
+        opacity: 0.55
+        onClicked: client.minimize()
     }
 
     // quit button
@@ -140,9 +140,9 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 10
         source: "pics/exit.png"
-        width: 60
-        height: 60
-        opacity: 0.25
+        width: 40
+        height: 40
+        opacity: 0.55
         onClicked: Qt.quit()
     }
 

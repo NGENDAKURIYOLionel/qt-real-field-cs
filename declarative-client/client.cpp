@@ -1,107 +1,18 @@
-//#include <QtGui>
-#include <QtNetwork>
 #include <QtCore>
 #include <QImage>
-
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include "client.h"
 
-/*QGridLayout *mainLayout;
-QWidget *Additional;
-QWidget *p;*/
+
 Client::Client()
-: networkSession(0),
-  _userName(""),
+: _userName(""),
   _gameId("")
 {
-   // hostLabel = new QLabel(tr("&Server name:"));
-   // portLabel = new QLabel(tr("S&erver port:"));
-    //p=parent;
-    // find out which IP to connect to
-    QString ipAddress;
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-    // use the first non-localhost IPv4 address
-    for (int i = 0; i < ipAddressesList.size(); ++i) {
-        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
-            ipAddressesList.at(i).toIPv4Address()) {
-            ipAddress = ipAddressesList.at(i).toString();
-            break;
-        }
-    }
-    // if we did not find one, use IPv4 localhost
-    if (ipAddress.isEmpty())
-        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
 
-
-
-    tcpSocket = new QTcpSocket(this);
-
-    connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
-            this, SLOT(displayError(QAbstractSocket::SocketError)));
-    connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
-
-    QNetworkConfigurationManager manager;
-    if (manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired) {
-        // Get saved network configuration
-        QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
-        settings.beginGroup(QLatin1String("QtNetwork"));
-        const QString id = settings.value(QLatin1String("DefaultNetworkConfiguration")).toString();
-        settings.endGroup();
-
-        // If the saved network configuration is not currently discovered use the system default
-        QNetworkConfiguration config = manager.configurationFromIdentifier(id);
-        if ((config.state() & QNetworkConfiguration::Discovered) !=
-            QNetworkConfiguration::Discovered) {
-            config = manager.defaultConfiguration();
-        }
-
-        networkSession = new QNetworkSession(config, this);
-        connect(networkSession, SIGNAL(opened()), this, SLOT(sessionOpened()));
-
-        //readLineButton->setEnabled(false);
-        //statusLabel->setText(tr("Opening network session."));
-        networkSession->open();
-    }
 }
-
-void Client::connectto()
-{
-    //readLineButton->setEnabled(false);
-    qDebug("connecting");
-    blockSize = 0;
-    tcpSocket->abort();
-    //tcpSocket->connectToHost(hostLineEdit->text(),
-      //                       portLineEdit->text().toInt());
-    tcpSocket->connectToHost("130.233.238.10", 6000);
-}
-
-void Client::connected()
-{
-    //statusLabel->setText("connected");
-    //emit loginSuccess();
-}
-
-void Client::readMessage()
-{
-    QTextStream in(tcpSocket);
-    QString newMessage;
-    QStringList messageParts;
-
-    newMessage=in.readAll();
-    messageParts=newMessage.split(";");
-
-    //readLineButton->setEnabled(false);
-    currentMessage = newMessage;
-    //statusLabel->setText(currentMessage);
-}
-
-void Client::sendMessageSlot()
-{
-    sendMessage(QString("login"));
-}
-
 
 void Client::sendImage(const QByteArray &image){
-
     QByteArray buf1 = image.left(image.indexOf(";"));//userName
     QByteArray buf2 = image.right(image.size() - image.indexOf(";") - 1);
     QByteArray buf3 = buf2.left(buf2.indexOf(";")); //LOGINPHOTO
@@ -132,10 +43,6 @@ void Client::sendImage(const QByteArray &image){
 }
 
 void Client::sendMessage(const QString &msg){
-//    if (!tcpSocket->isWritable())
-//         this->connectto();
-//   tcpSocket->write(msg.toAscii());
-
  // for debugging
  qDebug() << msg;
  QStringList message = msg.split(";");
@@ -144,6 +51,7 @@ void Client::sendMessage(const QString &msg){
  qDebug() << message[1];
  qDebug() << message[2];
  qDebug() << "---Debugging messages from cpp---";
+
 if (!message[0].isEmpty())
     _userName = message[0];
 
@@ -159,7 +67,6 @@ if (!message[0].isEmpty())
   else if (message[1]=="GAMELIST"){
        //fake game list
        _gameList << "game1" << "game2" << "game3" << "game4";
-       //qDebug("gamelist");
        emit gameList(_gameList,_gameList.size());
    }
    if (message[1]=="CREATEGAME"){
@@ -234,65 +141,6 @@ if (!message[0].isEmpty())
 
 }
 
-void Client::displayError(QAbstractSocket::SocketError socketError)
-{
-    switch (socketError) {
-    case QAbstractSocket::RemoteHostClosedError:
-        break;
-    case QAbstractSocket::HostNotFoundError:
-        emit loginFailed();
-        break;
-    case QAbstractSocket::ConnectionRefusedError:
-         emit loginFailed();
-         break;
-    default:
-         emit loginFailed();
-    }
-
-    //readLineButton->setEnabled(true);
-}
-
-void Client::enableconnectButton()
-{
-    /*connectButton->setEnabled((!networkSession || networkSession->isOpen()) &&
-                                 !hostLineEdit->text().isEmpty() &&
-                                 !portLineEdit->text().isEmpty());*/
-
-}
-
-void Client::enablereadLineButton()
-{
-    //readLineButton->setEnabled(networkSession->isOpen());
-    //readLineButton->setEnabled(!networkSession || networkSession->isOpen());
-}
-
-void Client::enablesendLineButton()
-{
-    //sendLineButton->setEnabled(!networkSession || networkSession->isOpen());
-}
-
-void Client::sessionOpened()
-{
-    // Save the used configuration
-    QNetworkConfiguration config = networkSession->configuration();
-    QString id;
-    if (config.type() == QNetworkConfiguration::UserChoice)
-        id = networkSession->sessionProperty(QLatin1String("UserChoiceConfiguration")).toString();
-    else
-        id = config.identifier();
-
-    QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
-    settings.beginGroup(QLatin1String("QtNetwork"));
-    settings.setValue(QLatin1String("DefaultNetworkConfiguration"), id);
-    settings.endGroup();
-
-    //statusLabel->setText(tr("This examples requires that you run the "
-    //                        "Fortune Server example as well."));
-
-    //enablereadLineButton();
-}
-
-
 // Will be tested after client connects to the server
 QByteArray Client::loadPhoto(const QString &uName)
 {
@@ -316,3 +164,8 @@ QByteArray Client::loadPhoto(const QString &uName)
     return buf;
 }
 
+void Client::minimize(){
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusMessage message = QDBusMessage::createSignal("/", "com.nokia.hildon_desktop", "exit_app_view");
+    connection.send(message);
+}
