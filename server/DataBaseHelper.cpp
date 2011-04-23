@@ -67,26 +67,10 @@ bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Sco
     }
 }
 
-bool DataBaseHelper::openDataBase() {
-
-    db.setDatabaseName("test.db");
-    if(db.open()) {
-        QSqlQuery query;
-        if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
-                      "Kills integer, " "Score integer, "
-                      "Deaths integer)"))
-            return true;
-        else
-            return false;
-    }
-
-
-}
-
 bool DataBaseHelper::writeToDataBase() {
     if(db.open()) {
         QSqlQuery query(db);
-        query.exec("SELECT * from Player WHERE Login=1");
+        query.exec("SELECT * from Player");
         QSqlRecord rec = query.record();
         if(query.isSelect()) {
             while(query.next()) {
