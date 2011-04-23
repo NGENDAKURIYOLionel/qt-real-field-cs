@@ -9,7 +9,7 @@
 using namespace std;
 
 
-PlayerInfo::PlayerInfo(string uid,string passwd) {
+PlayerInfo::PlayerInfo(string uid,string passwd,string path) {
 	// TODO Auto-generated constructor stub
 	score = 0;
 	numberOfDeaths = 0;
@@ -17,6 +17,7 @@ PlayerInfo::PlayerInfo(string uid,string passwd) {
 	UID = uid;
 	password = passwd;
 	numberOfInvites = 0;
+        imagePath = path;
 	//invites = 0;
 }
 
@@ -27,6 +28,10 @@ void PlayerInfo::setScore(int value) {
 
 string PlayerInfo::getUID() {
 	return UID;
+}
+
+string PlayerInfo::getImagePath() {
+        return imagePath;
 }
 
 string PlayerInfo::getPassword() {
