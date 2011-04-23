@@ -13,6 +13,7 @@
 #include <vector>
 using namespace std;
 
+
 DataBaseHelper::DataBaseHelper() {
 	// TODO Auto-generated constructor stub
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -22,26 +23,26 @@ DataBaseHelper::DataBaseHelper() {
     if(db.open()) {
         QSqlQuery query;
         if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
-                      "Kills integer, " "Score integer, " "Deaths integer)"))
+                      "Kills integer, " "Score integer, " "Deaths integer," "imagePath varchar(100))"))
             cout<<"works"<<endl;
         else
             cout<<"dint work"<<endl;
     }
     }
 
-    /*if(insertValues("test1","test1",11,11,11))
+    /*if(insertValues("test1","test1",11,11,11,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test2","test2",12,12,12))
+    if(insertValues("test2","test2",12,12,12,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test3","test3",13,13,13))
+    if(insertValues("test3","test3",13,13,13,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test4","test4",14,14,14))
+    if(insertValues("test4","test4",14,14,14,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;*/
@@ -52,12 +53,12 @@ DataBaseHelper::DataBaseHelper() {
 
 }
 
-bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths) {
+bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths,QString imagePath) {
 
     if(db.open()) {
     QSqlQuery query(db);
-    if(query.exec(QString("INSERT INTO Player Values ('%1','%2',%3,%4,%5)")
-            .arg(UID).arg(Password).arg(Kills).arg(Score).arg(Deaths)))
+    if(query.exec(QString("INSERT INTO Player Values ('%1','%2',%3,%4,%5,'%6')")
+            .arg(UID).arg(Password).arg(Kills).arg(Score).arg(Deaths).arg(imagePath)))
         return true;
     else {
         qDebug() << query.lastError();
@@ -85,7 +86,7 @@ bool DataBaseHelper::openDataBase() {
 bool DataBaseHelper::writeToDataBase() {
     if(db.open()) {
         QSqlQuery query(db);
-        query.exec("SELECT * from Player");
+        query.exec("SELECT * from Player WHERE Login=1");
         QSqlRecord rec = query.record();
         if(query.isSelect()) {
             while(query.next()) {
@@ -184,6 +185,25 @@ bool DataBaseHelper::addKill(string userId) {
 
 }
 
+vector<string> DataBaseHelper::getPlayers() {
+    vector<string> players;
+            for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+                players.push_back((*it)->getUID());
+            }
+            return players;
+
+
+
+}
+
+QString getImagePath(QString userId) {
+
+
+
+
+
+}
+
 bool DataBaseHelper::addDeath(string userId) {
 	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
 
@@ -246,7 +266,9 @@ bool DataBaseHelper::sendInvite(string userId,uint64_t gameId) {
 					return true;
 			}
 	}
-	return false;
+
+        return false;
+
 }
 
 bool DataBaseHelper::removeInvite(string userId,uint64_t gameId) {
@@ -276,6 +298,7 @@ vector<uint64_t> DataBaseHelper::getInvites(string userId) {
 
 void DataBaseHelper::testfunction() {
     if(readFromDataBase()) {
+        /*
         if(setScore("test1",10))
             cout<<"Set Score Success"<<endl;
         if(setScore("test2",10))
@@ -299,7 +322,13 @@ void DataBaseHelper::testfunction() {
         if(addKill("test3"))
             cout<<"Add Kill Success"<<endl;
         if(addKill("test4"))
-            cout<<"Add Kill Success"<<endl;
+            cout<<"Add Kill Success"<<endl;*/
+        vector<string> players = getPlayers();
+        for(vector<string>::iterator it = players.begin();it < players.end();it++) {
+            cout<<(*it)<<endl;
+
+        }
+
     }
     if(writeToDataBase())
         cout<<"Written to database"<<endl;
