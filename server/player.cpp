@@ -1,5 +1,6 @@
 #include "player.h"
 #include "gamefactory.h"
+#include <QByteArray>
 
 Player::Player(QString* id,QObject *parent) :
     QObject(parent)
@@ -27,12 +28,18 @@ void Player::loginWithPassword(QString* uname,QString* password){
     }
 }
 
-void Player::loginWithPicture(QString* uname, QImage* picture){
-    //TODO recognize and login
-    if(1){
+void Player::loginWithPicture(QString* uname, QByteArray* picture){
+
+	extern ImageRecognitionHelper irh;
+	std::string response_uid;
+	std::string jpeg_image(picture->constData(), picture->size());
+	// match_all() searches all registered UIDs
+    if(irh.match_all(response_uid, jpeg_image) >= 0){
+		// response_uid has a valid uid
         _logged = true;
         emit loggedInSignal(true);
     }else{
+		// response_uid is empty
         emit loggedInSignal(false);
     }
 }
@@ -89,7 +96,7 @@ void Player::joinGame(QString* uname,QString* game_id){
         connect(this, SIGNAL(startGameSignal()),game,SLOT(startGame()));
         connect(this, SIGNAL(joinTeamSignal(QString*,QString*)),game,SLOT(joinTeam(QString*,QString*)));
         connect(this, SIGNAL(leaveGameSignal(QString*)),game,SLOT(leaveGame(QString*)));
-        connect(this, SIGNAL(shotSignal(QImage*,QString*)),game,SLOT(shot(QImage*,QString*)));
+        connect(this, SIGNAL(shotSignal(QByteArray*,QString*)),game,SLOT(shot(QByteArray*,QString*)));
 
         connect(game,SIGNAL(gameStarted()),this,SLOT(gameStarted()));
         connect(game, SIGNAL(gameEnded(QString*, QList<Player*>*)),this, SLOT(gameEnded()));
@@ -120,7 +127,7 @@ void Player::cancel(QString* uname){
     }
 }
 
-void Player::shoot(QString* uname,QImage* picture){
+void Player::shoot(QString* uname,QByteArray* picture){
     if(uname->compare(_name)){
        emit shotSignal(picture, uname);
     }
