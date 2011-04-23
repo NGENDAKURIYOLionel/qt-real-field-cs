@@ -269,6 +269,8 @@ void Client::sendMessage(QString message){
 
 void Client::sendImage(const QString &uName)
 {
+    //make sure image is stored before sending out
+    sleep(2);
     if (!uName.isEmpty())
         _userName = uName;
 
