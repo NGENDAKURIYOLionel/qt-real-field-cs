@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
 	Server server;
 	QApplication app(argc, argv);
-	if (server.listen(QHostAddress("Any"),59999)) {
+        if (server.listen(QHostAddress::Any,8888)) {
 		std::cout << "server listening at port:" << server.serverPort() << std::endl;
 	}
 	else {

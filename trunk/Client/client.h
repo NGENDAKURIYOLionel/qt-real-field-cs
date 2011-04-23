@@ -75,7 +75,9 @@ private:
     int _gameTime;
     QStringList _gameList;
 
+
     bool resize(QString path);
+    quint32 nextBlockSize;
 };
 
 #endif

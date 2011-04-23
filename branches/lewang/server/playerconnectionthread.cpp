@@ -20,7 +20,9 @@ void PlayerConnectionThread::run()
     connect(&tcpSocket,SIGNAL(readyRead()),&handler,SLOT(readMessage()));
 
     //tcpSocket.write(message.toAscii());
-    handler.sendMessage(message.toAscii());
+    //handler.sendMessage(message.toAscii());
 
-    tcpSocket.waitForDisconnected();
+    tcpSocket.waitForDisconnected(600000); //million second
+    //while(tcpSocket.state() != QAbstractSocket::UnconnectedState);
+    qDebug() << "Disconnected";
 }

@@ -9,7 +9,7 @@
 #include "client.h"
 
 Client::Client(QWidget *parent)
-:   QDialog(parent), networkSession(0), _userName(""), _gameId("")
+:   QDialog(parent), networkSession(0), _userName(""), _gameId(""),nextBlockSize(0)
 {
     // find out which IP to connect to
     QString ipAddress;
@@ -111,13 +111,33 @@ void Client::minimize(){
 
 void Client::readMessage()
 {
-    QTextStream in(tcpSocket);
-    QString newMessage;
+//    QTextStream in(tcpSocket);
+//    QString newMessage;
+//    QStringList message;
+
+//    newMessage = in.readAll();
+//    message = newMessage.split(";");
+
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_7);
+    if (nextBlockSize == 0 ) {
+        if(tcpSocket->bytesAvailable() < sizeof(quint32))
+            return;
+        in >> nextBlockSize;
+    }
+    qDebug() << "nextBlocksize is: " << nextBlockSize;
+    qDebug() << "bytesAvailable is "<< tcpSocket->bytesAvailable();
+    if (tcpSocket->bytesAvailable() < nextBlockSize)
+        return;
+    nextBlockSize = 0;
     QStringList message;
+    QString newMessage;
+    qDebug() << "bytesAvailable is "<< tcpSocket->bytesAvailable();
+    in >> newMessage;
 
-    newMessage = in.readAll();
+    qDebug() << message;
+    //sendMessage("test;LOGINPASSWD;aaa");
     message = newMessage.split(";");
-
     // for debugging
     qDebug() << "---Debugging from readMessage starts---";
     qDebug() << newMessage << message.size();
@@ -236,7 +256,16 @@ void Client::sendMessage(QString message){
         }
     }
 
-    tcpSocket->write(message.toAscii());
+    QByteArray block;
+    QDataStream out(&block, QIODevice::ReadWrite);
+    out.setVersion(QDataStream::Qt_4_7);
+    out << quint32(0) << message;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
+    qDebug() << "size of the message:" << block.size() - sizeof(quint32);
+    tcpSocket->write(block);
+
+    //tcpSocket->write(message.toAscii());
 }
 
 void Client::sendImage(const QString &uName)
@@ -268,8 +297,15 @@ void Client::sendImage(const QString &uName)
     if (!file->open(QIODevice::ReadOnly))
         qDebug("Can not open photo image");
     QByteArray buf2 = file->readAll();
-    buf.append(buf2);
-    tcpSocket->write(buf);
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::ReadWrite);
+    out.setVersion(QDataStream::Qt_4_7);
+    out << quint32(0) << QString(buf1) << buf2;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
+    qDebug() << "size of the message:" << block.size() - sizeof(quint32);
+    tcpSocket->write(block);
 
     //    QByteArray buf1 = image.left(image.indexOf(";"));//userName
     //    QByteArray buf2 = image.right(image.size() - image.indexOf(";") - 1);
