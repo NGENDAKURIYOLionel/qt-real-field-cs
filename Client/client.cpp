@@ -281,37 +281,32 @@ void Client::sendImage(const QString &uName)
     QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
     filename = path.append(filename);
 
-    QByteArray buf(_userName.toUtf8());
-    QByteArray buf1;
+    QString message(_userName);
     QFile *file;
     if (!uName.isEmpty()) {
-        buf1.append(";LOGINPHOTO;");
+        message.append(";LOGINPHOTO;");
          file = new QFile(filename);
     }
     else{
-        buf1.append(";SHOOT;");
+        message.append(";SHOOT;");
         resize(filename);
+        sleep(2);
         file = new QFile("/home/user/MyDocs/DCIM/resized.jpg");
     }
-    buf.append(buf1);
 
     if (!file->open(QIODevice::ReadOnly))
         qDebug("Can not open photo image");
-    QByteArray buf2 = file->readAll();
+    QByteArray image = file->readAll();
 
     QByteArray block;
     QDataStream out(&block, QIODevice::ReadWrite);
     out.setVersion(QDataStream::Qt_4_7);
-    out << quint32(0) << QString(buf1) << buf2;
+    out << quint32(0) << message << image;
     out.device()->seek(0);
     out << quint32(block.size() - sizeof(quint32));
     qDebug() << "size of the message:" << block.size() - sizeof(quint32);
     tcpSocket->write(block);
-
-    //    QByteArray buf1 = image.left(image.indexOf(";"));//userName
-    //    QByteArray buf2 = image.right(image.size() - image.indexOf(";") - 1);
-    //    QByteArray buf3 = buf2.left(buf2.indexOf(";")); //LOGINPHOTO or SHOOT
-    //    QByteArray buf4 = buf2.right(buf2.size() - buf2.indexOf(";") - 1); //Image
+    delete (file);
 }
 
 bool Client::resize(QString path)
