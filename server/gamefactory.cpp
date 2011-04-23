@@ -19,7 +19,7 @@ namespace GameFactory{
         if(exists(id)){
             return _games.value(id);
         }else{
-            game* new_game(id, &_root);
+            game* new_game = new game(id, &_root);
             _games.insert(id, new_game);
             return new_game;
         }
