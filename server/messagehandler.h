@@ -38,7 +38,8 @@ signals:
 
 private:
     QTcpSocket *tcpsocket;
-    QImage* parsePicture(QString* message);
+    QImage* parsePicture(QByteArray image);
+    quint32 nextBlockSize;
 };
 
 #endif // MESSAGEHANDLER_H

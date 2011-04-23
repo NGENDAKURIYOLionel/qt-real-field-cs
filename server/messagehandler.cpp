@@ -7,28 +7,69 @@
 MessageHandler::MessageHandler(QTcpSocket *socket)
 {
     tcpsocket=socket;
+    nextBlockSize=0;
 }
 
 void MessageHandler::sendMessage(QString message){
-    tcpsocket->write(message.toAscii());
+    QByteArray block;
+    QDataStream out(&block, QIODevice::ReadWrite);
+    out.setVersion(QDataStream::Qt_4_7);
+    out << quint32(0) << message;
+    qDebug() << out;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
+    qDebug() << out;
+    qDebug() << "message: " << message;
+    qDebug() << "size: " << block.size() - sizeof(quint32);
+    tcpsocket->write(block);
+
+    //tcpsocket->write(message.toAscii());
 }
 
 void MessageHandler::sendMessageSlot(QString message){
     sendMessage(message);
 }
 
-QImage* MessageHandler::parsePicture(QString* message){
+QImage* MessageHandler::parsePicture(QByteArray image){
     //should parse the picture message here
-    QImage temp;
-    return &temp;
+    qDebug("parsePicture");
+    QFile file("/home/pkliang/image.jpg"); //write image to file image.jpg
+    if (!file.open(QIODevice::WriteOnly))
+        qDebug("can not save photo image");
+    if(file.write(image) == -1)
+        qDebug("saving image failed");
+    file.close();
+       QImage temp;
+       return &temp;
 }
 
 
 void MessageHandler::readMessage(){
-    QTextStream in(tcpsocket);
-    QString message = in.readAll();
+//    QTextStream in(tcpsocket);
+//    QString message = in.readAll();
+//    QStringList messageParts;
+//    messageParts=message.split(";");
+    QDataStream in(tcpsocket);
+    in.setVersion(QDataStream::Qt_4_7);
+    if (nextBlockSize == 0 ) {
+        if(tcpsocket->bytesAvailable() < sizeof(quint32))
+            return;
+        in >> nextBlockSize;
+    }
+    qDebug() << "nextBlocksize is: " << nextBlockSize;
+    qDebug() << "bytesAvailable is "<< tcpsocket->bytesAvailable();
+    if (tcpsocket->bytesAvailable() < nextBlockSize)
+        return;
+    nextBlockSize = 0;
     QStringList messageParts;
-    messageParts=message.split(";");
+    QString message;
+    qDebug() << "bytesAvailable is "<< tcpsocket->bytesAvailable();
+    in >> message;
+
+    qDebug() << message;
+    //sendMessage("test;LOGINPASSWD;aaa");
+    messageParts = message.split(";");
+
 
     if (messageParts.length()>1){
         if (messageParts[1]=="LOGINWITHPASSWORD"){
@@ -36,10 +77,13 @@ void MessageHandler::readMessage(){
                 emit loginWithPassword(&(messageParts[0]),&(messageParts[2]));
             }
         }
-        if (messageParts[1]=="LOGINWITHPICTURE"){
-            if (messageParts.length()==3){
-                emit loginWithPicture(&(messageParts[0]),parsePicture(&(messageParts[2])));
-            }
+        if (messageParts[1]=="LOGINPHOTO"){
+            //if (messageParts.length()==3){
+               // emit loginWithPicture(&(messageParts[0]),parsePicture(&(messageParts[2])));
+                QByteArray image;
+                in >> image;
+                parsePicture(image);
+           // }
         }
         if (messageParts[1]=="LOGOUT"){
             emit logout(&(messageParts[0]));
@@ -97,7 +141,8 @@ void MessageHandler::readMessage(){
 
         if (messageParts[1]=="SHOOT"){
             if (messageParts.length()==3){
-                emit shoot(&(messageParts[0]),parsePicture(&(messageParts[2])));
+
+                //emit shoot(&(messageParts[0]),parsePicture(&(messageParts[2])));
             }
         }
         if (messageParts[1]=="GAMESTART"){
