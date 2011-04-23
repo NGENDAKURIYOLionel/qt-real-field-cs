@@ -61,8 +61,9 @@ Rectangle {
                        LineEdit {
                            id: ipAddress
                            fontSize: 22
-                           text: "    Server IP Address"
+                           //text: "    Server IP Address"
                            //text: "130.233.238.69"
+                           text: "86.50.132.192"
                            echoMode: TextInput.Normal
                        }
            }
@@ -72,8 +73,8 @@ Rectangle {
                       LineEdit {
                           id: portNumber
                           fontSize: 22
-                          text: "    Server Port Number"
-                          //text:  "8888"
+                          //text: "    Server Port Number"
+                          text:  "8888"
                           echoMode: TextInput.Normal
                       }
            }
