@@ -13,12 +13,28 @@ Player::Player(QString* id,QObject *parent) :
     _alive = true;
 }
 
+bool Player::loggedIn(){
+    return _logged;
+}
+
 void Player::loginWithPassword(QString* uname,QString* password){
     //TODO match in database
+    if(1){
+        _logged = true;
+        emit loggedInSignal(true);
+    }else{
+        emit loggedInSignal(false);
+    }
 }
 
 void Player::loginWithPicture(QString* uname, QImage* picture){
     //TODO recognize and login
+    if(1){
+        _logged = true;
+        emit loggedInSignal(true);
+    }else{
+        emit loggedInSignal(false);
+    }
 }
 
 void Player::logout(QString* uname){
@@ -34,6 +50,7 @@ void Player::createGame(QString* uname, QString* game_id, int duration){
         game* game = GameFactory::getGame(game_id);
         game->setCreator(uname);
         game->setDuration(duration);
+        emit gameCreatedSignal(true);
         return;
     }
 }
