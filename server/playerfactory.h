@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include <QHash>
-#include "PlayerInfo.h"
+#include "player.h"
 
 namespace PlayerFactory{
-    static bool exists(QString* id);
-    static PlayerInfo* getPlayer(QString* id);
+    bool exists(QString* id);
+    Player* getPlayer(QString* id);
+    void destroyPlayer(QString* id);
 }
 
 #endif // PLAYERFACTORY_H
