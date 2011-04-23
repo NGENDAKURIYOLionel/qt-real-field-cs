@@ -1,5 +1,6 @@
 #include "game.h"
 #include "imagerecognitionhelper.h"
+#include <string>
 
 game::game(QString *id, QObject *parent) :
         QObject(parent)
@@ -142,13 +143,17 @@ bool game::hasEnded(){
     return _ended;
 }
 
-void game::shot(QImage* image, QString* player){
+void game::shot(QByteArray* image, QString* player){
     try{
         extern ImageRecognitionHelper irh;
-        int amount = irh.match((*_last_hit_player),(*image));
+		std::string temp_image(image->constData(), image->size());
+		std::string temp_player(_last_hit_player->toAscii().constData());
+        int amount = irh.match_all(temp_player,temp_image);
         if(amount >= 0){
             emit hit(player, _last_hit_player, amount);
-        }
+        } else {
+			emit miss(player);
+		}
     }catch(errors_e *e){
         std::cout << "ERROR MESSAGE: " << __FUNCTION__ << " : ImageRecognitionHelper raised an error: " << e << '\n';
         emit miss(player);

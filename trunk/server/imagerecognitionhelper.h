@@ -4,7 +4,6 @@
 #include <vector>
 #include "curl/curl.h"
 #include "json/json.h"
-#include <QImage>
 #include <QString>
 #include <QVector>
 
@@ -31,8 +30,7 @@ public:
 	// match puts the uid of the hit player into response
 	// returns damage or -1 if no hit (also nothing is put into response if no hit)
 	int match(std::string& response, std::string& jpeg_image, std::vector<std::string>& uids);
-	int match(QString& response, QImage& jpeg_image, QVector<QString>& uids);
-	int match(QString& response, QImage& jpeg_image); // matches among all users
+	int match_all(std::string& response, std::string& jpeg_image);
 	void account_users(std::vector<std::string>& response);
 
 	// deprecated

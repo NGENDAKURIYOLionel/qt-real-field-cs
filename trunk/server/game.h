@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QTimer>
-#include <QImage>
 #include <QHash>
 #include <QSet>
 #include <QDate>
@@ -32,7 +31,7 @@ public slots:
     void startGame();
     void endGame();
     void cancelGame();
-    void shot(QImage* image, QString* player);
+    void shot(QByteArray* image, QString* player);
     void joinTeam(QString* player, QString* team);
     void leaveGame(QString* player);
 

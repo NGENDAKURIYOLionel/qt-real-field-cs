@@ -1,6 +1,7 @@
 #include "player.h"
 #include "gamefactory.h"
 #include <QByteArray>
+#include "imagerecognitionhelper.h"
 
 Player::Player(QString* id,QObject *parent) :
     QObject(parent)

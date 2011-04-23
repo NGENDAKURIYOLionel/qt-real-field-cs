@@ -11,7 +11,7 @@
 #include<cstdio>
 #include<iostream>
 #include<vector>
-#include<tr1/cstdint>
+//#include<tr1/cstdint>
 
 class PlayerInfo {
 public:

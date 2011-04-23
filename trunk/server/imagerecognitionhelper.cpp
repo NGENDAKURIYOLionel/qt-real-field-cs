@@ -7,9 +7,8 @@
 #include <cstdio> // debug
 #include <ctime> // debug
 #include <QString>
-#include <QImage>
 #include <QVector>
-#
+#include <QByteArray>
 
 #define API_KEY "5f7a9cbd46993f8672eab2f8e2eb516b"
 #define API_SECRET "a88ae67f870e64c3e7abebee10585552"
@@ -246,15 +245,12 @@ int ImageRecognitionHelper::match(std::string& response,
 	return -1; // placeholder
 }
 
-int ImageRecognitionHelper::match(QString& response,
-                                   QImage& jpeg_image,
-                                   QVector<QString>& uids) {
-	return -1; // placeholder
-}
-
-int ImageRecognitionHelper::match(QString& response,
-                                   QImage& jpeg_image) {
-	return -1; // placeholder
+int ImageRecognitionHelper::match_all(std::string& response,
+                                      std::string& jpeg_image) {
+	std::vector<std::string> temp_uids;
+	std::string temp_uid("all");
+	temp_uids.push_back(temp_uid);
+	return match(response, jpeg_image, temp_uids);
 }
 
 // deprecated stuff
