@@ -100,9 +100,10 @@ void ImageRecognitionHelper::account_users(std::vector<std::string>& response) {
 	std::string post_url(API_URL ACCOUNT_USERS_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-	if (decoded_response["status"].asString().compare("success"))
+	std::cout << decoded_response;
+	if (decoded_response["status"].asString().compare("success")) {
 		throw IRH_ERROR_FACE_DOT_COM;
-	else std::cout << decoded_response;
+	}
 	//for (unsigned i = 0; i < decoded_response.)
 }
 
@@ -114,9 +115,11 @@ void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {
 	std::string post_url(API_URL TAGS_SAVE_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-	std::cout << decoded_response << std::endl;
-	if (decoded_response["status"].asString().compare("success"))
+//	std::cout << decoded_response << std::endl;
+	if (decoded_response["status"].asString().compare("success")) {
+		std::cout << decoded_response << std::endl;
 		throw IRH_ERROR_FACE_DOT_COM;
+	}
 }
 
 void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& tid_response) {
@@ -140,8 +143,10 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	std::string post_url(API_URL FACES_DETECT_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
-	if (decoded_response["status"].asString().compare("success"))
+	if (decoded_response["status"].asString().compare("success")) {
+		std::cout << decoded_response << std::endl;
 		throw IRH_ERROR_FACE_DOT_COM;
+	}
 
 	// are values returned by reference supposed to be freed at some point?
 //	Json::Value& photos_array = decoded_response["photos"];
@@ -163,11 +168,15 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	// TODO: check if face recognizable
 	// FIXME: check that the referenced object actually exists! (might return null)
 //	std::cout << decoded_response["photos"][0u]["tags"].size() << std::endl;
-	std::cout << decoded_response << std::endl;
+//	std::cout << decoded_response << std::endl;
 	if (decoded_response["photos"][0u]["tags"].size() < 1) throw IRH_ERROR_PHOTO_HAS_NO_FACES;
+	unsigned faces = decoded_response["photos"][0u]["tags"].size();
+
 	// TODO: if more than one face, pick the most likely (center of picture, best confidence, etc)
-	if (!decoded_response["photos"][0u]["tags"][0u]["recognizable"].asBool())
+	if (!decoded_response["photos"][0u]["tags"][0u]["recognizable"].asBool()) {
+//		std::cout << decoded_response << std::endl;
 		throw IRH_ERROR_PHOTO_HAS_NO_RECOGNIZABLE_FACE;
+	}
 	tid_response.assign(decoded_response["photos"][0u]["tags"][0u]["tid"].asString());
 }
 
@@ -208,6 +217,10 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
 	std::cout << decoded_response << std::endl;
+	if (decoded_response["status"].asString().compare("success")) {
+		throw IRH_ERROR_FACE_DOT_COM;
+	}
+//	decoded_response["photos"][0u]["tags"].
 }
 
 void ImageRecognitionHelper::faces_train(std::string& uid) {
@@ -216,9 +229,11 @@ void ImageRecognitionHelper::faces_train(std::string& uid) {
 	std::string post_url(API_URL FACES_TRAIN_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-	std::cout << decoded_response << std::endl;
-	if (decoded_response["status"].asString().compare("success"))
+//	std::cout << decoded_response << std::endl;
+	if (decoded_response["status"].asString().compare("success")) {
+		std::cout << decoded_response << std::endl;
 		throw IRH_ERROR_FACE_DOT_COM;
+	}
 }
 
 void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg_image) {

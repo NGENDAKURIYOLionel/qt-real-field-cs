@@ -29,7 +29,7 @@ void Player::loginWithPassword(QString* uname,QString* password){
     }
 }
 
-void Player::loginWithPicture(QString* uname, QByteArray* picture){
+void Player::loginWithPicture(QString* uname, QByteArray* picture) {
 
 	extern ImageRecognitionHelper irh;
 	std::string response_uid;

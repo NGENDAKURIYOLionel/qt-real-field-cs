@@ -35,5 +35,10 @@
 2011-04-18 06:30-9:45
 	new api
 	testing program
-2011-04-19 13:00-16:30
-	improving IRH
+2011-04-19 13:00-17:30
+	improving imagerecognitionhelper
+2011-04-20 12:30-16:30
+	fixed build problems
+	new match functions
+2011-04-23 12:15-17:30
+	integration
