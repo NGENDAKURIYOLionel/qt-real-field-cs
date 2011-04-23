@@ -15,13 +15,9 @@
 #include <QFile>
 #include <QString>
 #include <QSqlQuery>
-#include <QPixmap>
-#include <QByteArray>
-#include <QBuffer>
-
 
 #include "PlayerInfo.h"
-#include<tr1/cstdint>
+
 #include<sys/stat.h>
 #include <string>
 #include <vector>
@@ -35,7 +31,7 @@ public:
 	bool addDeath(std::string);
 	std::vector<uint64_t> getInvites(std::string);
 	bool removeInvite(std::string,uint64_t);
-	bool addPlayer(std::string,std::string);
+        bool addPlayer(std::string,std::string,std::string);
 	bool removePlayer(std::string);
         bool setScore(std::string userId,int value);
         int getDeaths(std::string userId);
@@ -46,7 +42,8 @@ public:
         bool openDataBase();
         bool insertValues(QString uid,QString password,int kills,int score,int deaths,QString imagePath);
         void testfunction();
-        vector<string> getPlayers();
+        void getPlayers(vector<string> *);
+        string getImagePath(string);
 
 
 private:
