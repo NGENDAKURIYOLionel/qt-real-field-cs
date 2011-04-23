@@ -132,10 +132,9 @@ void Client::readMessage()
     nextBlockSize = 0;
     QStringList message;
     QString newMessage;
-    qDebug() << "bytesAvailable is "<< tcpSocket->bytesAvailable();
     in >> newMessage;
 
-    qDebug() << message;
+    qDebug() << newMessage;
     //sendMessage("test;LOGINPASSWD;aaa");
     message = newMessage.split(";");
     // for debugging
