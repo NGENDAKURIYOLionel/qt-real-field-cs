@@ -25,6 +25,7 @@
 class DataBaseHelper {
 public:
 	DataBaseHelper();
+        ~DataBaseHelper();
 	std::string getPassword(std::string);
 	bool sendInvite(std::string,uint64_t);
 	bool addKill(std::string);
@@ -49,8 +50,7 @@ public:
 private:
 
 	std::vector<PlayerInfo *> playerVector;
-	virtual ~DataBaseHelper();
-	std::vector<uint64_t> playerInvites;
+        std::vector<uint64_t> playerInvites;
         QSqlDatabase db;
 
 
