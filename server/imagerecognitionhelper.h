@@ -6,6 +6,7 @@
 #include "json/json.h"
 #include <QString>
 #include <QVector>
+#define NAMESPACE_NAME "20110423_2"
 
 typedef unsigned game_id_t;
 typedef unsigned player_id_t;
@@ -32,6 +33,7 @@ public:
 	int match(std::string& response, std::string& jpeg_image, std::vector<std::string>& uids);
 	int match_all(std::string& response, std::string& jpeg_image);
 	void account_users(std::vector<std::string>& response);
+	void account_limits();
 
 	// deprecated
 	game_id_t start_game(std::vector<std::string>&); // image index in vector = player_id
@@ -45,7 +47,6 @@ private:
 
 	void post(std::string& post_data, std::string& post_url, Json::Value& decoded_response);
 	void post_multipart(curl_httppost* post_data, std::string& post_url, Json::Value& decoded_response);
-	void account_limits();
 	void faces_detect(std::string& jpeg_image, std::string& tid_response);
 	void faces_recognize(std::vector<std::string>& uids, std::string jpeg_image, std::string& response);
 	void faces_train(std::string&);

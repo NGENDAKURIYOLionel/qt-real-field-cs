@@ -4,7 +4,6 @@
 //#include <fstream>
 #include <cstdio>
 #include <ctime>
-#define NAMESPACE_NAME "20110419_2"
 
 static std::string test_namespace(NAMESPACE_NAME);
 static ImageRecognitionHelper test_irh(test_namespace);
@@ -118,7 +117,7 @@ int dummy(int argc, char *argv[])
 			return 0;
 		}
 	}
-	std::cout << "valid command line arguments: register, match" << std::endl;
+	std::cout << "valid command line arguments: register, match, users" << std::endl;
 	return 0;
 
 	// deprecated stuff
