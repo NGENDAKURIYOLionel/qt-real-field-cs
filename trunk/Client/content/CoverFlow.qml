@@ -62,16 +62,17 @@ Rectangle {
                 smooth: true
                 width: itemWidth; height: itemHeight
                 anchors.centerIn: parent
-                color: "black"
-                opacity:  0.75
-                radius:  25
+                //color: "black"
+                //opacity:  0.75
+                //radius:  25
+                color: "transparent"
 
                 Image {
                     id: myIcon
                     anchors.centerIn: parent
                     source: icon
                     smooth: true
-                    width: itemWidth-50; height: itemHeight-50
+                    width: itemWidth; height: itemHeight
                     Text {
                         id: frontName
                         anchors.centerIn: parent
@@ -88,6 +89,9 @@ Rectangle {
                         if (frontName.text != "New") {
                             listGameView.visible = true
                             client.sendMessage(";JOINGAME;" + frontName.text)
+                        }
+                        if (frontName.text == "New") {
+                            hostGameView.visible = true
                         }
                     }
                 }
@@ -108,6 +112,34 @@ Rectangle {
                     }
                 ]
 
+                Connections {
+                        target: client
+                        onStartGame: {
+                            hostGameView.visible = false
+
+                            listGameViewForCreator.visible = false
+                            joinTeamAForCreator.enabled = true
+                            joinTeamAForCreator.opacity = 1
+                            joinTeamBForCreator.enabled = true
+                            joinTeamBForCreator.opacity = 1
+                            gameReadyForCreator.enabled = false
+                            gameReadyForCreator.opacity = 0.25
+                            gameStartForCreator.enabled = false
+                            gameStartForCreator.opacity = 0.25
+                            listUserForCreator.text = ""
+
+                            listGameView.visible = false
+                            gameReady.enabled = false
+                            gameReady.opacity = 0.25
+                            joinTeamA.enabled = true
+                            joinTeamA.opacity = 1.0
+                            joinTeamB.enabled = true
+                            joinTeamB.opacity = 1.0
+                            listUser.text = ""
+
+                            rotation.angle = 0;
+                        }
+                }
 
                 Connections {
                         target: client
@@ -172,34 +204,6 @@ Rectangle {
                                 listGameViewForCreator.visible = true
                                 hostGameView.visible = false
                             }
-                        }
-                }
-
-                Connections {
-                        target: client
-                        onStartGame: {
-                            itemClicked()
-
-                            listGameViewForCreator.visible = false
-                            hostGameView.visible = true
-                            joinTeamAForCreator.enabled = true
-                            joinTeamAForCreator.opacity = 1
-                            joinTeamBForCreator.enabled = true
-                            joinTeamBForCreator.opacity = 1
-                            gameReadyForCreator.enabled = false
-                            gameReadyForCreator.opacity = 0.25
-                            gameStartForCreator.enabled = false
-                            gameStartForCreator.opacity = 0.25
-                            listUserForCreator.text = ""
-
-                            listUser.text = ""
-                            gameReady.enabled = false
-                            gameReady.opacity = 0.25
-                            joinTeamA.enabled = true
-                            joinTeamA.opacity = 1.0
-                            joinTeamB.enabled = true
-                            joinTeamB.opacity = 1.0
-                            listGameView.visible = false
                         }
                 }
 
@@ -446,9 +450,9 @@ Rectangle {
                     Button {
                         text: "Game ID"
                         anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: -105
+                        anchors.verticalCenterOffset: -105
                         anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.horizontalCenterOffset: -140
+                        anchors.horizontalCenterOffset: -140
                         source: "pics/toolbutton1.png"
                         fontSize: 20
                         width: 200
