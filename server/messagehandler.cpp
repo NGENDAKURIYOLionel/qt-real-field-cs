@@ -2,7 +2,6 @@
 #include <iostream>
 #include <QDateTime>
 #include <QtCore>
-#include <QImage>
 
 MessageHandler::MessageHandler(QTcpSocket *socket)
 {
@@ -29,20 +28,6 @@ void MessageHandler::sendMessage(QString message){
 void MessageHandler::sendMessageSlot(QString message){
     sendMessage(message);
 }
-
-QImage* MessageHandler::parsePicture(QByteArray image){
-    //should parse the picture message here
-    qDebug("parsePicture");
-    QFile file("/home/pkliang/image.jpg"); //write image to file image.jpg
-    if (!file.open(QIODevice::WriteOnly))
-        qDebug("can not save photo image");
-    if(file.write(image) == -1)
-        qDebug("saving image failed");
-    file.close();
-       QImage temp;
-       return &temp;
-}
-
 
 void MessageHandler::readMessage(){
 //    QTextStream in(tcpsocket);
@@ -78,12 +63,9 @@ void MessageHandler::readMessage(){
             }
         }
         if (messageParts[1]=="LOGINPHOTO"){
-            //if (messageParts.length()==3){
-               // emit loginWithPicture(&(messageParts[0]),parsePicture(&(messageParts[2])));
-                QByteArray image;
-                in >> image;
-                parsePicture(image);
-           // }
+			QByteArray image;
+			in >> image;
+			emit loginWithPicture(&(messageParts[0]),&image);
         }
         if (messageParts[1]=="LOGOUT"){
             emit logout(&(messageParts[0]));
@@ -140,10 +122,9 @@ void MessageHandler::readMessage(){
         }
 
         if (messageParts[1]=="SHOOT"){
-            if (messageParts.length()==3){
-
-                //emit shoot(&(messageParts[0]),parsePicture(&(messageParts[2])));
-            }
+			QByteArray image;
+			in >> image;
+			emit shoot(&(messageParts[0]), &image);
         }
         if (messageParts[1]=="GAMESTART"){
                 emit gameStart(&(messageParts[0]));

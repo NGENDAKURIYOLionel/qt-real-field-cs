@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QtCore>
-#include <QImage>
 
 class MessageHandler : public QObject
 {
@@ -20,7 +19,7 @@ public slots:
 
 signals:
     void loginWithPassword(QString* uname,QString* password);
-    void loginWithPicture(QString* uname,QImage* picture);
+    void loginWithPicture(QString* uname,QByteArray* picture);
     void logout(QString* uname);
     void gamelist(QString* uname);
     void createGame(QString* uname, QString* gameId, int duration);
@@ -33,12 +32,11 @@ signals:
     void joinTeam(QString* uname,QString* teamId);
     void leave(QString* uname);
     void cancel(QString* uname);
-    void shoot(QString* uname,QImage* picture);
+    void shoot(QString* uname,QByteArray* picture);
     void gameStart(QString* uname);
 
 private:
     QTcpSocket *tcpsocket;
-    QImage* parsePicture(QByteArray image);
     quint32 nextBlockSize;
 };
 
