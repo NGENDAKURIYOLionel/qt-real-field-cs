@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     Server server;
     QApplication app(argc, argv);
 
-    if (server.listen(QHostAddress("192.168.0.114"), 8888)) {
+    if (server.listen(QHostAddress::Any, 8888)) {
         qDebug() << "port:" << server.serverPort() <<"\n";
     }
     else {
