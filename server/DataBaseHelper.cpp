@@ -30,7 +30,7 @@ DataBaseHelper::DataBaseHelper() {
     }
     }
 
-    /*if(insertValues("test1","test1",11,11,11,"images.jpeg"))
+    if(insertValues("test1","test1",11,11,11,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
@@ -45,10 +45,10 @@ DataBaseHelper::DataBaseHelper() {
     if(insertValues("test4","test4",14,14,14,"images.jpeg"))
         cout<<"method works"<<endl;
     else
-         cout<<"method dint work"<<endl;*/
+         cout<<"method dint work"<<endl;
 
-    /*if(readFromDataBase())
-        cout<<"true"<<endl;*/
+    if(readFromDataBase())
+        cout<<"true"<<endl;
 
 
 }
@@ -120,7 +120,8 @@ bool DataBaseHelper::readFromDataBase() {
 
                 QString username = query.value(rec.indexOf("UID")).toString();
                 QString password = query.value(rec.indexOf("Password")).toString();
-                if(addPlayer(username.toStdString(),password.toStdString()))
+                QString imagePath = query.value(rec.indexOf("imagePath")).toString();
+                if(addPlayer(username.toStdString(),password.toStdString(),imagePath.toStdString()))
                     cout<<"added player successfully"<<endl;
 
             }
@@ -185,23 +186,23 @@ bool DataBaseHelper::addKill(string userId) {
 
 }
 
-vector<string> DataBaseHelper::getPlayers() {
-    vector<string> players;
+void DataBaseHelper::getPlayers(vector<string> *players) {
+
             for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-                players.push_back((*it)->getUID());
+                players->push_back((*it)->getUID());
+
             }
-            return players;
-
-
 
 }
 
-QString getImagePath(QString userId) {
+string DataBaseHelper::getImagePath(string userId) {
 
+            for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+                if((*it)->getUID() == userId) {
+                    return (*it)->getImagePath();
+                }
 
-
-
-
+            }
 }
 
 bool DataBaseHelper::addDeath(string userId) {
@@ -229,14 +230,14 @@ bool DataBaseHelper::setScore(string userId,int value) {
 
 }
 
-bool DataBaseHelper::addPlayer(string userId,string password) {
+bool DataBaseHelper::addPlayer(string userId,string password,string imagePath) {
 
 	if((!userId.empty()) && (!password.empty())) {
 		for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
 			if((*it)->getUID() == userId)
 				return false;
 		}
-		PlayerInfo *player = new PlayerInfo(userId,password);
+                PlayerInfo *player = new PlayerInfo(userId,password,imagePath);
 		playerVector.push_back(player);
 		return true;
 	}
@@ -323,11 +324,6 @@ void DataBaseHelper::testfunction() {
             cout<<"Add Kill Success"<<endl;
         if(addKill("test4"))
             cout<<"Add Kill Success"<<endl;*/
-        vector<string> players = getPlayers();
-        for(vector<string>::iterator it = players.begin();it < players.end();it++) {
-            cout<<(*it)<<endl;
-
-        }
 
     }
     if(writeToDataBase())
