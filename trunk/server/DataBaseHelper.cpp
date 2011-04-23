@@ -336,7 +336,9 @@ void DataBaseHelper::testfunction() {
 DataBaseHelper::~DataBaseHelper() {
 	// TODO Auto-generated destructor stub
     delete &db;
-    playerVector.clear();
-    playerInvites.clear();
+    for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        delete *it;
+    }
+    delete &playerInvites;
 
 }
