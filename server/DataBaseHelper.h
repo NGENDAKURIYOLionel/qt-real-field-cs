@@ -2,6 +2,7 @@
  * DataBaseHelper.h
  *
  * Author: Karthik Mallavarapu
+ * Install required libraries: apt-get install libqt4-sql-sqlite
  */
 
 
@@ -14,6 +15,10 @@
 #include <QFile>
 #include <QString>
 #include <QSqlQuery>
+#include <QPixmap>
+#include <QByteArray>
+#include <QBuffer>
+
 
 #include "PlayerInfo.h"
 #include<tr1/cstdint>
@@ -39,8 +44,10 @@ public:
         bool readFromDataBase();
         bool writeToDataBase();
         bool openDataBase();
-        bool insertValues(QString uid,QString password,int kills,int score,int deaths);
+        bool insertValues(QString uid,QString password,int kills,int score,int deaths,QString imagePath);
         void testfunction();
+        vector<string> getPlayers();
+
 
 private:
 
