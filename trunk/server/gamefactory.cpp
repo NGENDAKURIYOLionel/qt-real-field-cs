@@ -13,10 +13,13 @@ namespace GameFactory{
     }
 
     game* getGame(QString* id){
+        if(id == NULL){
+            return NULL;
+        }
         if(exists(id)){
             return _games.value(id);
         }else{
-            game* new_game = new game(id, &_root);
+            game* new_game(id, &_root);
             _games.insert(id, new_game);
             return new_game;
         }
@@ -27,6 +30,9 @@ namespace GameFactory{
     }
 
     void destroyGame(QString* gameid){
+        if(gameid == NULL){
+            return;
+        }
         game* game = _games.value(gameid);
         game->deleteLater();
         _games.remove(gameid);
