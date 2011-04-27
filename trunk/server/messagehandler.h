@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QtCore>
+#include "server.h"
 
 class MessageHandler : public QObject
 {
@@ -16,6 +17,7 @@ public:
 public slots:
     void readMessage();
     void sendMessageSlot(QString message);
+    void loggedOut();
 
 signals:
     //Caution:
@@ -25,7 +27,8 @@ signals:
     void loginWithPicture(QString* uname,QByteArray* picture);
     void logout(QString* uname);
     void gamelist(QString* uname);
-    void createGame(QString* uname, QString* gameId, int duration, int noOfTeamA, int noOfTeamB);
+    //void createGame(QString* uname, QString* gameId, int duration, int noOfTeamA, int noOfTeamB);
+    void createGame(QString* uname, QString* gameId, int duration);
     void joinGame(QString* uname,QString* gameId);
     void joinTeam(QString* uname,QString* teamId);
     void leave(QString* uname);

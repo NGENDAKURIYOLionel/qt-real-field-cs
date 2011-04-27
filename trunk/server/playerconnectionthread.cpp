@@ -2,7 +2,7 @@
 #include <QtNetwork>
 #include <iostream>
 
-PlayerConnectionThread::PlayerConnectionThread(int socketDescriptor, const QString &text, QObject *parent)
+PlayerConnectionThread::PlayerConnectionThread(int socketDescriptor, const QString &text, Server *parent)
     : QThread(parent), socketDescriptor(socketDescriptor), message(text)
 {
 

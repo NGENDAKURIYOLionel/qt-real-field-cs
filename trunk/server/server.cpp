@@ -4,7 +4,7 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
-
+    db=new DataBaseHelper;
 }
 
 void Server::incomingConnection(int socketDescriptor)

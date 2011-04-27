@@ -23,6 +23,7 @@ signals:
     void joinTeamSignal(QString* player, QString* team);
     void leaveGameSignal(QString* player);
     //MessageHandler side
+    /*
     void loggedInSignal(bool);
     void loggedOutSignal();
     void gameCreatedSignal(bool);
@@ -35,7 +36,19 @@ signals:
     void updateSignal(QString *game, int time_left, QHash<QString*, int> *teams, int kills, bool alive);
     void updatePlayerStatusSignal(QString *killer, QString *killed);
     void playerInvitedSignal(QString *inviter, QString* invited, QString* game_id);
-
+    */
+    void loggedInSignal(QString message);
+    void loggedOutSignal();
+    void gameCreatedSignal(QString message);
+    void gameInfoSignal(QString message);
+    void joinedSignal(QString message);
+    void gameStartedSignal(QString message);
+    void gameAbortedSignal(QString message);
+    void gameEndedSignal(QString message);
+    void hitSignal(QString message);
+    void updateSignal(QString message);
+    void updatePlayerStatusSignal(QString message);
+    void playerInvitedSignal(QString message);
 public slots:
     void loginWithPassword(QString* uname,QString* password);
     void loginWithPicture(QString* uname,QByteArray* picture);
