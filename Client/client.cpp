@@ -270,53 +270,59 @@ void Client::sendMessage(QString message){
 void Client::sendImage(const QString &uName)
 {
     //make sure image is stored before sending out
-    sleep(2);
-    if (!uName.isEmpty())
-        _userName = uName;
+       sleep(2);
+       if (!uName.isEmpty())
+           _userName = uName;
 
-    QString path("/home/user/MyDocs/DCIM/");
-    QDir folder = QDir(path);
-    folder.setFilter(QDir::Files | QDir::NoSymLinks);
-    folder.setSorting(QDir::Time);
-    QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
-    filename = path.append(filename);
+       QString path("/home/user/MyDocs/DCIM/");
+       QDir folder = QDir(path);
+       folder.setFilter(QDir::Files | QDir::NoSymLinks);
+       folder.setSorting(QDir::Time);
+       QString filename = folder.entryList(QDir::Files | QDir::NoDotAndDotDot).at(0);
+       filename = path.append(filename);
 
-    QString message(_userName);
-    QFile *file;
-    if (!uName.isEmpty()) {
-        message.append(";LOGINPHOTO;");
-         file = new QFile(filename);
-    }
-    else{
-        message.append(";SHOOT;");
-        resize(filename);
-        sleep(2);
-        file = new QFile("/home/user/MyDocs/DCIM/resized.jpg");
-    }
+       QString message(_userName);
+       QByteArray image;
 
-    if (!file->open(QIODevice::ReadOnly))
-        qDebug("Can not open photo image");
-    QByteArray image = file->readAll();
+       if (!uName.isEmpty()) {
+           message.append(";LOGINPHOTO;");
+           QFile file(filename);
+           if (!file.open(QIODevice::ReadOnly))
+               qDebug("Can not open photo image");
+           image = file.readAll();
+       }
+       else{
+           message.append(";SHOOT;");
+           image = resize(filename);
+           //file = new QFile("/home/user/MyDocs/DCIM/resized.jpg");
+       }
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::ReadWrite);
-    out.setVersion(QDataStream::Qt_4_7);
-    out << quint32(0) << message << image;
-    out.device()->seek(0);
-    out << quint32(block.size() - sizeof(quint32));
-    qDebug() << "size of the message:" << block.size() - sizeof(quint32);
-    tcpSocket->write(block);
-    delete (file);
+       if(image.size()==0) {
+           qDebug("send image abort");
+            return;
+       }
+
+       QByteArray block;
+       QDataStream out(&block, QIODevice::ReadWrite);
+       out.setVersion(QDataStream::Qt_4_7);
+       out << quint32(0) << message << image;
+       out.device()->seek(0);
+       out << quint32(block.size() - sizeof(quint32));
+       qDebug() << "size of the message:" << block.size() - sizeof(quint32);
+       tcpSocket->write(block);
 }
 
-bool Client::resize(QString path)
+QByteArray Client::resize(QString path)
 {
-   QImage image;
+   QImage image, resized;
+   QByteArray resizedImage;
+   QBuffer buf(&resizedImage);
+   buf.open(QIODevice::WriteOnly);
    if (!image.load(path)) {
-       qDebug("failed to load image");
-       return false;
+       qDebug("resize: failed to load image");
+       return resizedImage;
    }
-
-   QImage ret = image.scaled(640, 480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-   return (ret.save("/home/user/MyDocs/DCIM/resized.jpg",0,80));
+   resized = image.scaled(640, 480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+   resized.save(&buf,"JPG",80);
+   return resizedImage;
 }
