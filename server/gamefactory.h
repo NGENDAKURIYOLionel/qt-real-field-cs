@@ -6,6 +6,7 @@
 #include <QHash>
 #include "game.h"
 
+class game;
 namespace GameFactory{
     bool exists(QString* id);
     game* getGame(QString* id);

@@ -7,12 +7,14 @@
 #include <QSet>
 #include <QDate>
 #include "imagerecognitionhelper.h"
+#include "server.h"
 
+class Server;
 class game : public QObject
 {
     Q_OBJECT
 public:
-    explicit game(QString *gameid, QObject *parent = 0);
+    explicit game(QString *gameid, QObject *parent = 0,Server *s=NULL);
     QDate* getStartTime();
     bool setStartTime(QDate* time);
     int getDuration();
@@ -65,6 +67,8 @@ private:
     QHash<QString*, int> *_teams;
     QTimer *_timer;
     QString *_last_hit_player;
+    Server *server;
+
 };
 
 #endif // GAME_H

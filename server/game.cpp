@@ -1,8 +1,10 @@
 #include "game.h"
 #include "imagerecognitionhelper.h"
 #include <string>
+#include "playerfactory.h"
+#include "server.h"
 
-game::game(QString *id, QObject *parent) :
+game::game(QString *id, QObject *parent,Server *s) :
         QObject(parent)
 {
     _duration = -1; //marked as not set
@@ -21,6 +23,7 @@ game::game(QString *id, QObject *parent) :
     connect(this,SIGNAL(joined(QString*,QString*)),this,SLOT(onGameChange()));
     connect(this, SIGNAL(left(QString*,QString*)),this,SLOT(onGameChange()));
     connect(this, SIGNAL(destroyed()),this,SLOT(onDelete()));
+    server = s;
 }
 
 QDate* game::getStartTime(){
@@ -152,9 +155,30 @@ void game::shot(QByteArray* image, QString* player){
         extern ImageRecognitionHelper irh;
 		std::string temp_image(image->constData(), image->size());
 		std::string temp_player(_last_hit_player->toAscii().constData());
-        int amount = irh.match_all(temp_player,temp_image);
+                std::string irh_response;
+                vector<std::string> all_players;
+                QList<QString *> list = _players->keys();
+                for(int i=0;i<_players->size();i++)
+                    all_players.push_back((list.at(i))->toStdString());
+
+                int amount = irh.match(irh_response,temp_image,all_players);
         if(amount >= 0){
-            emit hit(player, _last_hit_player, amount);
+            QString victim = QString::fromStdString(irh_response);
+            PlayerFactory::getPlayer(&victim)->health -= amount;
+
+            if(PlayerFactory::getPlayer(&victim)->health <= 0) {
+                PlayerFactory::getPlayer(&victim)->_alive = false;
+                if(server->db->addDeath(irh_response))
+                    cout<<"add death from game to db works"<<endl;
+                else
+                    cout<<"add death from game to db does not work"<<endl;
+                if(server->db->addKill((*player).toStdString()))
+                    cout<<"add kill from game to db works"<<endl;
+                else
+                    cout<<"add kill from game to db does not work"<<endl;
+
+            }
+            emit hit(player, &victim, amount);
         } else {
 			emit miss(player);
 		}

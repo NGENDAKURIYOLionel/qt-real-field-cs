@@ -15,6 +15,7 @@ Player::Player(QString* id,QObject *parent,Server *s) :
     _logged = false;
     _alive = true;
     server = s;
+    health = 100;
 }
 
 bool Player::loggedIn(){
@@ -195,6 +196,7 @@ void Player::hit(QString* shooter, QString* target, int damage){
     if(shooter->compare(_name) == 0){
         if(damage >= _PLAYER_KILL_DAMAGE){
             (this->_kills)++;
+
         }
         //emit hitSignal(true, damage, target);
         QString temp("ONTARGET;true;");
