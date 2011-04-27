@@ -30,7 +30,7 @@ DataBaseHelper::DataBaseHelper() {
     }
     }
 
-    if(insertValues("test1","test1",11,11,11,"images.jpeg"))
+    /*if(insertValues("test1","test1",11,11,11,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
@@ -45,12 +45,10 @@ DataBaseHelper::DataBaseHelper() {
     if(insertValues("test4","test4",14,14,14,"images.jpeg"))
         cout<<"method works"<<endl;
     else
-         cout<<"method dint work"<<endl;
+         cout<<"method dint work"<<endl; */
 
     if(readFromDataBase())
         cout<<"true"<<endl;
-
-
 }
 
 bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths,QString imagePath) {
@@ -83,6 +81,8 @@ bool DataBaseHelper::writeToDataBase() {
                 cout<<" "<<score<<" "<<kills<<" "<<deaths<<" "<<username.toStdString()<<endl;
                 if(update.exec(QString("UPDATE Player SET Score=%2,Kills=%3,Deaths=%4 WHERE UID='%1' ").arg(username).arg(score).arg(kills).arg(deaths)))
                        cout<<"Updated database table successfully"<<endl;
+                else
+                    qDebug()<<update.lastError();
 
             }
             return true;
@@ -91,7 +91,7 @@ bool DataBaseHelper::writeToDataBase() {
 
     }
 
-    return true;
+    return false;
 }
 
 bool DataBaseHelper::readFromDataBase() {
@@ -120,170 +120,163 @@ bool DataBaseHelper::readFromDataBase() {
 }
 
 string DataBaseHelper::getPassword(string userId) {
+        string password;
 	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
 		if((*it)->getUID() == userId) {
-			return (*it)->getPassword();
+                        password = (*it)->getPassword();
+                        //return (*it)->getPassword();
 		}
 
 	}
-        return NULL;
+        return password;
 }
-
+/*Returns score of a player if getScore() is a success. Else returns -1*/
 int DataBaseHelper::getScore(string userId) {
+        int score = -1;
         for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
                 if((*it)->getUID() == userId) {
-                        return (*it)->getScore();
+                        score = (*it)->getScore();
                 }
 
         }
-        return NULL;
+        return score;
 }
 
+/*Returns number of deaths of a player if getDeaths() is a success. Else returns -1*/
 int DataBaseHelper::getDeaths(string userId) {
+        int deaths = -1;
         for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
                 if((*it)->getUID() == userId) {
-                        return (*it)->getDeaths();
+                        deaths = (*it)->getDeaths();
                 }
 
         }
-        return NULL;
+        return deaths;
 }
-
+/*Returns number of kills of a player if getKills() is a success. Else returns -1*/
 int DataBaseHelper::getKills(string userId) {
+        int kills = -1;
         for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
                 if((*it)->getUID() == userId) {
-                        return (*it)->getKills();
+                        kills = (*it)->getKills();
                 }
 
         }
-        return NULL;
+        return kills;
 }
 bool DataBaseHelper::addKill(string userId) {
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-			if((*it)->getUID() == userId) {
-				(*it)->addKill();
-				return true;
-			}
-
-		}
-	return false;
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            (*it)->addKill();
+            return true;
+        }
+    }
+    return false;
 
 }
 
 void DataBaseHelper::getPlayers(vector<string> *players) {
-
-            for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-                players->push_back((*it)->getUID());
-
-            }
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        players->push_back((*it)->getUID());
+    }
 
 }
 
 string DataBaseHelper::getImagePath(string userId) {
+    string imagePath;
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            imagePath = (*it)->getImagePath();
+        }
 
-            for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-                if((*it)->getUID() == userId) {
-                    return (*it)->getImagePath();
-                }
-
-            }
+    }
+    return imagePath;
 }
 
 bool DataBaseHelper::addDeath(string userId) {
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-
-				if((*it)->getUID() == userId) {
-					(*it)->addDeath();
-					return true;
-				}
-
-			}
-		return false;
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            (*it)->addDeath();
+            return true;
+        }
+    }
+    return false;
 
 }
 bool DataBaseHelper::setScore(string userId,int value) {
-        for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+      if((*it)->getUID() == userId) {
+          (*it)->setScore(value);
+        return true;
+      }
 
-                                if((*it)->getUID() == userId) {
-                                        (*it)->setScore(value);
-                                        return true;
-                                }
-
-                        }
-                return false;
+    }
+    return false;
 
 }
 
 bool DataBaseHelper::addPlayer(string userId,string password,string imagePath) {
 
-	if((!userId.empty()) && (!password.empty())) {
-		for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-			if((*it)->getUID() == userId)
-				return false;
-		}
-                PlayerInfo *player = new PlayerInfo(userId,password,imagePath);
-		playerVector.push_back(player);
-		return true;
-	}
-	else
-		return false;
+    if((!userId.empty()) && (!password.empty())) {
+        for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+            if((*it)->getUID() == userId)
+            return false;
+        }
+        PlayerInfo *player = new PlayerInfo(userId,password,imagePath);
+        playerVector.push_back(player);
+        return true;
+    }
+    else
+        return false;
 }
 
 bool DataBaseHelper::removePlayer(string userId) {
 
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-		if((*it)->getUID() == userId)
-		{
-			playerVector.erase(it);
-			return true;
-		}
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            playerVector.erase(it);
+            return true;
+        }
 
-	}
-	return false;
+    }
+    return false;
 }
 
-
 bool DataBaseHelper::sendInvite(string userId,uint64_t gameId) {
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-			if((*it)->getUID() == userId)
-			{
-				if((*it)->addInvite(gameId))
-					return true;
-			}
-	}
-
-        return false;
-
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            if((*it)->addInvite(gameId))
+                return true;
+        }
+    }
+    return false;
 }
 
 bool DataBaseHelper::removeInvite(string userId,uint64_t gameId) {
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-				if((*it)->getUID() == userId)
-				{
-					if((*it)->removeInvite(gameId))
-						return true;
-				}
-		}
-		return false;
-
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            if((*it)->removeInvite(gameId))
+                return true;
+        }
+    }
+    return false;
 }
 
-vector<uint64_t> DataBaseHelper::getInvites(string userId) {
-	playerInvites.clear();
-	for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
-			if((*it)->getUID() == userId)
-			{
-				playerInvites = (*it)->getInvites();
-				break;
-			}
+void DataBaseHelper::getInvites(string userId,vector<uint64_t> *playerInvites) {
+   for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+        if((*it)->getUID() == userId) {
+            vector<uint64_t> temp = (*it)->getInvites();
+            for(vector<uint64_t>::iterator i = temp.begin();i < temp.end();i++)
+                playerInvites->push_back((*i));
+            break;
+        }
+    }
 
-		}
-	return playerInvites;
 }
 
 void DataBaseHelper::testfunction() {
-    if(readFromDataBase()) {
-        /*
+    /*if(readFromDataBase()) {
+
         if(setScore("test1",10))
             cout<<"Set Score Success"<<endl;
         if(setScore("test2",10))
@@ -307,22 +300,26 @@ void DataBaseHelper::testfunction() {
         if(addKill("test3"))
             cout<<"Add Kill Success"<<endl;
         if(addKill("test4"))
-            cout<<"Add Kill Success"<<endl;*/
+            cout<<"Add Kill Success"<<endl;
 
-    }
-    if(writeToDataBase())
-        cout<<"Written to database"<<endl;
+    }*/
+    if(!(getImagePath("test1").empty()))
+        cout<<"Works"<<endl;
+    if(!(getImagePath("test5").empty()))
+        cout<<"Works"<<endl;
+    else
+        cout<<"NULL string test works"<<endl;
 
-
-
+    /*if(writeToDataBase())
+        cout<<"Written to database"<<endl;*/
 }
 
 DataBaseHelper::~DataBaseHelper() {
 	// TODO Auto-generated destructor stub
-    delete &db;
+    //delete &db;
     for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
         delete *it;
     }
-    delete &playerInvites;
+    //delete &playerInvites;
 
 }

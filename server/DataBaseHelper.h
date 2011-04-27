@@ -30,7 +30,7 @@ public:
 	bool sendInvite(std::string,uint64_t);
 	bool addKill(std::string);
 	bool addDeath(std::string);
-	std::vector<uint64_t> getInvites(std::string);
+        void getInvites(std::string,vector<uint64_t> *);
 	bool removeInvite(std::string,uint64_t);
         bool addPlayer(std::string,std::string,std::string);
 	bool removePlayer(std::string);
@@ -50,7 +50,6 @@ public:
 private:
 
 	std::vector<PlayerInfo *> playerVector;
-        std::vector<uint64_t> playerInvites;
         QSqlDatabase db;
 
 
