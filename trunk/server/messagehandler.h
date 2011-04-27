@@ -6,6 +6,7 @@
 #include <QtCore>
 #include "server.h"
 
+
 class MessageHandler : public QObject
 {
      Q_OBJECT

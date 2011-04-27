@@ -8,10 +8,11 @@
 #include "imagerecognitionhelper.h"
 #include "DataBaseHelper.h"
 #include "cstdio"
+#include "player.h"
 
 std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
-DataBaseHelper db;
+//DataBaseHelper db;
 
 typedef enum {
 	FILE_NOT_FOUND
@@ -58,18 +59,22 @@ int main(int argc, char *argv[])
 //int dummy(int argc, char *argv[])
 {
 	// TODO: register players
-	std::vector<std::string> db_players;
+        /*std::vector<std::string> db_players;
 	db.getPlayers(&db_players);
 	if (db_players.size() == 0) {
 		std::cout << "please register players before starting the server" << std::endl;
 		return 1;
-	}
-	for (unsigned i = 0; i < db_players.size(); i++) {
+        }
+        for (unsigned i = 0; i < db_players.size(); i++) {
 		std::string temp_image(db.getImagePath(db_players[i]));
 		register_player(db_players[i], temp_image);
-	}
+        }*/
 
 	Server server;
+        /*QString uid = "test1";
+        QString passwd = "test1";
+        Player *p = new Player(&uid,0,&server);
+        p->loginWithPassword(&uid,&passwd);*/
 	QApplication app(argc, argv);
 	if (server.listen(QHostAddress::Any,8888)) {
 		std::cout << "server listening at port:" << server.serverPort() << std::endl;

@@ -3,7 +3,7 @@
 
 #include <QtNetwork/QTcpServer>
 #include "DataBaseHelper.h"
-#include "playerfactory.h"
+//#include "playerfactory.h"
 #include "gamefactory.h"
 
 class Server : public QTcpServer

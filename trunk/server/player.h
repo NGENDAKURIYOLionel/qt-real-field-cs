@@ -5,13 +5,14 @@
 #include <QDate>
 #include <QHash>
 #include <QByteArray>
+#include "server.h"
 #define _PLAYER_KILL_DAMAGE 100
 
 class Player : public QObject
 {
     Q_OBJECT
 public:
-    explicit Player(QString *id, QObject *parent = 0);
+    explicit Player(QString *id, QObject *parent = 0,Server *s=NULL);
     bool loggedIn();
 
 signals:
@@ -82,6 +83,7 @@ private:
     bool _alive;
     bool _in_game;
     QString *_name;
+    Server *server;
 };
 
 #endif // PLAYER_H
