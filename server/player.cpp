@@ -23,9 +23,9 @@ void Player::loginWithPassword(QString* uname,QString* password){
     //TODO match in database
     if(1){
         _logged = true;
-        emit loggedInSignal(true);
+        emit loggedInSignal(QString("LOGIN;true"));
     }else{
-        emit loggedInSignal(false);
+        emit loggedInSignal(QString("LOGIN;false"));
     }
 }
 
@@ -38,10 +38,10 @@ void Player::loginWithPicture(QString* uname, QByteArray* picture) {
     if(irh.match_all(response_uid, jpeg_image) >= 0){
 		// response_uid has a valid uid
         _logged = true;
-        emit loggedInSignal(true);
+        emit loggedInSignal(QString("LOGIN;true"));
     }else{
 		// response_uid is empty
-        emit loggedInSignal(false);
+        emit loggedInSignal(QString("LOGIN;false"));
     }
 }
 
@@ -52,13 +52,13 @@ void Player::logout(QString* uname){
 
 void Player::createGame(QString* uname, QString* game_id, int duration){
     if(GameFactory::exists(game_id)){
-        emit gameCreatedSignal(false);
+        emit gameCreatedSignal("GAMECREATED;false");
         return;
     }else{
         game* game = GameFactory::getGame(game_id);
         game->setCreator(uname);
         game->setDuration(duration);
-        emit gameCreatedSignal(true);
+        emit gameCreatedSignal("GAMECREATED;");
         return;
     }
 }
@@ -143,15 +143,18 @@ void Player::gameStart(QString* uname){
 void Player::gameStarted(){
     _alive = true;
     //TODO maybe empty kills etc
-    emit gameStartedSignal();
+    emit gameStartedSignal("GAMESTARTED;");
 }
 
 void Player::gameEnded(QString *win_team, QList<Player*> *players){
-    emit gameEndedSignal(win_team,players);
+    //emit gameEndedSignal(win_team,players);
+    QString temp("GAMEEND;");
+    temp.append(win_team);
+    emit gameEndedSignal(temp);
 }
 
 void Player::gameAborted(){
-    emit gameAbortedSignal();
+    emit gameAbortedSignal("GAMEABORT;");
 }
 
 void Player::clearGameData(){
@@ -160,7 +163,7 @@ void Player::clearGameData(){
 
 void Player::joined(QString* player, QString* team){
     if(player->compare(_name) == 0){
-        emit joinedSignal(true);
+        emit joinedSignal("TEAMJOINED;");
     }
 }
 
@@ -175,7 +178,8 @@ void Player::left(QString *player, QString *team, QString *game_id){
 
 void Player::miss(QString* shooter){
     if(shooter->compare(_name) == 0){
-        emit hitSignal(false,-1, NULL);
+        //emit hitSignal(false,-1, NULL);
+        emit hitSignal("ONTARGET;false");
     }
 }
 
@@ -184,7 +188,9 @@ void Player::hit(QString* shooter, QString* target, int damage){
         if(damage >= _PLAYER_KILL_DAMAGE){
             (this->_kills)++;
         }
-        emit hitSignal(true, damage, target);
+        //emit hitSignal(true, damage, target);
+        QString temp("ONTARGET;true;");
+        emit hitSignal(temp.append(target));
     }else if(target->compare(_name) == 0){
         if(damage >= _PLAYER_KILL_DAMAGE){
             (this->_deaths)++;
