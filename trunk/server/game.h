@@ -26,7 +26,7 @@ public:
     void addTeam(QString* team);
     QString* getGameId();
     bool hasEnded();
-
+    QString getGameInfo();
 public slots:
     void startGame();
     void endGame();
@@ -62,7 +62,7 @@ private:
     //HashMap of player/team - pairs
     QHash<QString*, QString*> *_players;
     QHash<QString*, int> *_change_hash;
-    QSet<QString*> *_teams;
+    QHash<QString*, int> *_teams;
     QTimer *_timer;
     QString *_last_hit_player;
 };

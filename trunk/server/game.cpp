@@ -11,7 +11,7 @@ game::game(QString *id, QObject *parent) :
     _ended = false;
     _players = new QHash<QString*,QString*>();
     _change_hash = new QHash<QString*, int>();
-    _teams = new QSet<QString*>();
+    _teams = new QHash<QString*, int>();
     _timer = new QTimer(this);
     _last_hit_player = new QString();
     _timer->setSingleShot(true);
@@ -36,7 +36,7 @@ int game::getMaxPlayers(){
 }
 
 int game::getNumberOfTeams(){
-    return _teams->size();
+    return _teams->keys().size();
 }
 
 QString* game::getCreator(){
@@ -65,7 +65,7 @@ bool game::setMaxPlayers(int players){
 }
 
 void game::addTeam(QString *team){
-    _teams->insert(team);
+    _teams->insert(team, 0);
 }
 
 /*
@@ -75,8 +75,9 @@ void game::joinTeam(QString* player,QString* team){
     if(*player == NULL || *team == NULL){
         return;
     }
-    if(_players->keys().size() < getMaxPlayers()){
+    if(_players->keys().size() < getMaxPlayers() && _teams->contains(team)){
         _players->insert(player,team);
+        _teams->insert(team, _teams->value(team) + 1);
         emit joined(player,team);
     }
 }
@@ -86,6 +87,9 @@ void game::joinTeam(QString* player,QString* team){
 void game::leaveGame(QString *id){
     QString *team = _players->value(id);
     if(_players->remove(id) > 0){
+        int teams = _teams->value(team) - 1;
+        if(teams < 0) teams = 0;
+        _teams->insert(team, teams);
         emit left(id,team, _game_id);
     }
 }
@@ -167,7 +171,8 @@ QString* game::getGameId(){
 void game::onGameChange(){
     QHash<QString*, int> *hash = _change_hash;
     hash->clear();
-    for(QSet<QString*>::const_iterator i = _teams->begin();i != _teams->end();i++){
+    QList<QString*>::const_iterator end = _teams->keys().end();
+    for(QList<QString*>::const_iterator i = _teams->keys().begin();i != end;i++){
         hash->insert((*i),this->playersInTeam((*i)));
     }
     emit gameInfo(_game_id,getDuration(),hash);
@@ -199,4 +204,14 @@ QString* game::getWinningTeam(){
         }
     }
     return team;
+}
+
+QString game::getGameInfo(){
+    QString str;
+    str.append("GAMEINFO;").append(_game_id).append(";").append(_duration);
+    QList<QString*> list = _teams->keys();
+    for(QList<QString*>::const_iterator i = list.begin();i != list.end();i++){
+        str.append(_teams->value(*i));
+    }
+    return str;
 }

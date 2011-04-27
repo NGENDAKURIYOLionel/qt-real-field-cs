@@ -1,5 +1,4 @@
 #include "playerfactory.h"
-#include "server.h"
 namespace PlayerFactory{
     namespace{
         QHash<QString*, Player*> _players;
@@ -31,10 +30,16 @@ namespace PlayerFactory{
         }
     }
 
-    void destroyPlayer(QString *id){
+    void destroyPlayer(QString *id, MessageHandler *handler){
         if(id == NULL){
             return;
         }
-        _players.remove(id);
+        Player *player = _players.value(id);
+        if(player->inGame() == false){
+            player->disconnect(handler);
+            handler->disconnect(player);
+            _players.remove(id);
+           delete player;
+        }
     }
 }
