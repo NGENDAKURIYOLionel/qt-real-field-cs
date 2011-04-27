@@ -1,4 +1,5 @@
 #include "messagehandler.h"
+#include "playerfactory.h"
 #include <iostream>
 #include <QDateTime>
 #include <QtCore>
@@ -27,7 +28,8 @@ void MessageHandler::sendMessageSlot(QString message){
     sendMessage(message);
 }
 
-void MessageHandler::loggedOut(){
+void MessageHandler::loggedOut(QString* id){
+    PlayerFactory::destroyPlayer(id, this);
     return;
 }
 

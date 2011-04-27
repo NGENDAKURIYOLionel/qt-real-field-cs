@@ -14,6 +14,7 @@ class Player : public QObject
 public:
     explicit Player(QString *id, QObject *parent = 0,Server *s=NULL);
     bool loggedIn();
+    bool inGame();
 
 signals:
     //Game side
@@ -24,22 +25,8 @@ signals:
     void joinTeamSignal(QString* player, QString* team);
     void leaveGameSignal(QString* player);
     //MessageHandler side
-    /*
-    void loggedInSignal(bool);
-    void loggedOutSignal();
-    void gameCreatedSignal(bool);
-    void gameInfoSignal(QString* game_id, int duration, QHash<QString*, int> *teams);
-    void joinedSignal(bool);
-    void gameStartedSignal();
-    void gameAbortedSignal();
-    void gameEndedSignal(QString *win_team, QList<Player*> *players);
-    void hitSignal(bool value, int damage, QString* target);
-    void updateSignal(QString *game, int time_left, QHash<QString*, int> *teams, int kills, bool alive);
-    void updatePlayerStatusSignal(QString *killer, QString *killed);
-    void playerInvitedSignal(QString *inviter, QString* invited, QString* game_id);
-    */
     void loggedInSignal(QString message);
-    void loggedOutSignal();
+    void loggedOutSignal(QString *player);
     void gameCreatedSignal(QString message);
     void gameInfoSignal(QString message);
     void joinedSignal(QString message);

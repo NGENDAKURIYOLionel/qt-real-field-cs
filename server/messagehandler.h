@@ -18,7 +18,7 @@ public:
 public slots:
     void readMessage();
     void sendMessageSlot(QString message);
-    void loggedOut();
+    void loggedOut(QString* player);
 
 signals:
     //Caution:

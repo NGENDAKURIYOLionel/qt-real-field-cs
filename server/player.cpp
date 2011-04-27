@@ -2,6 +2,7 @@
 #include "gamefactory.h"
 #include <QByteArray>
 #include "imagerecognitionhelper.h"
+#include "DataBaseHelper.h"
 
 Player::Player(QString* id,QObject *parent,Server *s) :
     QObject(parent)
@@ -20,8 +21,11 @@ bool Player::loggedIn(){
     return _logged;
 }
 
+bool Player::inGame(){
+    return _in_game;
+}
+
 void Player::loginWithPassword(QString* uname,QString* password){
-    //TODO match in database
     std::string passwd = server->db->getPassword((*uname).toStdString());
     if(passwd == (*password).toStdString()){
         cout<<"Login with password works!"<<endl;
@@ -34,7 +38,6 @@ void Player::loginWithPassword(QString* uname,QString* password){
 }
 
 void Player::loginWithPicture(QString* uname, QByteArray* picture) {
-
 	extern ImageRecognitionHelper irh;
 	std::string response_uid;
 	std::string jpeg_image(picture->constData(), picture->size());
@@ -51,7 +54,7 @@ void Player::loginWithPicture(QString* uname, QByteArray* picture) {
 
 void Player::logout(QString* uname){
     _logged = false;
-    emit loggedOutSignal();
+    emit loggedOutSignal(_name);
 }
 
 void Player::createGame(QString* uname, QString* game_id, int duration){
@@ -113,6 +116,7 @@ void Player::joinGame(QString* uname,QString* game_id){
         connect(game, SIGNAL(left(QString*,QString*)), this, SLOT(left()));
 
         _in_game = true;
+        emit gameInfoSignal(game->getGameInfo());
     }
 }
 
