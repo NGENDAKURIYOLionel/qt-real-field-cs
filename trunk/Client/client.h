@@ -76,7 +76,7 @@ private:
     QStringList _gameList;
 
 
-    bool resize(QString path);
+    QByteArray resize(QString path);
     quint32 nextBlockSize;
 };
 
