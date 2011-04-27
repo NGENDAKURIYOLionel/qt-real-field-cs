@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include "imagerecognitionhelper.h"
 
-Player::Player(QString* id,QObject *parent) :
+Player::Player(QString* id,QObject *parent,Server *s) :
     QObject(parent)
 {
     _name = id;
@@ -13,6 +13,7 @@ Player::Player(QString* id,QObject *parent) :
     _misses = 0;
     _logged = false;
     _alive = true;
+    server = s;
 }
 
 bool Player::loggedIn(){
@@ -21,10 +22,13 @@ bool Player::loggedIn(){
 
 void Player::loginWithPassword(QString* uname,QString* password){
     //TODO match in database
-    if(1){
+    std::string passwd = server->db->getPassword((*uname).toStdString());
+    if(passwd == (*password).toStdString()){
+        cout<<"Login with password works!"<<endl;
         _logged = true;
         emit loggedInSignal(QString("LOGIN;true"));
     }else{
+        cout<<"Login with password did not work!"<<endl;
         emit loggedInSignal(QString("LOGIN;false"));
     }
 }

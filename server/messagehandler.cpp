@@ -2,7 +2,8 @@
 #include <iostream>
 #include <QDateTime>
 #include <QtCore>
-
+#include "player.h"
+#include "playerfactory.h"
 MessageHandler::MessageHandler(QTcpSocket *socket)
 {
     tcpsocket=socket;

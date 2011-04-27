@@ -1,8 +1,14 @@
 #include "playerfactory.h"
+#include "server.h"
 namespace PlayerFactory{
     namespace{
         QHash<QString*, Player*> _players;
         QObject _root;
+        Server *server;
+    }
+
+    void setServer(Server *s) {
+        server = s;
     }
 
     bool exists(QString *id){
