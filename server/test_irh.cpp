@@ -76,7 +76,7 @@ static void match_test(std::string& picture, std::vector<std::string>& uids) {
 	int damage = test_irh.match(response, jpeg_picture_data, uids);
 	if (damage < 0) std::cout << "no match" << std::endl;
 	else {
-		std::cout << "matched " << response << " with damage " << damage << std::endl;
+		std::cout << "matched user \'" << response << "\' with damage " << damage << std::endl;
 	}
 	clock_t end = clock();
 	std::cout << "match test: "
