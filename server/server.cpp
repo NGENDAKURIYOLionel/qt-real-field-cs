@@ -4,7 +4,8 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
-    db=new DataBaseHelper();
+	extern DataBaseHelper* db_global;
+    this->db = db_global;
 }
 
 void Server::incomingConnection(int socketDescriptor)

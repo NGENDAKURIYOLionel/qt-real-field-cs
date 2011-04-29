@@ -7,6 +7,7 @@
 #include <QString>
 #include <QVector>
 #define NAMESPACE_NAME "20110429"
+#define MAXIMUM_DAMAGE 100.0
 
 typedef unsigned game_id_t;
 typedef unsigned player_id_t;

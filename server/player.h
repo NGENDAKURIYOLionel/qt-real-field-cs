@@ -15,6 +15,8 @@ public:
     explicit Player(QString *id, QObject *parent = 0,Server *s=NULL);
     bool loggedIn();
     bool inGame();
+	int health;
+    bool _alive;
 
 signals:
     //Game side
@@ -67,7 +69,6 @@ private:
     int _deaths;
     int _misses;
     bool _logged;
-    bool _alive;
     bool _in_game;
     QString *_name;
     Server *server;
