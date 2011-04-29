@@ -6,7 +6,7 @@
 #include "json/json.h"
 #include <QString>
 #include <QVector>
-#define NAMESPACE_NAME "20110423_2"
+#define NAMESPACE_NAME "20110429"
 
 typedef unsigned game_id_t;
 typedef unsigned player_id_t;
@@ -48,10 +48,11 @@ private:
 	void post(std::string& post_data, std::string& post_url, Json::Value& decoded_response);
 	void post_multipart(curl_httppost* post_data, std::string& post_url, Json::Value& decoded_response);
 	void faces_detect(std::string& jpeg_image, std::string& tid_response);
-	void faces_recognize(std::vector<std::string>& uids, std::string jpeg_image, std::string& response);
+	double faces_recognize(std::vector<std::string>& uids, std::string jpeg_image, Json::Value& matched_uids);
 	void faces_train(std::string&);
 	void tags_remove(std::string&);
 	void tags_save(std::string&, std::string&);
+	unsigned select_face(Json::Value& decoded_response);
 	game_id_t games;
 };
 
