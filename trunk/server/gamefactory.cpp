@@ -1,18 +1,18 @@
 #include "gamefactory.h"
 namespace GameFactory{
     namespace{
-        QHash<QString*, game*> _games;
+        QHash<QString, game*> _games;
         QObject _root;
     }
 
-    bool exists(QString *id){
+    bool exists(QString id){
         if(id == NULL){
             return false;
         }
         return _games.contains(id);
     }
 
-    game* getGame(QString* id){
+    game* getGame(QString id){
         if(id == NULL){
             return NULL;
         }
@@ -25,11 +25,11 @@ namespace GameFactory{
         }
     }
 
-    QList<QString*> getGameIds(){
+    QList<QString> getGameIds(){
         return _games.keys();
     }
 
-    void destroyGame(QString* gameid){
+    void destroyGame(QString gameid){
         if(gameid == NULL){
             return;
         }

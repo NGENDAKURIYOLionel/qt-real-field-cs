@@ -8,9 +8,9 @@
 #include "messagehandler.h"
 
 namespace PlayerFactory{
-    bool exists(QString* id);
-    Player* getPlayer(QString* id);
-    void destroyPlayer(QString* id, MessageHandler *handler);
+    bool exists(QString id);
+    Player* getPlayer(QString id);
+    void destroyPlayer(QString id, MessageHandler *handler);
     //Server *server;
     void setServer(Server *s);
 }

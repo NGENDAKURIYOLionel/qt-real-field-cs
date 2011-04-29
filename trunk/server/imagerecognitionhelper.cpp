@@ -332,7 +332,7 @@ int ImageRecognitionHelper::match(std::string& response,
 		unsigned matched_uids = uids_response.size();
 		if (matched_uids == 0) return -1; // no matched UIDs
 
-		boolean first_found = false;
+                bool first_found = false;
 		unsigned i = 0;
 		std::string uid_part;
 		while (i < matched_uids) {
@@ -370,7 +370,7 @@ int ImageRecognitionHelper::match(std::string& response,
 //			std::cout << uid_part << " " << namespace_part << std::endl; // DEBUG
 			if (namespace_part.compare(current_namespace)) continue; // wrong namespace
 			if (uids.size() != 1 || uids[0].compare("all")) {
-				boolean uid_found = false;
+                                bool uid_found = false;
 				for (unsigned k = 0; k < uids.size(); k++) {
 					if (uid_part.compare(uids[k]) == 0) {
 						uid_found = true;

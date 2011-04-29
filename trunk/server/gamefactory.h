@@ -8,10 +8,10 @@
 
 class game;
 namespace GameFactory{
-    bool exists(QString* id);
-    game* getGame(QString* id);
-    QList<QString*> getGameIds();
-    void destroyGame(QString* id);
+    bool exists(QString id);
+    game* getGame(QString id);
+    QList<QString> getGameIds();
+    void destroyGame(QString id);
 }
 
 #endif // GAMEFACTORY_H
