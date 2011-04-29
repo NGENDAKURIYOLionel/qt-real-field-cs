@@ -12,7 +12,9 @@
 
 std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
-//DataBaseHelper db;
+
+// FIXME: needs to be deallocated somewhere?
+DataBaseHelper* db_global = new DataBaseHelper();
 
 typedef enum {
 	FILE_NOT_FOUND
@@ -66,16 +68,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-        /*std::vector<std::string> db_players;
-	db.getPlayers(&db_players);
+	std::vector<std::string> db_players;
+	db_global->getPlayers(&db_players);
 	if (db_players.size() == 0) {
 		std::cout << "please register players before starting the server" << std::endl;
 		return 1;
-        }
-        for (unsigned i = 0; i < db_players.size(); i++) {
-		std::string temp_image(db.getImagePath(db_players[i]));
+	}
+	for (unsigned i = 0; i < db_players.size(); i++) {
+		std::string temp_image(db_global->getImagePath(db_players[i]));
 		register_player(db_players[i], temp_image);
-        }*/
+	}
 
 	Server server;
 //	QString uid = "test1";

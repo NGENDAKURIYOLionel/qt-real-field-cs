@@ -24,8 +24,7 @@
 #define TAGS_SAVE_URL "/tags/save.json"
 
 #define IMAGE_CENTER 50.0
-#define MAXIMUM_DISTANCE 100.0
-#define MAXIMUM_DAMAGE 100.0
+#define MAXIMUM_DISTANCE 200.0
 
 ImageRecognitionHelper::ImageRecognitionHelper(std::string& api_namespace) {
 	if (api_namespace.empty()) throw;
@@ -252,7 +251,7 @@ double ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
-//	std::cout << decoded_response["photos"][0u]["tags"] << std::endl;
+//	std::cout << "DEBUG: " << std::endl << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	if (decoded_response["status"].asString().compare("success")) {
 		throw IRH_ERROR_FACE_DOT_COM;
 	}
@@ -287,6 +286,7 @@ void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg
 	faces_train(uid_with_namespace);
 }
 
+// TODO: estimate distance from tag width & height
 int ImageRecognitionHelper::match(std::string& response,
                                    std::string& jpeg_image,
                                    std::vector<std::string>& uids) {
@@ -299,8 +299,13 @@ int ImageRecognitionHelper::match(std::string& response,
 	Json::Value uids_response;
 	try {
 		double distance = faces_recognize(uids_with_namespace, jpeg_image, uids_response);
-		if (distance >= MAXIMUM_DISTANCE) return -1; // hit no-one
+//		std::cout << uids_response << std::endl; // DEBUG
 //		std::cout << "returned uids: " << uids_response << std::endl; // DEBUG
+		if (distance >= MAXIMUM_DISTANCE) {
+			// closest face too far from center
+			std::cout << "missed: " << distance << std::endl; // DEBUG
+			return -1;
+		}
 		unsigned matched_uids = uids_response.size();
 		if (matched_uids == 0) return -1; // no matched UIDs
 
@@ -337,7 +342,7 @@ int ImageRecognitionHelper::match(std::string& response,
 		for (unsigned j = i; j < matched_uids; j++) {
 			std::string temp_uid(uids_response[j]["uid"].asString());
 			unsigned index = temp_uid.find_first_of('@');
-			std::string uid_part = temp_uid.substr(0, index);
+			uid_part = temp_uid.substr(0, index);
 			std::string namespace_part = temp_uid.substr(index + 1);
 //			std::cout << uid_part << " " << namespace_part << std::endl; // DEBUG
 			if (namespace_part.compare(current_namespace)) continue; // wrong namespace
@@ -358,7 +363,7 @@ int ImageRecognitionHelper::match(std::string& response,
 			int another_confidence = uids_response[j]["confidence"].asInt();
 			if (another_confidence < best_confidence) continue;
 			best_confidence = another_confidence;
-			best_uid.assign(uids_response[j]["uid"].asString());
+			best_uid.assign(uid_part);
 		}
 		response.assign(best_uid);
 		// returned damage range: 0...MAXIMUM_DAMAGE
