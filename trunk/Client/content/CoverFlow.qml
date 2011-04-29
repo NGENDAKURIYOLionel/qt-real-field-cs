@@ -148,14 +148,14 @@ Rectangle {
                                 listGameIdForCreator.text = "Game: " + gameId
                                 listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
-                                listGameTimeForCreator.text = "Time(s): " + gameTime
+                                listGameTimeForCreator.text = "Time: " + gameTime
                                 listUserForCreator.text = joinUserName + " joins this game"
                             }
                             if (frontName.text == gameId) {
                                 listGameId.text = "Game: " + gameId
                                 listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
-                                listGameTime.text = "Time(s): " + gameTime
+                                listGameTime.text = "Time: " + gameTime
                                 listUser.text = joinUserName + " joins this game"
                             }
                         }
@@ -168,14 +168,14 @@ Rectangle {
                                 listGameIdForCreator.text = "Game: " + gameId
                                 listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
-                                listGameTimeForCreator.text = "Time(s): " + gameTime
+                                listGameTimeForCreator.text = "Time: " + gameTime
                                 listUserForCreator.text = leaveUserName + " leaves this game"
                             }
                             if (frontName.text == gameId) {
                                 listGameId.text = "Game: " + gameId
                                 listGameNoOfTeamA.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamB.text = "Players of Team B: " + noOfTeamB
-                                listGameTime.text = "Time(s): " + gameTime
+                                listGameTime.text = "Time: " + gameTime
                                 listUser.text = leaveUserName + " leaves this game"
                             }
                         }
@@ -199,7 +199,7 @@ Rectangle {
                                 listGameIdForCreator.text = "Game: " + gameId
                                 listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
-                                listGameTimeForCreator.text = "Time(s): " + gameTime
+                                listGameTimeForCreator.text = "Time: " + gameTime
                                 listGameViewForCreator.visible = true
                                 hostGameView.visible = false
                             }
