@@ -9,8 +9,9 @@
 #include "client.h"
 
 Client::Client(QWidget *parent)
-:   QDialog(parent), networkSession(0), _userName(""), _gameId(""),nextBlockSize(0)
+:   QDialog(parent), networkSession(0), _userName(""), _gameId(""), _alive("true"), nextBlockSize(0)
 {
+    _timer = new QTimer(this);
     // find out which IP to connect to
     QString ipAddress;
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
@@ -170,29 +171,32 @@ void Client::readMessage()
           else if (message[2] == "false")
              emit gameCreateFailed("Game setting error");
       }
-      if (message[1] == "GAMEINFO" && message.size() == 6) {
+      if (message[1] == "GAMEINFO"){// && message.size() == 6) {
            _gameId= message[2];
+           _gameTime = message[3].toInt();
            emit joinGameInfo(message[2], message[3].toInt(), message[4], message[5], QString("you"),  _gameList.contains(_gameId));
       }
       if (message[1] == "TEAMJOINED") {
            emit teamJoined(_gameId, _gameList.contains(_gameId));
       }
       if (message[1] == "GAMESTARTED") {
+           startGameTimer();
            emit startGame();
       }
       if (message[1] == "GAMESABORT") {
 
       }
-      if (message[1] == "USERJOIN" && message.size() == 7) {
-          emit joinGameInfo(message[2], message[3].toInt(), message[4], message[5], message[6],  _gameList.contains(_gameId));
+      if (message[1] == "USERJOIN"){// && message.size() == 6) {
+          emit joinGameInfo(_gameId, _gameTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
-      if (message[1] == "USERLEAVE" && message.size() == 7) {
-          emit leaveGameInfo(message[2], message[3].toInt(), message[4], message[5], message[6],  _gameList.contains(_gameId));
+      if (message[1] == "USERLEAVE"){// && message.size() == 6) {
+          emit leaveGameInfo(_gameId, _gameTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
-      if (message[1] == "GAMEUPDATE" && message.size() == 10) {
+      if (message[1] == "GAMEUPDATE"){// && message.size() == 10) {
           qDebug() << "gameupdate";
-          emit gameUpdate(message[2], message[3].toInt(), message[4], message[5], message[6],
-                          message[7], message[8].toInt(), message[9]);
+          if (message[5] == _userName && message[6].toInt() == 0)
+              _alive = "false";
+          emit gameUpdate(message[2], message[3], message[4], message[5], message[6].toInt(), _alive);
       }
       if (message[1] == "ONTARGET"){
           if (message[2] == "true")
@@ -201,15 +205,11 @@ void Client::readMessage()
              emit onTarget(false, "");
       }
       if (message[1] == "GAMEEND"){
+          stopGameTimer();
           emit gameEnd();
           emit showResult(message[2]);
       }
 }
-
-//lewang;USERJOIN;a;100;4/5;3/5;lewang;
-//lewang;USERLEAVE;a;100;4/5;3/5;lewang;
-//lewang;GAMEUPDATE;a;100;4/5;1/5;tim;tom;50;true;
-//lewnag;ONTARGET;true;a;  lewang;ONTARGET;false;
 
 void Client::sendMessage(QString message){
     QStringList messageList;
@@ -325,4 +325,32 @@ QByteArray Client::resize(QString path)
    resized = image.scaled(640, 480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
    resized.save(&buf,"JPG",80);
    return resizedImage;
+}
+
+
+void Client::update() {
+    QString readableTime;
+     _countDown--;
+
+    readableTime.sprintf("%02d:%02d", _countDown / 60, _countDown % 60);
+
+    if (_countDown == 0) {
+       stopGameTimer();
+       emit gameTime("00:00");
+    }
+    else {
+       emit gameTime(readableTime);
+    }
+}
+
+
+void Client::startGameTimer(){
+    _countDown = _gameTime;
+    update();
+    _timer->start(1000);
+}
+
+void Client::stopGameTimer(){
+    _countDown = 0;
+    _timer->stop();
 }
