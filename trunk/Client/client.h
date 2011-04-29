@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QTcpSocket>
 #include <QtCore>
+#include <QTimer>
 #include <QNetworkConfigurationManager>
 
 
@@ -51,16 +52,23 @@ signals:
 
     void gameEnd();
     void showResult(QString winner);
-    void gameUpdate(QString gameId, int gameTime, QString noOfTeamALeft, QString noOfTeamBLeft,
+    void gameUpdate(QString noOfTeamALeft, QString noOfTeamBLeft,
                     QString shooter, QString beShotOne, int health, QString isSelfKilled);
+    void gameTime(QString remainingTime);
     void onTarget(bool hit, QString uName);
 
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);
     void sessionOpened();
     void connected();
+    void update();
 
 private:
+    void startGameTimer();
+    void stopGameTimer();
+    QTimer *_timer;
+    int _countDown;
+
     // variable for Network Connection
     QTcpSocket *tcpSocket;
     QString currentMessage;
@@ -75,10 +83,12 @@ private:
     int _gameTime;
     QStringList _gameList;
 
+    QString _alive;
 
     QByteArray resize(QString path);
     quint32 nextBlockSize;
 };
 
 #endif
+
 
