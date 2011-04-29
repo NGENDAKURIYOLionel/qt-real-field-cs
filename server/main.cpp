@@ -68,16 +68,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	std::vector<std::string> db_players;
-	db_global->getPlayers(&db_players);
-	if (db_players.size() == 0) {
-		std::cout << "please register players before starting the server" << std::endl;
-		return 1;
-	}
-	for (unsigned i = 0; i < db_players.size(); i++) {
-		std::string temp_image(db_global->getImagePath(db_players[i]));
-		register_player(db_players[i], temp_image);
-	}
+//	std::vector<std::string> db_players;
+//	db_global->getPlayers(&db_players);
+//	if (db_players.size() == 0) {
+//		std::cout << "please register players before starting the server" << std::endl;
+//		return 1;
+//	}
+//	for (unsigned i = 0; i < db_players.size(); i++) {
+//		std::string temp_image(db_global->getImagePath(db_players[i]));
+//		register_player(db_players[i], temp_image);
+//	}
 
 	Server server;
 //	QString uid = "test1";
