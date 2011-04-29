@@ -15,7 +15,7 @@ public:
     explicit Player(QString *id, QObject *parent = 0,Server *s=NULL);
     bool loggedIn();
     bool inGame();
-	int health;
+    int  health;
     bool _alive;
 
 signals:
@@ -39,6 +39,9 @@ signals:
     void updateSignal(QString message);
     void updatePlayerStatusSignal(QString message);
     void playerInvitedSignal(QString message);
+    void gameUpdateSignal(QString message);
+    void leftSignal(QString message);
+
 public slots:
     void loginWithPassword(QString* uname,QString* password);
     void loginWithPicture(QString* uname,QByteArray* picture);
@@ -56,12 +59,15 @@ public slots:
     void gameStarted();
     void gameEnded(QString *win_team, QList<Player*> *players);
     void gameAborted();
-    void joined(QString* player, QString* team);
-    void left(QString* player, QString* team, QString* game);
+    void joined(QString* player, QString* team, int teamA, int teamB);
+    void left(QString* player, QString* team, QString* game, int teamA, int teamB);
     //emitted if the shooter misses, contains shooter
     void miss(QString* shooter);
     //emits a signal containing shooter, targets id, damage as int from 1-100
     void hit(QString* shooter, QString* target, int damage);
+    void gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QString* shooter,
+                    QString* target, int health, bool alive);
+
 
 private:
     void clearGameData();

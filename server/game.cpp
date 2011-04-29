@@ -19,9 +19,8 @@ game::game(QString *id, QObject *parent,Server *s) :
     _timer->setSingleShot(true);
     _game_id = id;
     connect(_timer,SIGNAL(timeout()), this, SLOT(endGame()));
-    connect(this,SIGNAL(durationChanged()),this,SLOT(onGameChange()));
-    connect(this,SIGNAL(joined(QString*,QString*)),this,SLOT(onGameChange()));
-    connect(this, SIGNAL(left(QString*,QString*)),this,SLOT(onGameChange()));
+    connect(this,SIGNAL(joined(QString*,QString*,int,int)),this,SLOT(onGameChange()));
+    connect(this, SIGNAL(left(QString*,QString*,QString*,int,int)),this,SLOT(onGameChange()));
     connect(this, SIGNAL(destroyed()),this,SLOT(onDelete()));
     server = s;
 }
@@ -74,14 +73,36 @@ void game::addTeam(QString *team){
 /*
  Join a team in this game
  */
-void game::joinTeam(QString* player,QString* team){
+void game::joinTeam(QString* player,QString* team) {
     if(*player == NULL || *team == NULL){
         return;
     }
-    if(_players->keys().size() < getMaxPlayers() && _teams->contains(team)){
+    if(_players->keys().size() < getMaxPlayers() && _teams->contains(team)) {
         _players->insert(player,team);
         _teams->insert(team, _teams->value(team) + 1);
-        emit joined(player,team);
+
+        int aTotal=0, bTotal=0;
+        for(int i=0;i<_players->size();i++) {
+            if(_players->value(_players->keys().at(i))->compare("teamA") == 0)
+               aTotal++;
+            else
+               bTotal++;
+        }
+        emit joined(player,team, aTotal, bTotal);
+    }
+    if(_players->keys().size() < getMaxPlayers() && !(_teams->contains(team))) {
+        addTeam(team);
+        _players->insert(player,team);
+        _teams->insert(team, _teams->value(team) + 1);
+
+        int aTotal=0, bTotal=0;
+        for(int i=0;i<_players->size();i++) {
+            if(_players->value(_players->keys().at(i))->compare("teamA") == 0)
+               aTotal++;
+            else
+               bTotal++;
+        }
+        emit joined(player,team, aTotal, bTotal);
     }
 }
 /*
@@ -93,7 +114,16 @@ void game::leaveGame(QString *id){
         int teams = _teams->value(team) - 1;
         if(teams < 0) teams = 0;
         _teams->insert(team, teams);
-        emit left(id,team, _game_id);
+
+        int aTotal=0, bTotal=0;
+        for(int i=0;i<_players->size();i++) {
+            if(_players->value(_players->keys().at(i))->compare("teamA") == 0)
+               aTotal++;
+            else
+               bTotal++;
+        }
+
+        emit left(id,team, _game_id, aTotal, bTotal);
     }
 }
 
@@ -179,6 +209,30 @@ void game::shot(QByteArray* image, QString* player){
 
             }
             emit hit(player, &victim, amount);
+            int aAlive=0, bAlive=0, aTotal=0, bTotal=0;
+            QString* tmpName;
+            //bool tmpAlive;
+            int tmpHealth;
+            for(int i=0;i<_players->size();i++) {
+                tmpName = _players->keys().at(i);
+                tmpHealth = PlayerFactory::getPlayer(tmpName)->health;
+                if(_players->value(tmpName)->compare("teamA") == 0) {
+                   aTotal++;
+                    if (tmpHealth > 0)
+                       aAlive++;
+                }
+                else {
+               bTotal++;
+               if(tmpHealth > 0)
+                   bAlive++;
+               }
+            }
+            if(PlayerFactory::getPlayer(&victim)->health > 0)
+                emit gameUpdate(aAlive, aTotal, bAlive, bTotal, player, &victim,
+                                PlayerFactory::getPlayer(&victim)->health, true);
+            else
+                emit gameUpdate(aAlive, aTotal, bAlive, bTotal, player, &victim,
+                                PlayerFactory::getPlayer(&victim)->health, false);
         } else {
 			emit miss(player);
 		}
@@ -218,7 +272,7 @@ QString* game::getWinningTeam(){
         hash->insert((*i), (val+ 1));
     }
     list = hash->keys();
-    QString *team;
+    QString *team = new QString("teamA");
     int alive = 0;
     for(QList<QString*>::const_iterator i = list.begin();i != list.end();i++){
         int tmp = hash->value((*i));

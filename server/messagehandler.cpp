@@ -12,6 +12,7 @@ MessageHandler::MessageHandler(QTcpSocket *socket)
 }
 
 void MessageHandler::sendMessage(QString message){
+    qDebug() << "sending:"<< message;
     QByteArray block;
     QDataStream out(&block, QIODevice::ReadWrite);
     //out.setVersion(QDataStream::Qt_4_7);
@@ -25,7 +26,7 @@ void MessageHandler::sendMessage(QString message){
 }
 
 void MessageHandler::sendMessageSlot(QString message){
-    sendMessage(message);
+    sendMessage(user+";"+message);
 }
 
 void MessageHandler::loggedOut(QString* id){
@@ -50,10 +51,13 @@ void MessageHandler::readMessage(){
     QString message;
 //    qDebug() << "bytesAvailable is "<< tcpsocket->bytesAvailable();
     in >> message;
-
+     qDebug() << message;
     messageParts = message.split(";");
 
-    // messageParts[0] is always the USERNAME
+    // messageParts[0] is always the
+
+    user=messageParts[0];
+
     if (messageParts.length()>1){
         Player* user=PlayerFactory::getPlayer(&messageParts[0]);
         if (user!=NULL){
@@ -69,7 +73,7 @@ void MessageHandler::readMessage(){
             connect(this,SIGNAL(gameStart(QString*)),user,SLOT(gameStart(QString*)));
             //player to message handler
             connect(user,SIGNAL(loggedInSignal(QString)),this,SLOT(sendMessageSlot(QString)));
-            connect(user,SIGNAL(loggedOutSignal()),this,SLOT(loggedOut()));
+            connect(user,SIGNAL(loggedOutSignal(QString*)),this,SLOT(loggedOut(QString*)));
             connect(user,SIGNAL(gameCreatedSignal(QString)),this,SLOT(sendMessageSlot(QString)));
             connect(user,SIGNAL(gameInfoSignal(QString)),this,SLOT(sendMessageSlot(QString)));
             connect(user,SIGNAL(joinedSignal(QString)),this,SLOT(sendMessageSlot(QString)));
@@ -80,6 +84,7 @@ void MessageHandler::readMessage(){
             connect(user,SIGNAL(updateSignal(QString)),this,SLOT(sendMessageSlot(QString)));
             connect(user,SIGNAL(updatePlayerStatusSignal(QString)),this,SLOT(sendMessageSlot(QString)));
             connect(user,SIGNAL(playerInvitedSignal(QString)),this,SLOT(sendMessageSlot(QString)));
+            connect(user,SIGNAL(gameUpdateSignal(QString)),this,SLOT(sendMessageSlot(QString)));
 
             if (messageParts[1] == "SHOOT") {
                 QByteArray image;
@@ -100,16 +105,18 @@ void MessageHandler::readMessage(){
                 emit loginWithPicture(&(messageParts[0]),&image);
             }
             if (messageParts[1]=="LOGINPASSWD"){
+                qDebug("handlering login message");
                 if (messageParts.length()==3)
                    emit loginWithPassword(&(messageParts[0]),&(messageParts[2]));
+                qDebug("after emit login message");
             }
             if (messageParts[1]=="GAMELIST"){
                 QList<QString*> games=GameFactory::getGameIds();
                 QString message("GAMELIST;");
-                for(int i;i<games.size();i++){
+                for(int i=0;i<games.size();i++){
                     message.append(games.at(i));
                 }
-                sendMessage(message);
+                sendMessage(messageParts[0]+";"+message);
                 //emit gamelist(&(messageParts[0]));
             }
             if (messageParts[1]=="LOGOUT"){
@@ -131,13 +138,14 @@ void MessageHandler::readMessage(){
             }
             if (messageParts[1] == "JOINTEAM") {
                 if (messageParts.length()==3){
+                    qDebug() << "messagehandler join start";
                     emit joinTeam(&(messageParts[0]),&(messageParts[2]));
+                    qDebug() << "messagehandler join end";
                 }
             }
             if (messageParts[1] == "GAMESTART") {
                 emit gameStart(&(messageParts[0]));
             }
-        else qDebug("unknown OPCODE");
         }
     }
 }

@@ -45,13 +45,14 @@ signals:
     void gameStarted();
     void gameEnded(QString *win_team, QList<QString*> *players);
     void gameCanceled();
-    void joined(QString* player, QString* team);
-    void left(QString* player, QString* team, QString* game);
+    void joined(QString* player, QString* team, int teamA, int teamB);
+    void left(QString* player, QString* team, QString* game, int teamA, int teamB);
     //emitted if the shooter misses, contains shooter
     void miss(QString* shooter);
     //emits a signal containing shooter, targets id, damage as int from 1-100
     void hit(QString* shooter, QString* target, int damage);
     void gameInfo(QString* gameid, int duration, QHash<QString*, int> *teams);
+    void gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QString* shooter, QString* target, int health,bool alive);
 
 private:
     QString* getWinningTeam();
