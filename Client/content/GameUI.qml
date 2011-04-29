@@ -20,6 +20,15 @@ Item {
         color: "blue"
     }
 
+    Text {
+        id: gameTime
+        font.pixelSize: 20
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        text: "Time: "
+        color: "blue"
+    }
+
     Connections {
             target: client
             onOnTarget: {
@@ -34,12 +43,12 @@ Item {
             target: client
             onGameUpdate: {
                 if (isSelfKilled == "true") {
-                   battleInfo.text = "Battle Info: Time: " + gameTime + " TeamA: " + noOfTeamALeft
+                   battleInfo.text = "Battle Info: " + " TeamA: " + noOfTeamALeft
                                    + " TeamB: " + noOfTeamBLeft + "   " + shooter  + " shot at "
                                    + beShotOne + "(" + health + ")" + " Your Status: " + "alive"
                 }
                 else {
-                    battleInfo.text = "Battle Info: Time: " + gameTime + " TeamA: " + noOfTeamALeft
+                    battleInfo.text = "Battle Info: " + " TeamA: " + noOfTeamALeft
                                     + " TeamB: " + noOfTeamBLeft + "   " + shooter  + " shot at "
                                     + beShotOne + "(" + health + ")" + " Your Status: " + "dead"
                     aiming.enabled = false
@@ -49,6 +58,13 @@ Item {
                     trigger.enabled = false
                     trigger.visible = false
                 }
+            }
+    }
+
+    Connections {
+            target: client
+            onGameTime: {
+                gameTime.text = "Time: " + remainingTime
             }
     }
 

@@ -200,7 +200,6 @@ Rectangle {
                                 listGameNoOfTeamAForCreator.text = "Players of Team A: " + noOfTeamA
                                 listGameNoOfTeamBForCreator.text = "Players of Team B: " + noOfTeamB
                                 listGameTimeForCreator.text = "Time(s): " + gameTime
-
                                 listGameViewForCreator.visible = true
                                 hostGameView.visible = false
                             }
