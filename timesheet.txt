@@ -42,3 +42,8 @@
 	new match functions
 2011-04-23 12:15-17:30
 	integration
+2011-04-27 15:00-18:20
+	integration
+	improve ImageDetectionHelper
+2011-04-29 12:15-
+	improve ImageDetectionHelper
