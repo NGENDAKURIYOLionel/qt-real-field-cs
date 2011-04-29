@@ -27,7 +27,10 @@ bool Player::inGame(){
 }
 
 void Player::loginWithPassword(QString* uname,QString* password){
-    std::string passwd = server->db->getPassword((*uname).toStdString());
+    qDebug("Player::loginwihPassword");
+    //std::string passwd = server->db->getPassword((*uname).toStdString());
+    std::string passwd = "aaa";
+    qDebug("test");
     if(passwd == (*password).toStdString()){
         cout<<"Login with password works!"<<endl;
         _logged = true;
@@ -66,7 +69,7 @@ void Player::createGame(QString* uname, QString* game_id, int duration){
         game* game = GameFactory::getGame(game_id);
         game->setCreator(uname);
         game->setDuration(duration);
-        emit gameCreatedSignal("GAMECREATED;");
+        emit gameCreatedSignal("GAMECREATED;true");
         return;
     }
 }
@@ -115,6 +118,8 @@ void Player::joinGame(QString* uname,QString* game_id){
         connect(game,SIGNAL(hit(QString*,QString*,int)), this, SLOT(hit(QString*,QString*,int)));
         connect(game, SIGNAL(destroyed()), this, SLOT(clearGameData()));
         connect(game, SIGNAL(left(QString*,QString*)), this, SLOT(left()));
+        connect(game, SIGNAL(gameUpdate(int,int,int,int,QString*,QString*,int,bool)), this,
+                SLOT(gameUpdate(int,int,int,int,QString*,QString*,int,bool)));
 
         _in_game = true;
         emit gameInfoSignal(game->getGameInfo());
@@ -122,7 +127,9 @@ void Player::joinGame(QString* uname,QString* game_id){
 }
 
 void Player::joinTeam(QString* uname,QString* teamId){
+    qDebug() << GameFactory::getGameIds().size();
     emit joinTeamSignal(uname,teamId);
+    qDebug() << "emit done";
 }
 
 void Player::leave(QString* uname){
@@ -170,19 +177,23 @@ void Player::clearGameData(){
     _in_game = false;
 }
 
-void Player::joined(QString* player, QString* team){
+void Player::joined(QString* player, QString* team, int teamA, int teamB){
     if(player->compare(_name) == 0){
         emit joinedSignal("TEAMJOINED;");
+
     }
+    emit joinedSignal(QString::number(teamA) + QString::number(teamB) + *player);
 }
 
-void Player::left(QString *player, QString *team, QString *game_id){
+void Player::left(QString *player, QString *team, QString *game_id, int teamA, int teamB){
     if(player->compare(_name) == 0){
         clearGameData();
         game* game = GameFactory::getGame(game_id);
         this->disconnect(game);
         game->disconnect(this);
     }
+
+    emit leftSignal(QString::number(teamA) + QString::number(teamB) + *player);
 }
 
 void Player::miss(QString* shooter){
@@ -206,4 +217,21 @@ void Player::hit(QString* shooter, QString* target, int damage){
             (this->_deaths)++;
         }
     }
+}
+
+void Player::gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QString *shooter, QString *target, int health, bool alive) {
+
+    QString tmp("GAMEUPDATE;");
+    tmp.append(QString::number(nofAliveA) + QString(";"));
+    tmp.append(QString::number(totalA) + QString(";"));
+    tmp.append(QString::number(nofAliveB) + QString(";"));
+    tmp.append(QString::number(totalB) + QString(";"));
+    tmp.append(*shooter + QString(";"));
+    tmp.append(*target + QString(";"));
+    tmp.append(QString::number(health) + QString(";"));
+    if(alive)
+        tmp.append("true;");
+    else
+        tmp.append("false;");
+    emit gameUpdateSignal(tmp);
 }

@@ -15,13 +15,14 @@ void PlayerConnectionThread::run()
         emit error(tcpSocket.error());
         return;
     }
-
+    qDebug("before messagehandler creation");
     MessageHandler handler(&tcpSocket);
+    qDebug("after messagehandler creation");
     connect(&tcpSocket,SIGNAL(readyRead()),&handler,SLOT(readMessage()));
 
     //tcpSocket.write(message.toAscii());
-    handler.sendMessage(message);
-
+    //handler.sendMessage(message);
+    qDebug("waiting for disconnected");
     tcpSocket.waitForDisconnected(600000);
     //std::cout << "disconnected" ;
 }

@@ -14,6 +14,7 @@ class MessageHandler : public QObject
 public:
     MessageHandler(QTcpSocket *socket);
     void sendMessage(QString message);
+    QString user;
 
 public slots:
     void readMessage();
