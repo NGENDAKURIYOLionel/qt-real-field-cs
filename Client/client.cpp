@@ -166,7 +166,9 @@ void Client::readMessage()
       }
       if (message[1]=="GAMECREATED"){
           if (message[2] == "true"){
-              emit gameCreateSuccess(_gameId, _gameTime, _noOfTeamA, _noOfTeamB);
+			  QString readableTime;
+	          readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
+              emit gameCreateSuccess(_gameId, readableTime, _noOfTeamA, _noOfTeamB);
           }
           else if (message[2] == "false")
              emit gameCreateFailed("Game setting error");
@@ -174,7 +176,10 @@ void Client::readMessage()
       if (message[1] == "GAMEINFO"){// && message.size() == 6) {
            _gameId= message[2];
            _gameTime = message[3].toInt();
-           emit joinGameInfo(message[2], message[3].toInt(), message[4], message[5], QString("you"),  _gameList.contains(_gameId));
+
+		   QString readableTime;
+	       readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
+           emit joinGameInfo(message[2], readableTime, message[4], message[5], QString("you"),  _gameList.contains(_gameId));
       }
       if (message[1] == "TEAMJOINED") {
            emit teamJoined(_gameId, _gameList.contains(_gameId));
@@ -187,10 +192,16 @@ void Client::readMessage()
 
       }
       if (message[1] == "USERJOIN"){// && message.size() == 6) {
-          emit joinGameInfo(_gameId, _gameTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
+
+		  QString readableTime;
+          readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
+          emit joinGameInfo(_gameId, readableTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
       if (message[1] == "USERLEAVE"){// && message.size() == 6) {
-          emit leaveGameInfo(_gameId, _gameTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
+
+		  QString readableTime;
+          readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
+          emit leaveGameInfo(_gameId, readableTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
       if (message[1] == "GAMEUPDATE"){// && message.size() == 10) {
           qDebug() << "gameupdate";

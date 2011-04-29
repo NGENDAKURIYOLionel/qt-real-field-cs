@@ -41,10 +41,10 @@ signals:
     void loginFailed();
 
     void gameList(QStringList list, int size);
-    void gameCreateSuccess(QString gameId, int gameTime, int noOfTeamA, int noOfTeamB);
+    void gameCreateSuccess(QString gameId, QString gameTime, int noOfTeamA, int noOfTeamB);
     void gameCreateFailed(QString error);
-    void joinGameInfo(QString gameId, int gameTime, QString noOfTeamA, QString noOfTeamB, QString joinUserName, bool isGameInList);
-    void leaveGameInfo(QString gameId, int gameTime, QString noOfTeamA, QString noOfTeamB, QString leaveUserName, bool isGameInList);
+    void joinGameInfo(QString gameId, QString gameTime, QString noOfTeamA, QString noOfTeamB, QString joinUserName, bool isGameInList);
+    void leaveGameInfo(QString gameId, QString gameTime, QString noOfTeamA, QString noOfTeamB, QString leaveUserName, bool isGameInList);
     void teamJoined(QString gameId, bool isGameInList);
     void startGame();
     void leaveGame();
