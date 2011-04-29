@@ -9,6 +9,7 @@
 #include <QString>
 #include <QVector>
 #include <QByteArray>
+#include <cmath>
 
 #define API_KEY "5f7a9cbd46993f8672eab2f8e2eb516b"
 #define API_SECRET "a88ae67f870e64c3e7abebee10585552"
@@ -24,7 +25,6 @@
 #define TAGS_SAVE_URL "/tags/save.json"
 
 #define IMAGE_CENTER 50.0
-#define MAXIMUM_DISTANCE 200.0
 
 ImageRecognitionHelper::ImageRecognitionHelper(std::string& api_namespace) {
 	if (api_namespace.empty()) throw;
@@ -45,6 +45,7 @@ static size_t response_callback(void* buffer, size_t size, size_t nmemb, void *u
 	return size*nmemb;
 }
 
+// TODO: increase tcp send window
 void ImageRecognitionHelper::post(std::string& post_data,
 								  std::string& post_url,
 								  Json::Value& decoded_response) {
@@ -56,7 +57,13 @@ void ImageRecognitionHelper::post(std::string& post_data,
 	curl_easy_setopt(easy_handle, CURLOPT_WRITEFUNCTION, response_callback);
 	curl_easy_setopt(easy_handle, CURLOPT_WRITEDATA, &response);
 	curl_easy_setopt(easy_handle, CURLOPT_URL, post_url.c_str());
+	clock_t start = clock();
 	if (curl_easy_perform(easy_handle) != CURLE_OK) throw IRH_ERROR_CURL;
+	clock_t end = clock();
+	std::cout << "face.com response time: "
+	          << (end-start)/(CLOCKS_PER_SEC/1000)
+	          << " ms"
+	          << std::endl;
 	if (easy_handle) curl_easy_cleanup(easy_handle);
 	Json::Reader json_reader;
 	if (!json_reader.parse(response, decoded_response, false)) throw IRH_ERROR_JSON;
@@ -75,13 +82,13 @@ void ImageRecognitionHelper::post_multipart(curl_httppost* post_data,
 	std::string response;
 	curl_easy_setopt(easy_handle, CURLOPT_WRITEFUNCTION, response_callback);
 	curl_easy_setopt(easy_handle, CURLOPT_WRITEDATA, &response);
-//	clock_t start = clock();
+	clock_t start = clock();
 	if (curl_easy_perform(easy_handle) != CURLE_OK) throw IRH_ERROR_CURL;
-//	clock_t end = clock();
-//	std::cout << "request: "
-//	          << (end-start)/(CLOCKS_PER_SEC/1000)
-//	          << " ms"
-//	          << std::endl;
+	clock_t end = clock();
+	std::cout << "face.com response time: "
+	          << (end-start)/(CLOCKS_PER_SEC/1000)
+	          << " ms"
+	          << std::endl;
 	if (easy_handle) curl_easy_cleanup(easy_handle);
 	curl_formfree(post_data);
 	curl_slist_free_all(headers);
@@ -215,9 +222,11 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	tid_response.assign(decoded_response["photos"][0u]["tags"][target_face]["tid"].asString());
 }
 
-double ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
+void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
                                              std::string jpeg_image,
-                                             Json::Value& matched_uids) {
+                                             Json::Value& matched_uids,
+                                             double& distance_from_center,
+                                             double& face_tag_size) {
 	std::string uids_comma_separated;
 	if (uids.size() < 1) throw;
 	uids_comma_separated += uids[0];
@@ -261,7 +270,10 @@ double ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	matched_uids = decoded_response["photos"][0u]["tags"][target_face]["uids"];
 	double x = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][target_face]["center"]["x"].asDouble();
 	double y = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][target_face]["center"]["y"].asDouble();
-	return x*x + y*y;
+	distance_from_center = sqrt(x*x + y*y);
+	double width = decoded_response["photos"][0u]["tags"][target_face]["width"].asDouble();
+	double height = decoded_response["photos"][0u]["tags"][target_face]["height"].asDouble();
+	face_tag_size = sqrt(width * height);
 }
 
 void ImageRecognitionHelper::faces_train(std::string& uid) {
@@ -288,8 +300,8 @@ void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg
 
 // TODO: estimate distance from tag width & height
 int ImageRecognitionHelper::match(std::string& response,
-                                   std::string& jpeg_image,
-                                   std::vector<std::string>& uids) {
+                                  std::string& jpeg_image,
+                                  std::vector<std::string>& uids) {
 	if (uids.size() < 1) throw;
 	if (jpeg_image.size() < 1) throw;
 	std::vector<std::string> uids_with_namespace(uids);
@@ -298,12 +310,23 @@ int ImageRecognitionHelper::match(std::string& response,
 	}
 	Json::Value uids_response;
 	try {
-		double distance = faces_recognize(uids_with_namespace, jpeg_image, uids_response);
+		double distance_from_center;
+		double face_tag_size;
+		faces_recognize(uids_with_namespace,
+		                jpeg_image,
+		                uids_response,
+		                distance_from_center,
+		                face_tag_size);
 //		std::cout << uids_response << std::endl; // DEBUG
 //		std::cout << "returned uids: " << uids_response << std::endl; // DEBUG
-		if (distance >= MAXIMUM_DISTANCE) {
+//		std::cout << face_tag_size << std::endl; // DEBUG
+		if (distance_from_center > face_tag_size) {
 			// closest face too far from center
-			std::cout << "missed: " << distance << std::endl; // DEBUG
+			std::cout << "missed: distance "
+			          << distance_from_center
+			          << " size "
+			          << face_tag_size
+			          << std::endl; // DEBUG
 			return -1;
 		}
 		unsigned matched_uids = uids_response.size();
@@ -366,8 +389,9 @@ int ImageRecognitionHelper::match(std::string& response,
 			best_uid.assign(uid_part);
 		}
 		response.assign(best_uid);
+		// TODO: calculate damage based on distance
 		// returned damage range: 0...MAXIMUM_DAMAGE
-		return (int)(MAXIMUM_DAMAGE*(MAXIMUM_DISTANCE - distance)/MAXIMUM_DISTANCE);
+		return (int)(MAXIMUM_DAMAGE*(face_tag_size - distance_from_center)/(face_tag_size));
 	} catch (errors_e e) {
 		switch (e) {
 		case IRH_ERROR_PHOTO_HAS_NO_FACES: return -1;

@@ -33,7 +33,7 @@ public:
 	// returns damage or -1 if no hit (also nothing is put into response if no hit)
 	int match(std::string& response, std::string& jpeg_image, std::vector<std::string>& uids);
 	int match_all(std::string& response, std::string& jpeg_image);
-	void account_users(std::vector<std::string>& response);
+	void account_users(std::vector<std::string>& response); // doesn't put anything in response at the moment
 	void account_limits();
 
 	// deprecated
@@ -49,7 +49,12 @@ private:
 	void post(std::string& post_data, std::string& post_url, Json::Value& decoded_response);
 	void post_multipart(curl_httppost* post_data, std::string& post_url, Json::Value& decoded_response);
 	void faces_detect(std::string& jpeg_image, std::string& tid_response);
-	double faces_recognize(std::vector<std::string>& uids, std::string jpeg_image, Json::Value& matched_uids);
+	void faces_recognize(
+	    std::vector<std::string>& uids,
+	    std::string jpeg_image,
+	    Json::Value& matched_uids,
+	    double& distance_from_center,
+	    double& face_tag_size);
 	void faces_train(std::string&);
 	void tags_remove(std::string&);
 	void tags_save(std::string&, std::string&);
