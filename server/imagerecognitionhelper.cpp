@@ -23,6 +23,10 @@
 #define TAGS_REMOVE_URL "/tags/remove.json"
 #define TAGS_SAVE_URL "/tags/save.json"
 
+#define IMAGE_CENTER 50.0
+#define MAXIMUM_DISTANCE 100.0
+#define MAXIMUM_DAMAGE 100.0
+
 ImageRecognitionHelper::ImageRecognitionHelper(std::string& api_namespace) {
 	if (api_namespace.empty()) throw;
 	current_namespace = std::string(api_namespace);
@@ -100,7 +104,7 @@ void ImageRecognitionHelper::account_users(std::vector<std::string>& response) {
 	std::string post_url(API_URL ACCOUNT_USERS_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-	std::cout << decoded_response;
+//	std::cout << decoded_response << std::endl;
 	if (decoded_response["status"].asString().compare("success")) {
 		throw IRH_ERROR_FACE_DOT_COM;
 	}
@@ -122,6 +126,37 @@ void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {
 	}
 }
 
+unsigned ImageRecognitionHelper::select_face(Json::Value& decoded_response) {
+//	std::cout << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
+	unsigned faces = decoded_response["photos"][0u]["tags"].size();
+	if (faces < 1) throw IRH_ERROR_PHOTO_HAS_NO_FACES;
+	unsigned target_face = 0;
+//	std::cout << decoded_response["photos"][0u]["tags"][target_face]["uids"] << std::endl; // DEBUG
+	if (faces > 1) {
+		double x = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][0u]["center"]["x"].asDouble();
+		double y = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][0u]["center"]["y"].asDouble();
+		double smallest_diff = x*x + y*y; // approx. without sqrt
+//		std::cout << smallest_diff
+//		          << " "
+//		          << decoded_response["photos"][0u]["tags"][target_face]["uids"]
+//		          << std::endl; // DEBUG
+		for (unsigned i = 1; i < faces; i++) {
+			x = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][i]["center"]["x"].asDouble();
+			y = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][i]["center"]["x"].asDouble();
+			double new_diff = x*x + y*y;
+//			std::cout << new_diff
+//			          << " "
+//			          << decoded_response["photos"][0u]["tags"][i]["uids"]
+//			          << std::endl; // DEBUG
+			if (new_diff < smallest_diff) {
+				smallest_diff = new_diff;
+				target_face = i;
+			}
+		}
+	}
+	return target_face;
+}
+
 void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& tid_response) {
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
@@ -133,6 +168,10 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	             CURLFORM_COPYNAME, "api_secret",
 	             CURLFORM_COPYCONTENTS, API_SECRET,
 	             CURLFORM_END);
+//	curl_formadd(&post_data, &last,
+//	             CURLFORM_COPYNAME, "detector",
+//	             CURLFORM_COPYCONTENTS, "Aggressive",
+//	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
 	             CURLFORM_COPYNAME, "file",
 	             CURLFORM_CONTENTTYPE, "image/jpeg",
@@ -165,24 +204,21 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 //	}
 
 	// pick first face found in photo
-	// TODO: check if face recognizable
 	// FIXME: check that the referenced object actually exists! (might return null)
 //	std::cout << decoded_response["photos"][0u]["tags"].size() << std::endl;
 //	std::cout << decoded_response << std::endl;
-	if (decoded_response["photos"][0u]["tags"].size() < 1) throw IRH_ERROR_PHOTO_HAS_NO_FACES;
-	unsigned faces = decoded_response["photos"][0u]["tags"].size();
+	unsigned target_face = select_face(decoded_response);
 
-	// TODO: if more than one face, pick the most likely (center of picture, best confidence, etc)
-	if (!decoded_response["photos"][0u]["tags"][0u]["recognizable"].asBool()) {
+	if (!decoded_response["photos"][0u]["tags"][target_face]["recognizable"].asBool()) {
 //		std::cout << decoded_response << std::endl;
 		throw IRH_ERROR_PHOTO_HAS_NO_RECOGNIZABLE_FACE;
 	}
-	tid_response.assign(decoded_response["photos"][0u]["tags"][0u]["tid"].asString());
+	tid_response.assign(decoded_response["photos"][0u]["tags"][target_face]["tid"].asString());
 }
 
-void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
+double ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
                                              std::string jpeg_image,
-                                             std::string& response) {
+                                             Json::Value& matched_uids) {
 	std::string uids_comma_separated;
 	if (uids.size() < 1) throw;
 	uids_comma_separated += uids[0];
@@ -216,11 +252,17 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
-	std::cout << decoded_response << std::endl;
+//	std::cout << decoded_response["photos"][0u]["tags"] << std::endl;
 	if (decoded_response["status"].asString().compare("success")) {
 		throw IRH_ERROR_FACE_DOT_COM;
 	}
-//	decoded_response["photos"][0u]["tags"].
+	unsigned target_face = select_face(decoded_response);
+//	face_response.assign(decoded_response["photos"][0u]["tags"][target_face].asString());
+//	decoded_response["photos"][0u]["tags"][target_face]["uids"];
+	matched_uids = decoded_response["photos"][0u]["tags"][target_face]["uids"];
+	double x = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][target_face]["center"]["x"].asDouble();
+	double y = IMAGE_CENTER - decoded_response["photos"][0u]["tags"][target_face]["center"]["y"].asDouble();
+	return x*x + y*y;
 }
 
 void ImageRecognitionHelper::faces_train(std::string& uid) {
@@ -245,7 +287,6 @@ void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg
 	faces_train(uid_with_namespace);
 }
 
-// TODO: ignore users from other namespaces
 int ImageRecognitionHelper::match(std::string& response,
                                    std::string& jpeg_image,
                                    std::vector<std::string>& uids) {
@@ -255,9 +296,80 @@ int ImageRecognitionHelper::match(std::string& response,
 	for (unsigned i = 0; i < uids_with_namespace.size(); i++) {
 		uids_with_namespace[i] += "@" + current_namespace;
 	}
-	std::string temp_response;
-	faces_recognize(uids_with_namespace, jpeg_image, temp_response);
-	return -1; // placeholder
+	Json::Value uids_response;
+	try {
+		double distance = faces_recognize(uids_with_namespace, jpeg_image, uids_response);
+		if (distance >= MAXIMUM_DISTANCE) return -1; // hit no-one
+//		std::cout << "returned uids: " << uids_response << std::endl; // DEBUG
+		unsigned matched_uids = uids_response.size();
+		if (matched_uids == 0) return -1; // no matched UIDs
+
+		boolean first_found = false;
+		unsigned i = 0;
+		std::string uid_part;
+		while (i < matched_uids) {
+			std::string temp_uid(uids_response[i]["uid"].asString());
+			unsigned index = temp_uid.find_first_of('@');
+			uid_part = temp_uid.substr(0, index);
+			std::string namespace_part = temp_uid.substr(index + 1); // @ should never be at the end
+//			std::cout << uid_part << " " << namespace_part << std::endl; // DEBUG
+			if (!namespace_part.compare(current_namespace)) {
+				// match_all
+				if (uids.size() == 1 && !uids[0].compare("all")) {
+					first_found = true;
+					break;
+				} else { // check that the uid is in the uids list
+					for (unsigned k = 0; k < uids.size(); k++) {
+						if (uid_part.compare(uids[k]) == 0) {
+							first_found = true;
+							break;
+						}
+					}
+				}
+			}
+			i++;
+		}
+		if (!first_found) return -1; // all matched UIDs have wrong namespace
+
+		std::string best_uid(uid_part);
+		int best_confidence = uids_response[i]["confidence"].asInt();
+//		std::cout << best_confidence << " " << best_uid << std::endl; // DEBUG
+		for (unsigned j = i; j < matched_uids; j++) {
+			std::string temp_uid(uids_response[j]["uid"].asString());
+			unsigned index = temp_uid.find_first_of('@');
+			std::string uid_part = temp_uid.substr(0, index);
+			std::string namespace_part = temp_uid.substr(index + 1);
+//			std::cout << uid_part << " " << namespace_part << std::endl; // DEBUG
+			if (namespace_part.compare(current_namespace)) continue; // wrong namespace
+			if (uids.size() != 1 || uids[0].compare("all")) {
+				boolean uid_found = false;
+				for (unsigned k = 0; k < uids.size(); k++) {
+					if (uid_part.compare(uids[k]) == 0) {
+						uid_found = true;
+						break;
+					}
+				}
+				if (!uid_found) continue; // uid wasn't in the uids list
+			}
+//			std::cout << uids_response[i]["confidence"].asInt()
+//			          << " "
+//			          << uids_response[i]["uid"].asString()
+//			          << std::endl; // DEBUG
+			int another_confidence = uids_response[j]["confidence"].asInt();
+			if (another_confidence < best_confidence) continue;
+			best_confidence = another_confidence;
+			best_uid.assign(uids_response[j]["uid"].asString());
+		}
+		response.assign(best_uid);
+		// returned damage range: 0...MAXIMUM_DAMAGE
+		return (int)(MAXIMUM_DAMAGE*(MAXIMUM_DISTANCE - distance)/MAXIMUM_DISTANCE);
+	} catch (errors_e e) {
+		switch (e) {
+		case IRH_ERROR_PHOTO_HAS_NO_FACES: return -1;
+		default: throw e;
+		}
+	}
+	return -1; // shouldn't be reachable
 }
 
 int ImageRecognitionHelper::match_all(std::string& response,

@@ -12,7 +12,7 @@ typedef enum {
 	FILE_NOT_FOUND
 } main_errors;
 
-void read_file(const char* src, std::string& target) {
+static void read_file(const char* src, std::string& target) {
 	FILE* f = fopen(src, "rb");
 	if (f == NULL) throw FILE_NOT_FOUND;
 #define BUFSIZE 4096
@@ -25,7 +25,7 @@ void read_file(const char* src, std::string& target) {
 	fclose(f);
 }
 
-void register_test(std::string& uid, std::string& picture) {
+static void register_test(std::string& uid, std::string& picture) {
 	clock_t start = clock();
 	std::cout << "registering user " << uid << std::endl;
 	std::string jpeg_picture_data;
@@ -48,18 +48,19 @@ void register_test(std::string& uid, std::string& picture) {
 			  << std::endl;
 }
 
-void users_test() {
+static void users_test() {
 	clock_t start = clock();
 	std::vector<std::string> r;
 	test_irh.account_users(r);
 	clock_t end = clock();
-	std::cout << "register: "
+	std::cout << "users: "
 			  << (end-start)/(CLOCKS_PER_SEC/1000)
 			  << " ms"
 			  << std::endl;
 }
 
-void match_test(std::string& picture, std::vector<std::string>& uids) {
+static void match_test(std::string& picture, std::vector<std::string>& uids) {
+	clock_t start = clock();
 	std::cout << "matching picture to users" << std::endl;
 //	for (unsigned i = 0; i < uids.size(); i++) {
 //		std::cout << uids[i] << std::endl;
@@ -72,12 +73,28 @@ void match_test(std::string& picture, std::vector<std::string>& uids) {
 		return;
 	}
 	std::string response;
-	test_irh.match(response, jpeg_picture_data, uids);
+	int damage = test_irh.match(response, jpeg_picture_data, uids);
+	if (damage < 0) std::cout << "no match" << std::endl;
+	else {
+		std::cout << "matched " << response << " with damage " << damage << std::endl;
+	}
+	clock_t end = clock();
+	std::cout << "match test: "
+			  << (end-start)/(CLOCKS_PER_SEC/1000)
+			  << " ms"
+			  << std::endl;
 }
 
 int dummy(int argc, char *argv[])
 //int main(int argc, char *argv[])
 {
+	try {
+		std::vector<std::string> users;
+		test_irh.account_users(users);
+	} catch (...) {
+		std::cout << "error using face.com - is your namespace set correctly?" << std::endl;
+		return 1;
+	}
 	if (argc > 1) {
 		std::string argv1(argv[1]);
 		if (!argv1.compare("register")) {

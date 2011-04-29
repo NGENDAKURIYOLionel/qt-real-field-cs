@@ -58,7 +58,14 @@ static void register_player(std::string& uid, std::string& picture) {
 int main(int argc, char *argv[])
 //int dummy(int argc, char *argv[])
 {
-	// TODO: register players
+	try {
+		std::vector<std::string> users;
+		irh.account_users(users);
+	} catch (...) {
+		std::cout << "error using face.com - is your namespace set correctly?" << std::endl;
+		return 1;
+	}
+
         /*std::vector<std::string> db_players;
 	db.getPlayers(&db_players);
 	if (db_players.size() == 0) {
@@ -71,10 +78,10 @@ int main(int argc, char *argv[])
         }*/
 
 	Server server;
-        /*QString uid = "test1";
-        QString passwd = "test1";
-        Player *p = new Player(&uid,0,&server);
-        p->loginWithPassword(&uid,&passwd);*/
+//	QString uid = "test1";
+//	QString passwd = "test1";
+//	Player *p = new Player(&uid,0,&server);
+//	p->loginWithPassword(&uid,&passwd);
 	QApplication app(argc, argv);
 	if (server.listen(QHostAddress::Any,8888)) {
 		std::cout << "server listening at port:" << server.serverPort() << std::endl;
