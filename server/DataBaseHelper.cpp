@@ -23,32 +23,36 @@ DataBaseHelper::DataBaseHelper() {
     if(db.open()) {
         QSqlQuery query;
         if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
-                      "Kills integer, " "Score integer, " "Deaths integer," "imagePath varchar(100))"))
+                      "Kills integer, " "Score integer, " "Deaths integer," "imagePath varchar(100))")) {
             cout<<"works"<<endl;
+            insertDummy();
+        }
         else
             cout<<"dint work"<<endl;
     }
     }
 
-    /*if(insertValues("test1","test1",11,11,11,"images.jpeg"))
-        cout<<"method works"<<endl;
-    else
-         cout<<"method dint work"<<endl;
-    if(insertValues("test2","test2",12,12,12,"images.jpeg"))
-        cout<<"method works"<<endl;
-    else
-         cout<<"method dint work"<<endl;
-    if(insertValues("test3","test3",13,13,13,"images.jpeg"))
-        cout<<"method works"<<endl;
-    else
-         cout<<"method dint work"<<endl;
-    if(insertValues("test4","test4",14,14,14,"images.jpeg"))
-        cout<<"method works"<<endl;
-    else
-         cout<<"method dint work"<<endl; */
-
     if(readFromDataBase())
         cout<<"true"<<endl;
+}
+
+void DataBaseHelper::insertDummy() {
+    if(insertValues("test1","test1",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
+    if(insertValues("test2","test2",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
+    if(insertValues("test3","test3",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
+    if(insertValues("test4","test4",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
 }
 
 bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths,QString imagePath) {
@@ -63,6 +67,8 @@ bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Sco
         return false;
     }
     }
+    else
+        return false;
 }
 
 bool DataBaseHelper::writeToDataBase() {
@@ -112,6 +118,8 @@ bool DataBaseHelper::readFromDataBase() {
             return true;
 
         }
+        else
+            return false;
 
     }
 
