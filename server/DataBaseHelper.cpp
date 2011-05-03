@@ -19,7 +19,7 @@ DataBaseHelper::DataBaseHelper() {
     db = QSqlDatabase::addDatabase("QSQLITE");
 
     db.setDatabaseName("test.db");
-    if(!(QFile::exists("test.db"))) {
+    /*if(!(QFile::exists("test.db"))) {
         if(db.open()) {
             QSqlQuery query;
             if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
@@ -35,12 +35,13 @@ DataBaseHelper::DataBaseHelper() {
           QSqlQuery query;
           if(query.exec("select count(*) from Player") == 0)
               insertDummy();
-    }
-
+    }*/
 
 
     if(readFromDataBase())
         cout<<"true"<<endl;
+    else
+        cout<<"did not really work"<<endl;
 }
 
 void DataBaseHelper::insertDummy() {
