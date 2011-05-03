@@ -51,8 +51,7 @@ private:
 
 	std::vector<PlayerInfo *> playerVector;
         QSqlDatabase db;
-
-
+        void insertDummy();
 };
 
 #endif /* DATABASEHELPER_H_ */
