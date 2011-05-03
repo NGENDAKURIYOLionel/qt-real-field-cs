@@ -46,7 +46,7 @@ public slots:
     void loginWithPassword(QString uname,QString password);
     void loginWithPicture(QString uname,QByteArray* picture);
     void logout(QString uname);
-    void createGame(QString uname, QString game_id, int duration);
+    void createGame(QString uname, QString game_id, int duration, int, int);
     void setTime(QString game_id, QDate* date);
     void setDuration(QString game_id, int duration);
     void invite(QString uname,QString targetName,QString game_id);

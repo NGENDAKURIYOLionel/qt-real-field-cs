@@ -12,7 +12,7 @@ MessageHandler::MessageHandler(QTcpSocket *socket)
 }
 
 void MessageHandler::sendMessage(QString message){
-    qDebug() << "sending:"<< message;
+    qDebug() << "sending: "<< message;
     QByteArray block;
     QDataStream out(&block, QIODevice::ReadWrite);
     //out.setVersion(QDataStream::Qt_4_7);
@@ -26,6 +26,7 @@ void MessageHandler::sendMessage(QString message){
 }
 
 void MessageHandler::sendMessageSlot(QString message){
+	qDebug() << "user" << user << "sending" << message;
     sendMessage(user+";"+message);
 }
 
@@ -65,7 +66,7 @@ void MessageHandler::readMessage(){
             connect(this,SIGNAL(loginWithPassword(QString,QString)),user,SLOT(loginWithPassword(QString,QString)));
             connect(this, SIGNAL(loginWithPicture(QString,QByteArray*)), user, SLOT(loginWithPicture(QString,QByteArray*)));
             connect(this,SIGNAL(logout(QString)),user,SLOT(logout(QString)));
-            connect(this,SIGNAL(createGame(QString,QString,int)),user,SLOT(createGame(QString,QString,int)));
+            connect(this,SIGNAL(createGame(QString,QString,int,int,int)),user,SLOT(createGame(QString,QString,int,int,int)));
             connect(this,SIGNAL(joinGame(QString,QString)),user,SLOT(joinGame(QString,QString)));
             connect(this,SIGNAL(joinTeam(QString,QString)),user,SLOT(joinTeam(QString,QString)));
             connect(this,SIGNAL(leave(QString)),user,SLOT(leave(QString)));
@@ -89,6 +90,7 @@ void MessageHandler::readMessage(){
             if (messageParts[1] == "SHOOT") {
                 QByteArray image;
                 in >> image;
+				qDebug() << __FILE__ << __LINE__ << __func__ << "recv SHOOT, image size " << image.size();
                 emit shoot((messageParts[0]), &image);
     //            // This is how to save received file to image
     //            QFile file("~/resized.jpg"); //write image to file image.jpg
@@ -124,8 +126,13 @@ void MessageHandler::readMessage(){
             }
             if (messageParts[1]=="CREATEGAME"){
                 if (messageParts.length()==6){
-                       //emit createGame(&(messageParts[0]),&(messageParts[2]),messageParts[3].toInt(), messageParts[4].toInt(), messageParts[5].toInt());
-                       emit createGame((messageParts[0]),(messageParts[2]),messageParts[3].toInt());
+					emit createGame(
+					            messageParts[0], // user name
+					            messageParts[2], // game id
+					            messageParts[3].toInt(), // duration
+					            messageParts[4].toInt(), // team A number of players
+					            messageParts[5].toInt()); // team B number of players
+//                       emit createGame((messageParts[0]),(messageParts[2]),messageParts[3].toInt());
                 }
             }
             if (messageParts[1] == "JOINGAME") {
