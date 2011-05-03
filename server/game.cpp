@@ -104,7 +104,7 @@ void game::joinTeam(QString player,QString team) {
             else
                bTotal++;
         }
-        emit joined(player,team, aTotal, bTotal);
+        emit joined(player,team, aTotal, bTotal); // crashed here
     }
 }
 /*
@@ -250,9 +250,14 @@ QString game::getGameId(){
 
 void game::onGameChange(){
     QHash<QString, int> *hash = _change_hash;
+//	qDebug << *_change_hash;
     hash->clear();
-    QList<QString>::const_iterator end = _teams->keys().end();
-    for(QList<QString>::const_iterator i = _teams->keys().begin();i != end;i++){
+	QList<QString> temp_list = _teams->keys();
+	qDebug() << __FILE__ << " " << __LINE__ << " " << __func__ << " " << temp_list;
+    for(QList<QString>::const_iterator i = temp_list.begin();i != temp_list.end(); i++){
+		// crash at dereferencing i
+//		qDebug() << *i;
+//		qDebug() << this->playersInTeam(*i);
         hash->insert(*i,this->playersInTeam(*i));
     }
     emit gameInfo(_game_id,getDuration(),hash);

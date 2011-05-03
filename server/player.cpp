@@ -28,8 +28,8 @@ bool Player::inGame(){
 
 void Player::loginWithPassword(QString uname,QString password){
     qDebug("Player::loginwihPassword");
-    std::string passwd = server->db->getPassword((uname).toStdString());
-    //std::string passwd = "aaa";
+//    std::string passwd = server->db->getPassword((uname).toStdString());
+    std::string passwd = "aaa";
     qDebug("test");
     if(passwd == password.toStdString()){
         cout<<"Login with password works!"<<endl;

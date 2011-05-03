@@ -14,7 +14,7 @@ std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
 
 // FIXME: needs to be deallocated somewhere?
-DataBaseHelper* db_global = new DataBaseHelper();
+//DataBaseHelper* db_global = new DataBaseHelper();
 
 typedef enum {
 	FILE_NOT_FOUND
@@ -61,12 +61,14 @@ int main(int argc, char *argv[])
 //int dummy(int argc, char *argv[])
 {
 	try {
+		std::cout << "contacting face.com" << std::endl;
 		std::vector<std::string> users;
 		irh.account_users(users);
 	} catch (...) {
 		std::cout << "error using face.com - is your namespace set correctly?" << std::endl;
 		return 1;
 	}
+	std::cout << "contacted face.com" << std::endl;
 
 //	std::vector<std::string> db_players;
 //	db_global->getPlayers(&db_players);
