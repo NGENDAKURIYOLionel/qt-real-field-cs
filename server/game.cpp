@@ -80,10 +80,12 @@ void game::joinTeam(QString player,QString team) {
     }
     if(_players->keys().size() < getMaxPlayers()) {
         if(!_teams->contains(team)) addTeam(team);
+        //add player to players
         _players->insert(player,team);
+        //add player to team, increments the player count
         _teams->insert(team, _teams->value(team) + 1);
         qDebug() << "game emitting joined";
-        emit joined(player,team, _teams->value("teamA"), _teams->value("teamB"));
+        emit joined(player,team, playersInTeam("teamA"), playersInTeam("teamB"));
     }
 }
 /*
@@ -115,17 +117,7 @@ int game::playersInTeam(QString team){
     if(_teams->contains(team)){
         return -1;
     }
-    //get the values as a list from the QHash
-    QList<QString> list = _players->values();
-    int size = list.size(), count = 0;
-    //go through the values
-    for(int i = 0; i < size; i++){
-        //if the team index is the same up the count
-        if(list.at(i).compare(team)){
-            count++;
-        }
-    }
-    return count;
+    return _teams->value(team);
 }
 /*
  Starts this game
