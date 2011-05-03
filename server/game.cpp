@@ -78,33 +78,12 @@ void game::joinTeam(QString player,QString team) {
     if(player == NULL || team == NULL){
         return;
     }
-    if(_players->keys().size() < getMaxPlayers() && _teams->contains(team)) {
+    if(_players->keys().size() < getMaxPlayers()) {
+        if(!_teams->contains(team)) addTeam(team);
         _players->insert(player,team);
         _teams->insert(team, _teams->value(team) + 1);
-
-        int aTotal=0, bTotal=0;
-        for(int i=0;i<_players->size();i++) {
-            if(_players->value(_players->keys().at(i)).compare("teamA") == 0)
-               aTotal++;
-            else
-               bTotal++;
-        }
         qDebug() << "game emitting joined";
-        emit joined(player,team, aTotal, bTotal);
-    }
-    if(_players->keys().size() < getMaxPlayers() && !(_teams->contains(team))) {
-        addTeam(team);
-        _players->insert(player,team);
-        _teams->insert(team, _teams->value(team) + 1);
-
-        int aTotal=0, bTotal=0;
-        for(int i=0;i<_players->size();i++) {
-            if(_players->value(_players->keys().at(i)).compare("teamA") == 0)
-               aTotal++;
-            else
-               bTotal++;
-        }
-        emit joined(player,team, aTotal, bTotal); // crashed here
+        emit joined(player,team, _teams->value("teamA"), _teams->value("teamB"));
     }
 }
 /*
@@ -120,9 +99,9 @@ void game::leaveGame(QString id){
         int aTotal=0, bTotal=0;
         for(int i=0;i<_players->size();i++) {
             if(_players->value(_players->keys().at(i)).compare("teamA") == 0)
-               aTotal++;
+                aTotal++;
             else
-               bTotal++;
+                bTotal++;
         }
 
         emit left(id,team, _game_id, aTotal, bTotal);
@@ -185,15 +164,15 @@ bool game::hasEnded(){
 void game::shot(QByteArray* image, QString player){
     try{
         extern ImageRecognitionHelper irh;
-		std::string temp_image(image->constData(), image->size());
-                std::string temp_player(_last_hit_player.toAscii().constData());
-                std::string irh_response;
-                vector<std::string> all_players;
-                QList<QString> list = _players->keys();
-                for(int i=0;i<_players->size();i++)
-                    all_players.push_back((list.at(i)).toStdString());
+        std::string temp_image(image->constData(), image->size());
+        std::string temp_player(_last_hit_player.toAscii().constData());
+        std::string irh_response;
+        vector<std::string> all_players;
+        QList<QString> list = _players->keys();
+        for(int i=0;i<_players->size();i++)
+            all_players.push_back((list.at(i)).toStdString());
 
-                int amount = irh.match(irh_response,temp_image,all_players);
+        int amount = irh.match(irh_response,temp_image,all_players);
         if(amount >= 0){
             QString victim = QString::fromStdString(irh_response);
             PlayerFactory::getPlayer(victim)->health -= amount;
@@ -219,15 +198,15 @@ void game::shot(QByteArray* image, QString player){
                 tmpName = _players->keys().at(i);
                 tmpHealth = PlayerFactory::getPlayer(tmpName)->health;
                 if(_players->value(tmpName).compare("teamA") == 0) {
-                   aTotal++;
+                    aTotal++;
                     if (tmpHealth > 0)
-                       aAlive++;
+                        aAlive++;
                 }
                 else {
-               bTotal++;
-               if(tmpHealth > 0)
-                   bAlive++;
-               }
+                    bTotal++;
+                    if(tmpHealth > 0)
+                        bAlive++;
+                }
             }
             if(PlayerFactory::getPlayer(victim)->health > 0)
                 emit gameUpdate(aAlive, aTotal, bAlive, bTotal, player, victim,
@@ -236,8 +215,8 @@ void game::shot(QByteArray* image, QString player){
                 emit gameUpdate(aAlive, aTotal, bAlive, bTotal, player, victim,
                                 PlayerFactory::getPlayer(victim)->health, false);
         } else {
-			emit miss(player);
-		}
+            emit miss(player);
+        }
     }catch(errors_e *e){
         std::cout << "ERROR MESSAGE: " << __FUNCTION__ << " : ImageRecognitionHelper raised an error: " << e << '\n';
         emit miss(player);
@@ -249,7 +228,7 @@ QString game::getGameId(){
 }
 
 void game::onGameChange(){
-    QHash<QString, int> *hash = _change_hash;
+    QHash<QString, int> hash = _change_hash;
 //	qDebug << *_change_hash;
     hash->clear();
 	QList<QString> temp_list = _teams->keys();
@@ -293,10 +272,10 @@ QString game::getWinningTeam(){
 
 QString game::getGameInfo(){
     QString str;
-    str.append("GAMEINFO;").append(_game_id).append(";").append(_duration);
+    str.append("GAMEINFO;").append(_game_id).append(";").append(QString("%1").arg(_duration));
     QList<QString> list = _teams->keys();
     for(QList<QString>::const_iterator i = list.begin();i != list.end();i++){
-        str.append(_teams->value(*i));
+        str.append(QString("%1").arg(_teams->value(*i)));
     }
     return str;
 }
