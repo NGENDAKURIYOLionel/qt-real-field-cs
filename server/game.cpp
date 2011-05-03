@@ -23,6 +23,8 @@ game::game(QString id, QObject *parent,Server *s) :
     connect(this, SIGNAL(left(QString,QString,QString,int,int)),this,SLOT(onGameChange()));
     connect(this, SIGNAL(destroyed()),this,SLOT(onDelete()));
     server = s;
+	addTeam("teamA");
+	addTeam("teamB");
 }
 
 QDate* game::getStartTime(){
@@ -92,6 +94,7 @@ void game::joinTeam(QString player,QString team) {
  Leave the game
  */
 void game::leaveGame(QString id){
+	qDebug() << __FILE__ << __LINE__ << __func__;
     QString team = _players->value(id);
     if(_players->remove(id) > 0){
         int teams = _teams->value(team) - 1;
@@ -114,15 +117,15 @@ void game::leaveGame(QString id){
  Return the number of players in the given team or -1 if no such team
  */
 int game::playersInTeam(QString team){
-    if(_teams->contains(team)){
-        return -1;
-    }
+//	qDebug() << __FILE__ << __LINE__ << __func__ << team;
+	Q_ASSERT(_teams->contains(team));
     return _teams->value(team);
 }
 /*
  Starts this game
  */
 void game::startGame(){
+	qDebug() << __FILE__ << __LINE__ << __func__;
     _timer->start();
     _ended = false;
     emit gameStarted();
@@ -154,6 +157,7 @@ bool game::hasEnded(){
 }
 
 void game::shot(QByteArray* image, QString player){
+	qDebug() << __FILE__ << __LINE__ << __func__ << "shoot slot " << image->size();
     try{
         extern ImageRecognitionHelper irh;
         std::string temp_image(image->constData(), image->size());
@@ -165,6 +169,7 @@ void game::shot(QByteArray* image, QString player){
             all_players.push_back((list.at(i)).toStdString());
 
         int amount = irh.match(irh_response,temp_image,all_players);
+		qDebug() << __FILE__ << __LINE__ << __func__ << amount; // DEBUG
         if(amount >= 0){
             QString victim = QString::fromStdString(irh_response);
             PlayerFactory::getPlayer(victim)->health -= amount;
@@ -266,8 +271,15 @@ QString game::getGameInfo(){
     QString str;
     str.append("GAMEINFO;").append(_game_id).append(";").append(QString("%1").arg(_duration));
     QList<QString> list = _teams->keys();
-    for(QList<QString>::const_iterator i = list.begin();i != list.end();i++){
-        str.append(QString("%1").arg(_teams->value(*i)));
-    }
+	Q_ASSERT(list.size() > 1);
+	for(QList<QString>::const_iterator i = list.begin();i != list.end();i++){
+		if (*i == "teamA") {
+			str.append(QString(";%1/%2").arg(_teams->value(*i)).arg(teamAplayers));
+		} else if (*i == "teamB") {
+			str.append(QString(";%1/%2").arg(_teams->value(*i)).arg(teamBplayers));
+		} else {
+			str.append(QString(";%1/%2").arg(_teams->value(*i)).arg(_max_players/2));
+		}
+	}
     return str;
 }

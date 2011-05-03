@@ -61,14 +61,16 @@ void Player::logout(QString uname){
     emit loggedOutSignal(_name);
 }
 
-void Player::createGame(QString uname, QString game_id, int duration){
+void Player::createGame(QString uname, QString game_id, int duration, int teamA, int teamB){
     if(GameFactory::exists(game_id)){
-        emit gameCreatedSignal("GAMECREATED;false");
+        //emit gameCreatedSignal("GAMECREATED;false"); // FIXME
         return;
     }else{
         game* game = GameFactory::getGame(game_id);
         game->setCreator(uname);
         game->setDuration(duration);
+		game->teamAplayers = teamA;
+		game->teamBplayers = teamB;
         emit gameCreatedSignal("GAMECREATED;true");
         joinGame(uname,game_id);
         return;
@@ -129,6 +131,7 @@ void Player::joinGame(QString uname,QString game_id){
 }
 
 void Player::joinTeam(QString uname,QString teamId){
+	qDebug() << __FILE__ << __LINE__ << __func__;
     qDebug() << GameFactory::getGameIds().size();
     emit joinTeamSignal(uname,teamId);
     qDebug() << "emit done, thread:" << thread();
@@ -147,13 +150,17 @@ void Player::cancel(QString uname){
 }
 
 void Player::shoot(QString uname,QByteArray* picture){
-    if(uname.compare(_name)){
-       emit shotSignal(picture, uname);
+	qDebug() << __FILE__ << __LINE__ << __func__ << "shoot slot " << picture->size();
+    if(uname.compare(_name) == 0){
+		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting shotSignal";
+		emit shotSignal(picture, uname);
     }
 }
 
 void Player::gameStart(QString uname){
-    if(uname.compare(_name)){
+	qDebug() << __FILE__ << __LINE__ << __func__ << uname;
+    if(uname.compare(_name) == 0){
+		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting startGameSignal()";
         emit startGameSignal();
     }
 }
@@ -202,13 +209,16 @@ void Player::left(QString player, QString team, QString game_id, int teamA, int 
 }
 
 void Player::miss(QString shooter){
+	qDebug() << __FILE__ << __LINE__ << __func__;
     if(shooter.compare(_name) == 0){
         //emit hitSignal(false,-1, NULL);
+		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting hitSignal";
         emit hitSignal("ONTARGET;false");
     }
 }
 
 void Player::hit(QString shooter, QString target, int damage){
+	qDebug() << __FILE__ << __LINE__ << __func__;
     if(shooter.compare(_name) == 0){
         if(damage >= _PLAYER_KILL_DAMAGE){
             (this->_kills)++;

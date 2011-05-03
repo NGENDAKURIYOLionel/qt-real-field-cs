@@ -29,6 +29,8 @@ public:
     QString getGameId();
     bool hasEnded();
     QString getGameInfo();
+	unsigned teamAplayers;
+	unsigned teamBplayers;
 public slots:
     void startGame();
     void endGame();
