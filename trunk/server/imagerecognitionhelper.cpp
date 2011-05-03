@@ -60,10 +60,10 @@ void ImageRecognitionHelper::post(std::string& post_data,
 	clock_t start = clock();
 	if (curl_easy_perform(easy_handle) != CURLE_OK) throw IRH_ERROR_CURL;
 	clock_t end = clock();
-	std::cout << "face.com response time: "
-	          << (end-start)/(CLOCKS_PER_SEC/1000)
-	          << " ms"
-	          << std::endl;
+//	std::cout << "face.com response time: "
+//	          << (end-start)/(CLOCKS_PER_SEC/1000)
+//	          << " ms"
+//	          << std::endl;
 	if (easy_handle) curl_easy_cleanup(easy_handle);
 	Json::Reader json_reader;
 	if (!json_reader.parse(response, decoded_response, false)) throw IRH_ERROR_JSON;
@@ -85,10 +85,10 @@ void ImageRecognitionHelper::post_multipart(curl_httppost* post_data,
 	clock_t start = clock();
 	if (curl_easy_perform(easy_handle) != CURLE_OK) throw IRH_ERROR_CURL;
 	clock_t end = clock();
-	std::cout << "face.com response time: "
-	          << (end-start)/(CLOCKS_PER_SEC/1000)
-	          << " ms"
-	          << std::endl;
+//	std::cout << "face.com response time: "
+//	          << (end-start)/(CLOCKS_PER_SEC/1000)
+//	          << " ms"
+//	          << std::endl;
 	if (easy_handle) curl_easy_cleanup(easy_handle);
 	curl_formfree(post_data);
 	curl_slist_free_all(headers);
@@ -332,7 +332,7 @@ int ImageRecognitionHelper::match(std::string& response,
 		unsigned matched_uids = uids_response.size();
 		if (matched_uids == 0) return -1; // no matched UIDs
 
-                bool first_found = false;
+		bool first_found = false;
 		unsigned i = 0;
 		std::string uid_part;
 		while (i < matched_uids) {
@@ -370,7 +370,7 @@ int ImageRecognitionHelper::match(std::string& response,
 //			std::cout << uid_part << " " << namespace_part << std::endl; // DEBUG
 			if (namespace_part.compare(current_namespace)) continue; // wrong namespace
 			if (uids.size() != 1 || uids[0].compare("all")) {
-                                bool uid_found = false;
+				bool uid_found = false;
 				for (unsigned k = 0; k < uids.size(); k++) {
 					if (uid_part.compare(uids[k]) == 0) {
 						uid_found = true;
