@@ -37,9 +37,8 @@ DataBaseHelper::DataBaseHelper() {
               insertDummy();
     }*/
 
-
     if(readFromDataBase())
-        cout<<"true"<<endl;
+        cout<<"read database works"<<endl;
     else
         cout<<"did not really work"<<endl;
 }
@@ -333,9 +332,9 @@ void DataBaseHelper::testfunction() {
 DataBaseHelper::~DataBaseHelper() {
 	// TODO Auto-generated destructor stub
     //delete &db;
-    for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+    /*for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
         delete *it;
-    }
+    }*/
     //delete &playerInvites;
 
 }

@@ -9,6 +9,7 @@
 #include "DataBaseHelper.h"
 #include "cstdio"
 #include "player.h"
+#include "playerfactory.h"
 
 std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
@@ -82,6 +83,9 @@ int main(int argc, char *argv[])
 //	}
 
 	Server server;
+        PlayerFactory::setServer(&server);
+
+        cout<<server.db->getPassword("test1")<<endl;
         /*QString uid = "test1";
         QString passwd = "test1";
         Player *p = new Player(uid,0,&server);

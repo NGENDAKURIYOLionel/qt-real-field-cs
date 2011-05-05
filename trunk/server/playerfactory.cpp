@@ -24,7 +24,7 @@ namespace PlayerFactory{
         if(exists(id)){
             return _players.value(&id);
         }else{
-            Player* player = new Player(id);
+            Player* player = new Player(id,0,server);
             _players.insert(&id,player);
             return player;
         }
