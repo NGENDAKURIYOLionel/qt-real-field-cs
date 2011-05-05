@@ -12,6 +12,7 @@ Client::Client(QWidget *parent)
 :   QDialog(parent), networkSession(0), _userName(""), _gameId(""), _alive("true"), nextBlockSize(0)
 {
     _timer = new QTimer(this);
+    connect(_timer, SIGNAL(timeout()), this, SLOT(update()));
     // find out which IP to connect to
     QString ipAddress;
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
@@ -346,7 +347,7 @@ QByteArray Client::resize(QString path)
 void Client::update() {
     QString readableTime;
      _countDown--;
-
+    qDebug() << __FILE__ << __LINE__ << __func__ << _countDown;
     readableTime.sprintf("%02d:%02d", _countDown / 60, _countDown % 60);
 
     if (_countDown == 0) {
