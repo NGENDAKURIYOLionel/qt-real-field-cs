@@ -25,7 +25,7 @@ Item {
     Connections {
             target: client
             onShowResult: {
-                result.text = winner + " Won"
+                result.text = winner
             }
     }
 

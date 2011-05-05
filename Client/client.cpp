@@ -122,6 +122,10 @@ void Client::readMessage()
 
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_7);
+    while(tcpSocket->bytesAvailable() > 0) {
+
+
+
     if (nextBlockSize == 0 ) {
         if(tcpSocket->bytesAvailable() < sizeof(quint32))
             return;
@@ -190,7 +194,8 @@ void Client::readMessage()
            emit startGame();
       }
       if (message[1] == "GAMESABORT") {
-
+           emit gameEnd();
+           emit showResult("Game Aborted");
       }
       if (message[1] == "USERJOIN"){// && message.size() == 6) {
 
@@ -219,7 +224,8 @@ void Client::readMessage()
       if (message[1] == "GAMEEND"){
           stopGameTimer();
           emit gameEnd();
-          emit showResult(message[2]);
+          emit showResult(message[2].append(" Won"));
+      }
       }
 }
 
@@ -245,7 +251,7 @@ void Client::sendMessage(QString message){
         if (messageList[2].size() > 6)
             error = error + "GameID is no more than 6 characters\n";
         int time = messageList[3].toInt();
-        if (time <= 60 || time >= 6000)
+        if (time <= 10 || time >= 6000)
             error = error + "Time is no less than 60 seconds and larger than 6000 seconds\n";
         int noTeamA =  messageList[4].toInt();
         if (noTeamA <= 0 || noTeamA > 20)
@@ -264,12 +270,14 @@ void Client::sendMessage(QString message){
         else{
             qDebug() << error;
              emit gameCreateFailed(error);
+             return;
         }
     }
 
      if (messageList[1]=="LEAVEGAME"){
          message.append(_gameId);
      }
+
 
     QByteArray block;
     QDataStream out(&block, QIODevice::ReadWrite);
@@ -279,8 +287,6 @@ void Client::sendMessage(QString message){
     out << quint32(block.size() - sizeof(quint32));
     qDebug() << "size of the message:" << block.size() - sizeof(quint32);
     tcpSocket->write(block);
-
-    //tcpSocket->write(message.toAscii());
 }
 
 void Client::sendImage(const QString &uName)
