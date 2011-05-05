@@ -266,6 +266,10 @@ void Client::sendMessage(QString message){
         }
     }
 
+     if (messageList[1]=="LEAVEGAME"){
+         message.append(_gameId);
+     }
+
     QByteArray block;
     QDataStream out(&block, QIODevice::ReadWrite);
     out.setVersion(QDataStream::Qt_4_7);

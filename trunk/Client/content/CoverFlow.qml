@@ -432,7 +432,7 @@ Rectangle {
                                     gameStartForCreator.opacity = 0.25
                                     itemClicked()
                                     listUserForCreator.text = ""
-                                    client.sendMessage(";LEAVEGAME;" + frontName.text)
+                                    client.sendMessage(";LEAVEGAME;")
                                 }
                             }
                         }
@@ -712,7 +712,7 @@ Rectangle {
                                     joinTeamA.opacity = 1.0
                                     joinTeamB.enabled = true
                                     joinTeamB.opacity = 1.0
-                                    client.sendMessage(";LEAVEGAME;" + frontName.text)
+                                    client.sendMessage(";LEAVEGAME;")
                                 }
                         }
                     }
