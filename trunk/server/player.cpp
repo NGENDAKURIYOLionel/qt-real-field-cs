@@ -16,6 +16,7 @@ Player::Player(QString id,QObject *parent,Server *s) :
     _alive = true;
     server = s;
     health = 100;
+    handler=NULL;
 }
 
 bool Player::loggedIn(){
@@ -36,10 +37,10 @@ void Player::loginWithPassword(QString uname,QString password){
     if(passwd.compare(password.toStdString()) == 0){
         cout<<"Login with password works!"<<endl;
         _logged = true;
-        emit loggedInSignal(QString("LOGIN;true"));
+        handler->sendMessageSlot(QString("LOGIN;true"));
     }else{
         cout<<"Login with password did not work!"<<endl;
-        emit loggedInSignal(QString("LOGIN;false"));
+        handler->sendMessageSlot(QString("LOGIN;false"));
     }
 }
 
@@ -51,21 +52,21 @@ void Player::loginWithPicture(QString uname, QByteArray* picture) {
     if(irh.match_all(response_uid, jpeg_image) >= 0){
 		// response_uid has a valid uid
         _logged = true;
-        emit loggedInSignal(QString("LOGIN;true"));
+        handler->sendMessageSlot(QString("LOGIN;true"));
     }else{
 		// response_uid is empty
-        emit loggedInSignal(QString("LOGIN;false"));
+        handler->sendMessageSlot(QString("LOGIN;false"));
     }
 }
 
 void Player::logout(QString uname){
     _logged = false;
-    emit loggedOutSignal(_name);
+    handler->loggedOut(_name);
 }
 
 void Player::createGame(QString uname, QString game_id, int duration, int teamA, int teamB){
     if(GameFactory::exists(game_id)){
-        //emit gameCreatedSignal("GAMECREATED;false"); // FIXME
+        handler->sendMessageSlot("GAMECREATED;false");
         return;
     }else{
         game* game = GameFactory::getGame(game_id);
@@ -73,7 +74,7 @@ void Player::createGame(QString uname, QString game_id, int duration, int teamA,
         game->setDuration(duration);
 		game->teamAplayers = teamA;
 		game->teamBplayers = teamB;
-        emit gameCreatedSignal("GAMECREATED;true");
+        handler->sendMessageSlot("GAMECREATED;true");
         joinGame(uname,game_id);
         return;
     }
@@ -98,7 +99,7 @@ void Player::setDuration(QString game_id, int duration){
 }
 
 void Player::invite(QString uname,QString target_name,QString game_id){
-    //TODO invites to database and emit to players
+    //TODO invites to database and handler->sendMessageSlotto players
     //bool res = DataBaseHelper::sendInvite(uname, target_name, game_id);
     //if(res){
     //  emit playerInvitedSignal(uname,target, game);
@@ -108,6 +109,7 @@ void Player::invite(QString uname,QString target_name,QString game_id){
 void Player::joinGame(QString uname,QString game_id){
     if(GameFactory::exists(game_id)){
         qDebug() << "joingame in player" << game_id;
+        qDebug() << "joingame in player,player=" << this;
         game* game = GameFactory::getGame(game_id);
         connect(this, SIGNAL(abortGameSignal()),game,SLOT(cancelGame()));
         connect(this, SIGNAL(endGameSignal()),game,SLOT(endGame()));
@@ -128,12 +130,13 @@ void Player::joinGame(QString uname,QString game_id){
                 SLOT(gameUpdate(int,int,int,int,QString,QString,int,bool)));
 
         _in_game = true;
-        emit gameInfoSignal(game->getGameInfo());
+        handler->sendMessageSlot(game->getGameInfo());
     }
 }
 
 void Player::joinTeam(QString uname,QString teamId){
 	qDebug() << __FILE__ << __LINE__ << __func__;
+        qDebug() << "jointeam in player,player=" << this;
     qDebug() << GameFactory::getGameIds().size();
     emit joinTeamSignal(uname,teamId);
     qDebug() << "emit done, thread:" << thread();
@@ -146,9 +149,13 @@ void Player::leave(QString uname){
 }
 
 void Player::cancel(QString uname){
-    if(uname.compare(_name)){
+    qDebug() <<"player cancel start";
+    if(uname.compare(_name)==0){
+        qDebug() <<"player cancel inside loop start";
         emit abortGameSignal();
+        qDebug() <<"player cancel inside loop end";
     }
+    qDebug() <<"player cancel end";
 }
 
 void Player::shoot(QString uname,QByteArray* picture){
@@ -170,18 +177,19 @@ void Player::gameStart(QString uname){
 void Player::gameStarted(){
     _alive = true;
     //TODO maybe empty kills etc
-    emit gameStartedSignal("GAMESTARTED;");
+    handler->sendMessageSlot("GAMESTARTED;");
 }
 
 void Player::gameEnded(QString win_team, QList<QString> *players){
     //emit gameEndedSignal(win_team,players);
     QString temp("GAMEEND;");
     temp.append(win_team);
-    emit gameEndedSignal(temp);
+    handler->sendMessageSlot(temp);
 }
 
 void Player::gameAborted(){
-    emit gameAbortedSignal("GAMEABORT;");
+    qDebug() <<"player aborted received";
+    handler->sendMessageSlot("GAMEABORT;");
 }
 
 void Player::clearGameData(){
@@ -193,10 +201,10 @@ void Player::joined(QString player, QString team, int teamA, int teamB){
     qDebug() << "player emitting joined player" << player ;
     if(player.compare(_name) == 0){
         qDebug() << "real emit from player";
-        emit joinedSignal("TEAMJOINED;");
+        handler->sendMessageSlot("TEAMJOINED;");
 
     }
-    emit joinedSignal(QString::number(teamA) + QString::number(teamB) + player);
+    handler->sendMessageSlot("USERJOIN;"+QString::number(teamA) +";" +QString::number(teamB) + ";"+player);
 }
 
 void Player::left(QString player, QString team, QString game_id, int teamA, int teamB){
@@ -207,7 +215,7 @@ void Player::left(QString player, QString team, QString game_id, int teamA, int 
         game->disconnect(this);
     }
 
-    emit leftSignal(QString::number(teamA) + QString::number(teamB) + player);
+    handler->sendMessageSlot("USERLEAVE;"+QString::number(teamA) +";"+ QString::number(teamB) +";"+ player);
 }
 
 void Player::miss(QString shooter){
@@ -215,7 +223,7 @@ void Player::miss(QString shooter){
     if(shooter.compare(_name) == 0){
         //emit hitSignal(false,-1, NULL);
 		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting hitSignal";
-        emit hitSignal("ONTARGET;false");
+        handler->sendMessageSlot("ONTARGET;false");
     }
 }
 
@@ -228,7 +236,7 @@ void Player::hit(QString shooter, QString target, int damage){
         }
         //emit hitSignal(true, damage, target);
         QString temp("ONTARGET;true;");
-        emit hitSignal(temp.append(target));
+        handler->sendMessageSlot(temp.append(target));
     }else if(target.compare(_name) == 0){
         if(damage >= _PLAYER_KILL_DAMAGE){
             (this->_deaths)++;
@@ -250,5 +258,9 @@ void Player::gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QS
         tmp.append("true;");
     else
         tmp.append("false;");
-    emit gameUpdateSignal(tmp);
+    handler->sendMessageSlot(tmp);
+}
+
+void Player::setHandler(MessageHandler* mh){
+    handler=mh;
 }
