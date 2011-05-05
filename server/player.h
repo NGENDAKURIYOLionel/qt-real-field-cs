@@ -6,6 +6,7 @@
 #include <QHash>
 #include <QByteArray>
 #include "server.h"
+#include "messagehandler.h"
 #define _PLAYER_KILL_DAMAGE 100
 
 class Player : public QObject
@@ -17,6 +18,7 @@ public:
     bool inGame();
     int  health;
     bool _alive;
+    void setHandler(MessageHandler* mh);
 
 signals:
     //Game side
@@ -78,6 +80,7 @@ private:
     bool _in_game;
     QString _name;
     Server *server;
+    MessageHandler *handler;
 };
 
 #endif // PLAYER_H

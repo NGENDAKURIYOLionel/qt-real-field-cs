@@ -7,6 +7,7 @@
 #include "server.h"
 #include "messagehandler.h"
 
+
 namespace PlayerFactory{
     bool exists(QString id);
     Player* getPlayer(QString id);

@@ -134,6 +134,7 @@ void game::startGame(){
  Ends this game
  */
 void game::endGame(){
+    qDebug() << "game ended";
     _timer->stop();
     _ended = true;
     QString win_team = getWinningTeam();
@@ -145,9 +146,11 @@ void game::endGame(){
  Game also ends if it's canceled
  */
 void game::cancelGame(){
+    qDebug() <<"game cancel start";
     _timer->stop();
     _ended = true;
     emit gameCanceled();
+    qDebug() <<"game cancel end";
 }
 /*
  Returns true if this game has ended
@@ -225,7 +228,7 @@ QString game::getGameId(){
 }
 
 void game::onGameChange(){
-    QHash<QString, int> *hash = _change_hash;
+    QHash<QString, int>* hash = _change_hash;
 //	qDebug << *_change_hash;
     hash->clear();
 	QList<QString> temp_list = _teams->keys();

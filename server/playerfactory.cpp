@@ -1,7 +1,7 @@
 #include "playerfactory.h"
 namespace PlayerFactory{
     namespace{
-        QHash<QString*, Player*> _players;
+        QHash<QString, Player*> _players;
         QObject _root;
         Server *server;
     }
@@ -14,7 +14,7 @@ namespace PlayerFactory{
         if(id == NULL){
             return false;
         }
-        return _players.contains(&id);
+        return _players.contains(id);
     }
 
     Player* getPlayer(QString id){
@@ -22,10 +22,10 @@ namespace PlayerFactory{
             return NULL;
         }
         if(exists(id)){
-            return _players.value(&id);
+            return _players.value(id);
         }else{
             Player* player = new Player(id,0,server);
-            _players.insert(&id,player);
+            _players.insert(id,player);
             return player;
         }
     }
@@ -34,11 +34,11 @@ namespace PlayerFactory{
         if(id == NULL){
             return;
         }
-        Player *player = _players.value(&id);
+        Player *player = _players.value(id);
         if(player->inGame() == false){
             player->disconnect(handler);
             handler->disconnect(player);
-            _players.remove(&id);
+            _players.remove(id);
            delete player;
         }
     }
