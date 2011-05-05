@@ -63,7 +63,7 @@ Rectangle {
                            fontSize: 22
                            //text: "    Server IP Address"
                            //text: "86.50.129.148"
-                           text: "86.50.129.205"
+                           text: "86.50.139.110"
                            echoMode: TextInput.Normal
                        }
            }
