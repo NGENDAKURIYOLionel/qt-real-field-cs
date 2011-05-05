@@ -230,6 +230,10 @@ Rectangle {
                             console.log(frontName.text)
                             console.log(gameId)
 
+                            joinTeamAForCreator.enabled = false
+                            joinTeamAForCreator.opacity = 0.5
+                            joinTeamBForCreator.enabled = false
+                            joinTeamBForCreator.opacity = 0.5
                             gameReadyForCreator.enabled = false
                             gameReadyForCreator.opacity = 0.5
                         }
@@ -238,6 +242,10 @@ Rectangle {
                             console.log(frontName.text)
                             console.log(gameId)
 
+                            joinTeamA.enabled = false
+                            joinTeamA.opacity = 0.5
+                            joinTeamB.enabled = false
+                            joinTeamB.opacity = 0.5
                             gameReady.enabled = false
                             gameReady.opacity = 0.5
                         }
@@ -432,7 +440,7 @@ Rectangle {
                                     gameStartForCreator.opacity = 0.25
                                     itemClicked()
                                     listUserForCreator.text = ""
-                                    client.sendMessage(";LEAVEGAME;")
+                                    client.sendMessage(";GAMEABORT;")
                                 }
                             }
                         }
