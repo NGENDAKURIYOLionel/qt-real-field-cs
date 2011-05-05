@@ -225,7 +225,7 @@ QString game::getGameId(){
 }
 
 void game::onGameChange(){
-    QHash<QString, int> hash = _change_hash;
+    QHash<QString, int> *hash = _change_hash;
 //	qDebug << *_change_hash;
     hash->clear();
 	QList<QString> temp_list = _teams->keys();

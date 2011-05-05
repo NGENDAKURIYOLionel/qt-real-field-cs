@@ -82,10 +82,10 @@ int main(int argc, char *argv[])
 //	}
 
 	Server server;
-//	QString uid = "test1";
-//	QString passwd = "test1";
-//	Player *p = new Player(&uid,0,&server);
-//	p->loginWithPassword(&uid,&passwd);
+        /*QString uid = "test1";
+        QString passwd = "test1";
+        Player *p = new Player(uid,0,&server);
+        p->loginWithPassword(uid,passwd);*/
 	QApplication app(argc, argv);
 	if (server.listen(QHostAddress::Any,8888)) {
 		std::cout << "server listening at port:" << server.serverPort() << std::endl;
