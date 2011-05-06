@@ -165,8 +165,15 @@ void Client::readMessage()
               emit loginFailed();
       }
      if (message[1]=="GAMELIST"){
-          for (int i = 2; i < message.size()-1; i++)
-              _gameList.append(message[i]);
+          for (int i = 2; i < message.size(); i++){
+              if (message[i].isNull())
+                  continue;
+              else
+                  _gameList.append(message[i]);
+          }
+          foreach(QString tmp, _gameList)
+              qDebug() << tmp;
+
           emit gameList(_gameList, _gameList.size());
       }
       if (message[1]=="GAMECREATED"){
