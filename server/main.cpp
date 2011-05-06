@@ -15,7 +15,7 @@ std::string current_namespace(NAMESPACE_NAME);
 ImageRecognitionHelper irh(current_namespace);
 
 // FIXME: needs to be deallocated somewhere?
-//DataBaseHelper* db_global = new DataBaseHelper();
+DataBaseHelper* db_global = new DataBaseHelper();
 
 typedef enum {
 	FILE_NOT_FOUND
@@ -34,13 +34,19 @@ static void read_file(const char* src, std::string& target) {
 	fclose(f);
 }
 
-static void register_player(std::string& uid, std::string& picture) {
+static void register_player(std::string& uid, std::string& picture, std::vector<std::string>& users) {
+	for (unsigned i = 0; i < users.size(); i++) {
+		if (uid.compare(users[i]) == 0) {
+			std::cout << "user " << uid << " has already been registered" << std::endl;
+			return;
+		}
+	}
 	std::cout << "registering user " << uid << std::endl;
 	std::string jpeg_picture_data;
 	try {
 		read_file(picture.c_str(), jpeg_picture_data);
 	} catch(...) {
-		std::cout << "error reading image" << std::endl;
+		std::cout << "error reading image " << picture << std::endl;
 		return;
 	}
 	try {
@@ -61,9 +67,9 @@ static void register_player(std::string& uid, std::string& picture) {
 int main(int argc, char *argv[])
 //int dummy(int argc, char *argv[])
 {
+	std::vector<std::string> users;
 	try {
-		std::cout << "contacting face.com" << std::endl;
-		std::vector<std::string> users;
+		std::cout << "testing face.com..." << std::endl;
 		irh.account_users(users);
 	} catch (...) {
 		std::cout << "error using face.com - is your namespace set correctly?" << std::endl;
@@ -71,16 +77,16 @@ int main(int argc, char *argv[])
 	}
 	std::cout << "contacted face.com" << std::endl;
 
-//	std::vector<std::string> db_players;
-//	db_global->getPlayers(&db_players);
-//	if (db_players.size() == 0) {
-//		std::cout << "please register players before starting the server" << std::endl;
-//		return 1;
-//	}
-//	for (unsigned i = 0; i < db_players.size(); i++) {
-//		std::string temp_image(db_global->getImagePath(db_players[i]));
-//		register_player(db_players[i], temp_image);
-//	}
+	std::vector<std::string> db_players;
+	db_global->getPlayers(&db_players);
+	if (db_players.size() == 0) {
+		std::cout << "please register players before starting the server" << std::endl;
+		return 1;
+	}
+	for (unsigned i = 0; i < db_players.size(); i++) {
+		std::string temp_image(db_global->getImagePath(db_players[i]));
+		register_player(db_players[i], temp_image, users);
+	}
 
 	Server server;
         PlayerFactory::setServer(&server);
