@@ -143,7 +143,7 @@ void Player::joinTeam(QString uname,QString teamId){
 }
 
 void Player::leave(QString uname){
-    if(uname.compare(_name)){
+    if(uname.compare(_name)==0){
         g->leaveGame(uname);
     }
 }
@@ -152,9 +152,10 @@ void Player::cancel(QString uname){
     qDebug() <<"player cancel start";
     if(uname.compare(_name)==0){
         qDebug() <<"player cancel inside loop start";
+        game* tempGame=g;
         g->cancelGame();
         qDebug() <<"player cancel inside loop end";
-        GameFactory::destroyGame(g->getGameId());
+        GameFactory::destroyGame(tempGame->getGameId());
     }
     qDebug() <<"player cancel end";
 }
@@ -163,7 +164,9 @@ void Player::shoot(QString uname,QByteArray* picture){
 	qDebug() << __FILE__ << __LINE__ << __func__ << "shoot slot " << picture->size();
     if(uname.compare(_name) == 0){
 		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting shotSignal";
+                if(g!=NULL){
                 g->shot(picture, uname);
+                }
     }
 }
 
@@ -232,6 +235,12 @@ void Player::miss(QString shooter){
         //emit hitSignal(false,-1, NULL);
 		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting hitSignal";
         handler->sendMessageSlot("ONTARGET;false");
+    }
+}
+
+void Player::timeover(){
+    if(g!=NULL){
+    g->endGame();
     }
 }
 

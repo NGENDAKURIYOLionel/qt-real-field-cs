@@ -18,7 +18,7 @@ game::game(QString id, QObject *parent,Server *s) :
     _last_hit_player = "";
     //_timer->setSingleShot(true);
     _game_id = id;
-    connect(_timer,SIGNAL(timeout()), this, SLOT(endGame()));
+    connect(_timer,SIGNAL(timeout()), this, SLOT(update()));
 //    connect(this,SIGNAL(joined(QString,QString,int,int)),this,SLOT(onGameChange()));
 //    connect(this, SIGNAL(left(QString,QString,QString,int,int)),this,SLOT(onGameChange()));
     connect(this, SIGNAL(destroyed()),this,SLOT(onDelete()));
@@ -87,7 +87,7 @@ void game::joinTeam(QString player,QString team) {
         //add player to team, increments the player count
         _teams->insert(team, _teams->value(team) + 1);
         qDebug() << "game emitting joined";
-        for(int i;i<_players->size();i++){
+        for(int i=0;i<_players->size();i++){
         PlayerFactory::getPlayer(_players->keys().at(i))->joined(player,team, playersInTeam("teamA"), playersInTeam("teamB"));
         }
     }
@@ -110,7 +110,7 @@ void game::leaveGame(QString id){
             else
                 bTotal++;
         }
-        for(int i;i<_players->size();i++){
+        for(int i=0;i<_players->size();i++){
         PlayerFactory::getPlayer(_players->keys().at(i))->left(id,team, _game_id, aTotal, bTotal);
         }
     }
@@ -132,27 +132,34 @@ void game::startGame(){
     _countdownTime = _duration;
     _timer->start(1000);
     _ended = false;
-    for(int i;i<_players->size();i++){
+    for(int i=0;i<_players->size();i++){
     PlayerFactory::getPlayer(_players->keys().at(i))->gameStarted();
     }
 }
+
+/*
+  Update timer
+ */
+void game::update(){
+    _countdownTime--;
+    qDebug() << "timer shoots" << _countdownTime;
+    if (_countdownTime == 0)
+        endGame();
+}
+
 /*
  Ends this game
  */
 void game::endGame(){
-
-    qDebug() << "timer shoots";
-    _countdownTime--;
-    if (_countdownTime == 0) {
-        _timer->stop();
-        _ended = true;
-        QString win_team = getWinningTeam();
-        QList<QString> players = _players->keys();
-        for(int i;i<_players->size();i++){
-        PlayerFactory::getPlayer(_players->keys().at(i))->gameEnded(win_team,&players);
-        }
-        GameFactory::destroyGame(_game_id);
+    _timer->stop();
+    _ended = true;
+    QString win_team = getWinningTeam();
+    QList<QString> players = _players->keys();
+    for(int i=0;i<_players->size();i++){
+    PlayerFactory::getPlayer(_players->keys().at(i))->gameEnded(win_team,&players);
     }
+    GameFactory::destroyGame(_game_id);
+
 }
 /*
  Cancels/aborts the ongoing game and emits a corresponding signal
@@ -162,7 +169,7 @@ void game::cancelGame(){
     qDebug() <<"game cancel start";
     _timer->stop();
     _ended = true;
-    for(int i;i<_players->size();i++){
+    for(int i=0;i<_players->size();i++){
     PlayerFactory::getPlayer(_players->keys().at(i))->gameAborted();
     }
     qDebug() <<"game cancel end";
@@ -204,7 +211,7 @@ void game::shot(QByteArray* image, QString player){
                     cout<<"add kill from game to db does not work"<<endl;
 
             }
-            for(int i;i<_players->size();i++){
+            for(int i=0;i<_players->size();i++){
             PlayerFactory::getPlayer(_players->keys().at(i))->hit(player, victim, amount);
             }
             int aAlive=0, bAlive=0, aTotal=0, bTotal=0;
@@ -226,23 +233,23 @@ void game::shot(QByteArray* image, QString player){
                 }
             }
             if(PlayerFactory::getPlayer(victim)->health > 0)
-                for(int i;i<_players->size();i++){
+                for(int i=0;i<_players->size();i++){
                 PlayerFactory::getPlayer(_players->keys().at(i))->gameUpdate(aAlive, aTotal, bAlive, bTotal, player, victim,
                                 PlayerFactory::getPlayer(victim)->health, true);
                 }
             else
-                for(int i;i<_players->size();i++){
+                for(int i=0;i<_players->size();i++){
                 PlayerFactory::getPlayer(_players->keys().at(i))->gameUpdate(aAlive, aTotal, bAlive, bTotal, player, victim,
                                 PlayerFactory::getPlayer(victim)->health, false);
                 }
         } else {
-            for(int i;i<_players->size();i++){
+            for(int i=0;i<_players->size();i++){
             PlayerFactory::getPlayer(_players->keys().at(i))->miss(player);
             }
         }
     }catch(errors_e *e){
         std::cout << "ERROR MESSAGE: " << __FUNCTION__ << " : ImageRecognitionHelper raised an error: " << e << '\n';
-        for(int i;i<_players->size();i++){
+        for(int i=0;i<_players->size();i++){
         PlayerFactory::getPlayer(_players->keys().at(i))->miss(player);
         }
     }
@@ -264,7 +271,7 @@ void game::onGameChange(){
 //		qDebug() << this->playersInTeam(*i);
         hash->insert(*i,this->playersInTeam(*i));
     }
-    for(int i;i<_players->size();i++){
+    for(int i=0;i<_players->size();i++){
     //PlayerFactory::getPlayer(_players->keys().at(i))->gameInfo(_game_id,getDuration(),hash);
     }
 }
