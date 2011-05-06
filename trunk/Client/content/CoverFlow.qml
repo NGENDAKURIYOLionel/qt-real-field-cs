@@ -211,6 +211,7 @@ Rectangle {
                 Connections {
                         target: client
                         onGameAbort: {
+                            if (frontName.text == "New") {
                                 listGameViewForCreator.visible = false
                                 hostGameView.visible = false
                                 joinTeamAForCreator.enabled = true
@@ -220,6 +221,17 @@ Rectangle {
                                 gameReadyForCreator.enabled = true
                                 gameReadyForCreator.opacity = 1
                                 itemClicked()
+                            }
+                            else{
+                                listUser.text = ""
+                                gameReady.enabled = false
+                                gameReady.opacity = 0.25
+                                joinTeamA.enabled = true
+                                joinTeamA.opacity = 1.0
+                                joinTeamB.enabled = true
+                                joinTeamB.opacity = 1.0
+                                itemClicked()
+                            }
                         }
                 }
 
