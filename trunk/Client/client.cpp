@@ -165,7 +165,8 @@ void Client::readMessage()
               emit loginFailed();
       }
      if (message[1]=="GAMELIST"){
-          for (int i = 2; i < message.size(); i++){
+            _gameList.clear();
+            for (int i = 2; i < message.size(); i++){
               if (message[i].isNull())
                   continue;
               else
