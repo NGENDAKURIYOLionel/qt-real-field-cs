@@ -69,11 +69,11 @@ void Player::createGame(QString uname, QString game_id, int duration, int teamA,
         handler->sendMessageSlot("GAMECREATED;false");
         return;
     }else{
-        game* game = GameFactory::getGame(game_id);
-        game->setCreator(uname);
-        game->setDuration(duration);
-		game->teamAplayers = teamA;
-		game->teamBplayers = teamB;
+        game* tempgame = GameFactory::getGame(game_id);
+        tempgame->setCreator(uname);
+        tempgame->setDuration(duration);
+                tempgame->teamAplayers = teamA;
+                tempgame->teamBplayers = teamB;
         handler->sendMessageSlot("GAMECREATED;true");
         joinGame(uname,game_id);
         return;
@@ -82,18 +82,18 @@ void Player::createGame(QString uname, QString game_id, int duration, int teamA,
 
 void Player::setTime(QString game_id, QDate *date){
     if(GameFactory::exists(game_id)){
-        game* game = GameFactory::getGame(game_id);
-        if(game->getCreator().compare(_name) == 0){
-            game->setStartTime(date);
+        game* tempgame = GameFactory::getGame(game_id);
+        if(tempgame->getCreator().compare(_name) == 0){
+            tempgame->setStartTime(date);
         }
     }
 }
 
 void Player::setDuration(QString game_id, int duration){
     if(GameFactory::exists(game_id)){
-        game* game = GameFactory::getGame(game_id);
-        if(game->getCreator().compare(_name) == 0){
-            game->setDuration(duration);
+        game* tempgame = GameFactory::getGame(game_id);
+        if(tempgame->getCreator().compare(_name) == 0){
+            tempgame->setDuration(duration);
         }
     }
 }
@@ -110,27 +110,27 @@ void Player::joinGame(QString uname,QString game_id){
     if(GameFactory::exists(game_id)){
         qDebug() << "joingame in player" << game_id;
         qDebug() << "joingame in player,player=" << this;
-        game* game = GameFactory::getGame(game_id);
-        connect(this, SIGNAL(abortGameSignal()),game,SLOT(cancelGame()));
-        connect(this, SIGNAL(endGameSignal()),game,SLOT(endGame()));
-        connect(this, SIGNAL(startGameSignal()),game,SLOT(startGame()));
-        connect(this, SIGNAL(joinTeamSignal(QString,QString)),game,SLOT(joinTeam(QString,QString)));
-        connect(this, SIGNAL(leaveGameSignal(QString)),game,SLOT(leaveGame(QString)));
-        connect(this, SIGNAL(shotSignal(QByteArray*,QString)),game,SLOT(shot(QByteArray*,QString)));
+        g = GameFactory::getGame(game_id);
+        connect(this, SIGNAL(abortGameSignal()),g,SLOT(cancelGame()));
+        connect(this, SIGNAL(endGameSignal()),g,SLOT(endGame()));
+        connect(this, SIGNAL(startGameSignal()),g,SLOT(startGame()));
+        connect(this, SIGNAL(joinTeamSignal(QString,QString)),g,SLOT(joinTeam(QString,QString)));
+        connect(this, SIGNAL(leaveGameSignal(QString)),g,SLOT(leaveGame(QString)));
+        connect(this, SIGNAL(shotSignal(QByteArray*,QString)),g,SLOT(shot(QByteArray*,QString)));
 
-        connect(game,SIGNAL(gameStarted()),this,SLOT(gameStarted()));
-        connect(game, SIGNAL(gameEnded(QString,QList<QString>*)),this, SLOT(gameEnded(QString,QList<QString>*)));
-        connect(game,SIGNAL(gameCanceled()), this, SLOT(gameAborted()));
-        connect(game,SIGNAL(joined(QString,QString,int,int)), this, SLOT(joined(QString,QString,int,int)));
-        connect(game,SIGNAL(miss(QString)), this, SLOT(miss(QString)));
-        connect(game,SIGNAL(hit(QString,QString,int)), this, SLOT(hit(QString,QString,int)));
+        connect(g,SIGNAL(gameStarted()),this,SLOT(gameStarted()));
+        connect(g, SIGNAL(gameEnded(QString,QList<QString>*)),this, SLOT(gameEnded(QString,QList<QString>*)));
+        connect(g,SIGNAL(gameCanceled()), this, SLOT(gameAborted()));
+        connect(g,SIGNAL(joined(QString,QString,int,int)), this, SLOT(joined(QString,QString,int,int)));
+        connect(g,SIGNAL(miss(QString)), this, SLOT(miss(QString)));
+        connect(g,SIGNAL(hit(QString,QString,int)), this, SLOT(hit(QString,QString,int)));
         //connect(game, SIGNAL(destroyed()), this, SLOT(clearGameData()));
-        connect(game, SIGNAL(left(QString,QString,QString,int,int)), this, SLOT(left(QString,QString,QString,int,int)));
-        connect(game, SIGNAL(gameUpdate(int,int,int,int,QString,QString,int,bool)), this,
+        connect(g, SIGNAL(left(QString,QString,QString,int,int)), this, SLOT(left(QString,QString,QString,int,int)));
+        connect(g, SIGNAL(gameUpdate(int,int,int,int,QString,QString,int,bool)), this,
                 SLOT(gameUpdate(int,int,int,int,QString,QString,int,bool)));
 
         _in_game = true;
-        handler->sendMessageSlot(game->getGameInfo());
+        handler->sendMessageSlot(g->getGameInfo());
     }
 }
 
@@ -154,6 +154,7 @@ void Player::cancel(QString uname){
         qDebug() <<"player cancel inside loop start";
         emit abortGameSignal();
         qDebug() <<"player cancel inside loop end";
+        GameFactory::destroyGame(g->getGameId());
     }
     qDebug() <<"player cancel end";
 }
@@ -185,15 +186,22 @@ void Player::gameEnded(QString win_team, QList<QString> *players){
     QString temp("GAMEEND;");
     temp.append(win_team);
     handler->sendMessageSlot(temp);
+    this->disconnect(g);
+    g->disconnect(this);
+    clearGameData();
 }
 
 void Player::gameAborted(){
     qDebug() <<"player aborted received";
+    this->disconnect(g);
+    g->disconnect(this);
+    clearGameData();
     handler->sendMessageSlot("GAMEABORT;");
 }
 
 void Player::clearGameData(){
     _in_game = false;
+    g=NULL;
 }
 
 void Player::joined(QString player, QString team, int teamA, int teamB){
@@ -210,9 +218,9 @@ void Player::joined(QString player, QString team, int teamA, int teamB){
 void Player::left(QString player, QString team, QString game_id, int teamA, int teamB){
     if(player.compare(_name) == 0){
         clearGameData();
-        game* game = GameFactory::getGame(game_id);
-        this->disconnect(game);
-        game->disconnect(this);
+        game* tempgame = GameFactory::getGame(game_id);
+        this->disconnect(tempgame);
+        tempgame->disconnect(this);
     }
 
     handler->sendMessageSlot("USERLEAVE;"+QString::number(teamA) +";"+ QString::number(teamB) +";"+ player);

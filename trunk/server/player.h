@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include "server.h"
 #include "messagehandler.h"
+#include "game.h"
 #define _PLAYER_KILL_DAMAGE 100
 
 class Player : public QObject
@@ -81,6 +82,7 @@ private:
     QString _name;
     Server *server;
     MessageHandler *handler;
+    game *g;
 };
 
 #endif // PLAYER_H

@@ -33,8 +33,10 @@ namespace GameFactory{
         if(gameid == NULL){
             return;
         }
+        if (exists(gameid)){
         game* game = _games.value(gameid);
         game->deleteLater();
         _games.remove(gameid);
+        }
     }
 }

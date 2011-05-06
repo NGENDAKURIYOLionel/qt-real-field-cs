@@ -118,7 +118,7 @@ void MessageHandler::readMessage(){
                 QString message("GAMELIST;");
                 for(int i=0;i<games.size();i++){
                     message.append(games.at(i));
-                    cout<<"Printing game ids "<<message<<games.at(i)<<endl;
+                    qDebug()<<"Printing game ids "<<message<<games.at(i);
                 }
 
                 sendMessage(messageParts[0]+";"+message);
