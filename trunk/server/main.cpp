@@ -90,8 +90,9 @@ int main(int argc, char *argv[])
 
 	Server server;
         PlayerFactory::setServer(&server);
+        GameFactory::setServer(&server);
 
-        cout<<server.db->getPassword("test1")<<endl;
+        //cout<<server.db->getPassword("test1")<<endl;
         /*QString uid = "test1";
         QString passwd = "test1";
         Player *p = new Player(uid,0,&server);
