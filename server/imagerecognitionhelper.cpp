@@ -144,7 +144,7 @@ unsigned ImageRecognitionHelper::select_face(Json::Value& decoded_response) {
 //	std::cout << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	unsigned faces = decoded_response["photos"][0u]["tags"].size();
 	if (faces < 1) {
-		std::cout << "FYI: face.com found no face in the picture" << std::cout;
+                std::cout << "FYI: face.com found no face in the picture" << std::endl;
 		throw IRH_ERROR_PHOTO_HAS_NO_FACES;
 	}
 	unsigned target_face = 0;
