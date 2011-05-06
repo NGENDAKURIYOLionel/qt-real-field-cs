@@ -25,10 +25,11 @@ Item {
     Connections {
             target: client
             onGameList: {
-           // var list = new Array();
-            for (var i =0; i < size; i++)
-             // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile")
-              appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
+                appModel.clear()
+                appModel.append( { name: "New"  ,icon: "pics/numberIcon.png" })
+                for (var i =0; i < size; i++)
+             // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile"
+                   appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
             }
     }
 
