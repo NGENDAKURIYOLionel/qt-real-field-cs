@@ -138,13 +138,13 @@ void Player::joinTeam(QString uname,QString teamId){
 	qDebug() << __FILE__ << __LINE__ << __func__;
         qDebug() << "jointeam in player,player=" << this;
     qDebug() << GameFactory::getGameIds().size();
-    emit joinTeamSignal(uname,teamId);
+    g->joinTeam(uname,teamId);
     qDebug() << "emit done, thread:" << thread();
 }
 
 void Player::leave(QString uname){
     if(uname.compare(_name)){
-        emit leaveGameSignal(uname);
+        g->leaveGame(uname);
     }
 }
 
@@ -152,7 +152,7 @@ void Player::cancel(QString uname){
     qDebug() <<"player cancel start";
     if(uname.compare(_name)==0){
         qDebug() <<"player cancel inside loop start";
-        emit abortGameSignal();
+        g->cancelGame();
         qDebug() <<"player cancel inside loop end";
         GameFactory::destroyGame(g->getGameId());
     }
@@ -163,7 +163,7 @@ void Player::shoot(QString uname,QByteArray* picture){
 	qDebug() << __FILE__ << __LINE__ << __func__ << "shoot slot " << picture->size();
     if(uname.compare(_name) == 0){
 		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting shotSignal";
-		emit shotSignal(picture, uname);
+                g->shot(picture, uname);
     }
 }
 
@@ -171,7 +171,7 @@ void Player::gameStart(QString uname){
 	qDebug() << __FILE__ << __LINE__ << __func__ << uname;
     if(uname.compare(_name) == 0){
 		qDebug() << __FILE__ << __LINE__ << __func__ << "emitting startGameSignal()";
-        emit startGameSignal();
+        g->startGame();
     }
 }
 
