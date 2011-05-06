@@ -32,8 +32,8 @@ void Player::loginWithPassword(QString uname,QString password){
 
     std::string passwd = server->db->getPassword((uname).toStdString());
     //std::string passwd = "aaa";
-    qDebug("test");
-    cout<<passwd<<endl;
+    //qDebug("test");
+
     if(passwd.compare(password.toStdString()) == 0){
         cout<<"Login with password works!"<<endl;
         _logged = true;
