@@ -19,7 +19,8 @@ DataBaseHelper::DataBaseHelper() {
     db = QSqlDatabase::addDatabase("QSQLITE");
 
     db.setDatabaseName("test.db");
-    /*if(!(QFile::exists("test.db"))) {
+
+    if(!(QFile::exists("test.db"))) {
         if(db.open()) {
             QSqlQuery query;
             if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
@@ -35,7 +36,7 @@ DataBaseHelper::DataBaseHelper() {
           QSqlQuery query;
           if(query.exec("select count(*) from Player") == 0)
               insertDummy();
-    }*/
+    }
 
     if(readFromDataBase())
         cout<<"read database works"<<endl;
@@ -44,22 +45,23 @@ DataBaseHelper::DataBaseHelper() {
 }
 
 void DataBaseHelper::insertDummy() {
-    if(insertValues("test1","test1",0,0,0,"images.jpeg"))
+    if(insertValues("karthik","123",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test2","test2",0,0,0,"images.jpeg"))
+
+    if(insertValues("risto","1234",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test3","test3",0,0,0,"images.jpeg"))
+    /*if(insertValues("test3","test3",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
     if(insertValues("test4","test4",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
-         cout<<"method dint work"<<endl;
+         cout<<"method dint work"<<endl;*/
 }
 
 bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths,QString imagePath) {
