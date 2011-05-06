@@ -110,11 +110,19 @@ void ImageRecognitionHelper::account_users(std::vector<std::string>& response) {
 	std::string post_url(API_URL ACCOUNT_USERS_URL);
 	Json::Value decoded_response;
 	post(post_data, post_url, decoded_response);
-//	std::cout << decoded_response << std::endl;
+	//std::cout << decoded_response << std::endl;
 	if (decoded_response["status"].asString().compare("success")) {
 		throw IRH_ERROR_FACE_DOT_COM;
 	}
-	//for (unsigned i = 0; i < decoded_response.)
+	unsigned size = decoded_response["users"][NAMESPACE_NAME].size();
+	for (unsigned i = 0; i < size; i++) {
+		std::string temp_uid(decoded_response["users"][NAMESPACE_NAME][i].asString());
+		unsigned index = temp_uid.find_first_of('@');
+		std::string uid_without_namespace = temp_uid.substr(0, index);
+		//std::cout << uid_without_namespace << std::endl;
+		if (uid_without_namespace.size() <= 0) throw;
+		response.push_back(uid_without_namespace.c_str());
+	}
 }
 
 void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {

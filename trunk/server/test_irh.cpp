@@ -91,6 +91,9 @@ int dummy(int argc, char *argv[])
 	try {
 		std::vector<std::string> users;
 		test_irh.account_users(users);
+		for (unsigned j = 0; j < users.size(); j++) {
+			std::cout << users[j] << std::endl;
+		}
 	} catch (...) {
 		std::cout << "error using face.com - is your namespace set correctly?" << std::endl;
 		return 1;
