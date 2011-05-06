@@ -336,8 +336,8 @@ void DataBaseHelper::testfunction() {
 
 DataBaseHelper::~DataBaseHelper() {
 	// TODO Auto-generated destructor stub
-    //if(writeToDataBase())
-      //      cout<<"Written to database"<<endl;
+    if(writeToDataBase())
+           cout<<"Written to database"<<endl;
     //delete &db;
     /*for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
         delete *it;
