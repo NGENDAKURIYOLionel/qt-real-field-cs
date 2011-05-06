@@ -69,6 +69,7 @@ private:
     QHash<QString, int> *_change_hash;
     QHash<QString, int> *_teams;
     QTimer *_timer;
+    int _countdownTime;
     QString _last_hit_player;
     Server *server;
 
