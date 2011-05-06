@@ -21,6 +21,7 @@ DataBaseHelper::DataBaseHelper() {
     db.setDatabaseName("test.db");
 
     if(!(QFile::exists("test.db"))) {
+
         if(db.open()) {
             QSqlQuery query;
             if(query.exec("create table Player " "(UID varchar(20) primary key, " "Password varchar(20), "
@@ -33,9 +34,11 @@ DataBaseHelper::DataBaseHelper() {
         }
     }
     else {
-          QSqlQuery query;
-          if(query.exec("select count(*) from Player") == 0)
-              insertDummy();
+        if(db.open()) {
+            QSqlQuery query;
+            if(query.exec("select count(*) from Player") == 0)
+                insertDummy();
+        }
     }
 
     if(readFromDataBase())
@@ -333,6 +336,8 @@ void DataBaseHelper::testfunction() {
 
 DataBaseHelper::~DataBaseHelper() {
 	// TODO Auto-generated destructor stub
+    if(writeToDataBase())
+            cout<<"Written to database"<<endl;
     //delete &db;
     /*for(vector<PlayerInfo*>::iterator it = playerVector.begin();it < playerVector.end();it++) {
         delete *it;
