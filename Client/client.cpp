@@ -9,7 +9,7 @@
 #include "client.h"
 
 Client::Client(QWidget *parent)
-:   QDialog(parent), networkSession(0), _userName(""), _gameId(""), _alive("true"), nextBlockSize(0)
+:   QDialog(parent), networkSession(0), _userName(""), _gameId(""), _alive("true"), nextBlockSize(0), _isCreator(false)
 {
     _timer = new QTimer(this);
     connect(_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -180,6 +180,7 @@ void Client::readMessage()
           if (message[2] == "true"){
 			  QString readableTime;
 	          readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
+                  _isCreator = true;
               emit gameCreateSuccess(_gameId, readableTime, _noOfTeamA, _noOfTeamB);
           }
           else if (message[2] == "false")
@@ -229,7 +230,8 @@ void Client::readMessage()
              emit onTarget(false, "");
       }
       if (message[1] == "GAMEEND"){
-          stopGameTimer();
+          if (!_isCreator)
+            stopGameTimer();
           emit gameEnd();
           emit showResult(message[2].append(" Won"));
       }
@@ -382,4 +384,7 @@ void Client::startGameTimer(){
 void Client::stopGameTimer(){
     _countDown = 0;
     _timer->stop();
+    //Game creator sends TIMEOVER message when game ends
+    if (_isCreator)
+        sendMessage(_userName+";"+"TIMEOVER");
 }
