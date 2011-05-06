@@ -170,6 +170,7 @@ void game::cancelGame(){
     _timer->stop();
     _ended = true;
     for(int i=0;i<_players->size();i++){
+        qDebug() <<"game loop "<<i;
     PlayerFactory::getPlayer(_players->keys().at(i))->gameAborted();
     }
     qDebug() <<"game cancel end";

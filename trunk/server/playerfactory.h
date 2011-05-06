@@ -7,6 +7,7 @@
 #include "server.h"
 #include "messagehandler.h"
 
+class Player;
 
 namespace PlayerFactory{
     bool exists(QString id);
@@ -14,6 +15,8 @@ namespace PlayerFactory{
     void destroyPlayer(QString id, MessageHandler *handler);
     //Server *server;
     void setServer(Server *s);
+    QList<Player*> getPlayers();
+
 }
 
 #endif // PLAYERFACTORY_H

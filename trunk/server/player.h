@@ -10,6 +10,10 @@
 #include "game.h"
 #define _PLAYER_KILL_DAMAGE 100
 
+class MessageHandler;
+class Server;
+class game;
+
 class Player : public QObject
 {
     Q_OBJECT
@@ -20,6 +24,7 @@ public:
     int  health;
     bool _alive;
     void setHandler(MessageHandler* mh);
+    void updateGameList(QString message);
 
 signals:
     //Game side

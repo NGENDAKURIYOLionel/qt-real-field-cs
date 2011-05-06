@@ -42,4 +42,8 @@ namespace PlayerFactory{
            delete player;
         }
     }
+
+    QList<Player*> getPlayers(){
+        return _players.values();
+    }
 }

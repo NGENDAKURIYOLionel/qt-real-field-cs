@@ -61,6 +61,7 @@ void Player::loginWithPicture(QString uname, QByteArray* picture) {
 
 void Player::logout(QString uname){
     _logged = false;
+    clearGameData();
     handler->loggedOut(_name);
 }
 
@@ -76,6 +77,7 @@ void Player::createGame(QString uname, QString game_id, int duration, int teamA,
                 tempgame->teamBplayers = teamB;
         handler->sendMessageSlot("GAMECREATED;true");
         joinGame(uname,game_id);
+        GameFactory::updateGameList();
         return;
     }
 }
@@ -144,7 +146,10 @@ void Player::joinTeam(QString uname,QString teamId){
 
 void Player::leave(QString uname){
     if(uname.compare(_name)==0){
+        clearGameData();
+        if(g!=NULL){
         g->leaveGame(uname);
+        }
     }
 }
 
@@ -155,6 +160,7 @@ void Player::cancel(QString uname){
         game* tempGame=g;
         g->cancelGame();
         qDebug() <<"player cancel inside loop end";
+        clearGameData();
         GameFactory::destroyGame(tempGame->getGameId());
     }
     qDebug() <<"player cancel end";
@@ -180,6 +186,7 @@ void Player::gameStart(QString uname){
 
 void Player::gameStarted(){
     _alive = true;
+    health=100;
     //TODO maybe empty kills etc
     handler->sendMessageSlot("GAMESTARTED;");
 }
@@ -280,4 +287,8 @@ void Player::gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QS
 
 void Player::setHandler(MessageHandler* mh){
     handler=mh;
+}
+
+void Player::updateGameList(QString message){
+    handler->sendMessageSlot(message);
 }
