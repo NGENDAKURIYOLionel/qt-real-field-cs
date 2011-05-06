@@ -143,7 +143,10 @@ void ImageRecognitionHelper::tags_save(std::string& tid, std::string& uid) {
 unsigned ImageRecognitionHelper::select_face(Json::Value& decoded_response) {
 //	std::cout << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	unsigned faces = decoded_response["photos"][0u]["tags"].size();
-	if (faces < 1) throw IRH_ERROR_PHOTO_HAS_NO_FACES;
+	if (faces < 1) {
+		std::cout << "FYI: face.com found no face in the picture" << std::cout;
+		throw IRH_ERROR_PHOTO_HAS_NO_FACES;
+	}
 	unsigned target_face = 0;
 //	std::cout << decoded_response["photos"][0u]["tags"][target_face]["uids"] << std::endl; // DEBUG
 	if (faces > 1) {
@@ -274,6 +277,7 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	post_multipart(post_data, post_url, decoded_response);
 //	std::cout << "DEBUG: " << std::endl << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	if (decoded_response["status"].asString().compare("success")) {
+		std::cout << "FYI: face.com status failure" << std::endl;
 		throw IRH_ERROR_FACE_DOT_COM;
 	}
 	unsigned target_face = select_face(decoded_response);
@@ -334,15 +338,18 @@ int ImageRecognitionHelper::match(std::string& response,
 //		std::cout << face_tag_size << std::endl; // DEBUG
 		if (distance_from_center > face_tag_size) {
 			// closest face too far from center
-			std::cout << "missed: distance "
+			std::cout << "FYI: missed, distance "
 			          << distance_from_center
-			          << " size "
+			          << ", size "
 			          << face_tag_size
 			          << std::endl; // DEBUG
 			return -1;
 		}
 		unsigned matched_uids = uids_response.size();
-		if (matched_uids == 0) return -1; // no matched UIDs
+		if (matched_uids == 0) {
+			std::cout << "FYI: detected face but matched no-one" << std::endl;
+			return -1; // no matched UIDs
+		}
 
 		bool first_found = false;
 		unsigned i = 0;
@@ -369,7 +376,10 @@ int ImageRecognitionHelper::match(std::string& response,
 			}
 			i++;
 		}
-		if (!first_found) return -1; // all matched UIDs have wrong namespace
+		if (!first_found) {
+			std::cout << "FYI: matched UIDs had wrong namespace" << std::endl;
+			return -1; // all matched UIDs have wrong namespace
+		}
 
 		std::string best_uid(uid_part);
 		int best_confidence = uids_response[i]["confidence"].asInt();
@@ -403,6 +413,7 @@ int ImageRecognitionHelper::match(std::string& response,
 		response.assign(best_uid);
 		// TODO: calculate damage based on distance
 		// returned damage range: 0...MAXIMUM_DAMAGE
+		std::cout << "FYI: hit and returning damage" << std::endl;
 		return (int)(MAXIMUM_DAMAGE*(face_tag_size - distance_from_center)/(face_tag_size));
 	} catch (errors_e e) {
 		switch (e) {
