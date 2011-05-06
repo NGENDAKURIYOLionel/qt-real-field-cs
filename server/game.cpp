@@ -16,7 +16,7 @@ game::game(QString id, QObject *parent,Server *s) :
     _teams = new QHash<QString, int>();
     _timer = new QTimer(this);
     _last_hit_player = "";
-    _timer->setSingleShot(true);
+    //_timer->setSingleShot(true);
     _game_id = id;
     connect(_timer,SIGNAL(timeout()), this, SLOT(endGame()));
     connect(this,SIGNAL(joined(QString,QString,int,int)),this,SLOT(onGameChange()));
@@ -59,7 +59,7 @@ bool game::setStartTime(QDate* time){
 bool game::setDuration(int duration){
     _duration = duration;
     //adjust the timer to the new duration
-    _timer->setInterval(duration * 1000); //duration in milliseconds
+   // _timer->setInterval(duration * 1000); //duration in milliseconds
     return true;
 }
 
@@ -125,8 +125,9 @@ int game::playersInTeam(QString team){
  Starts this game
  */
 void game::startGame(){
-	qDebug() << __FILE__ << __LINE__ << __func__;
-    _timer->start();
+        qDebug() << __FILE__ << __LINE__ << __func__ << _duration;
+    _countdownTime = _duration;
+    _timer->start(1000);
     _ended = false;
     emit gameStarted();
 }
@@ -134,13 +135,16 @@ void game::startGame(){
  Ends this game
  */
 void game::endGame(){
-    qDebug() << "game ended";
-    _timer->stop();
-    _ended = true;
-    QString win_team = getWinningTeam();
-    QList<QString> players = _players->keys();
-    emit gameEnded(win_team,&players);
-    GameFactory::destroyGame(_game_id);
+    qDebug() << "timer shoots";
+    _countdownTime--;
+    if (_countdownTime == 0) {
+        _timer->stop();
+        _ended = true;
+        QString win_team = getWinningTeam();
+        QList<QString> players = _players->keys();
+        emit gameEnded(win_team,&players);
+        GameFactory::destroyGame(_game_id);
+    }
 }
 /*
  Cancels/aborts the ongoing game and emits a corresponding signal
