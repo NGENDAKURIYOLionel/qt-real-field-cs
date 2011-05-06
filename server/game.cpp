@@ -140,6 +140,7 @@ void game::endGame(){
     QString win_team = getWinningTeam();
     QList<QString> players = _players->keys();
     emit gameEnded(win_team,&players);
+    GameFactory::destroyGame(_game_id);
 }
 /*
  Cancels/aborts the ongoing game and emits a corresponding signal
