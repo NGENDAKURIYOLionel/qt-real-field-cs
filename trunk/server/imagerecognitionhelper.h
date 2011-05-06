@@ -9,13 +9,9 @@
 #define NAMESPACE_NAME "20110429_2"
 #define MAXIMUM_DAMAGE 100.0
 
-typedef unsigned game_id_t;
-typedef unsigned player_id_t;
 typedef enum {
-	IRH_ERROR_NOT_ENOUGH_PLAYERS, // deprecated
 	IRH_ERROR_CURL,
 	IRH_ERROR_JSON,
-	IRH_ERROR_MALFORMED_RESPONSE, // deprecated
 	IRH_ERROR_FACE_DOT_COM, // face.com api returned other than status: success
 	IRH_ERROR_PHOTO_HAS_NO_FACES,
 	IRH_ERROR_PHOTO_HAS_NO_RECOGNIZABLE_FACE, // face.com says the face isn't recognizable
@@ -34,12 +30,8 @@ public:
 	int match(std::string& response, std::string& jpeg_image, std::vector<std::string>& uids);
 	int match_all(std::string& response, std::string& jpeg_image);
 	void account_users(std::vector<std::string>& response); // doesn't put anything in response at the moment
-	void account_limits();
-
-	// deprecated
-	game_id_t start_game(std::vector<std::string>&); // image index in vector = player_id
-	player_id_t match(std::string&, game_id_t);
-	void end_game(game_id_t);
+	void account_limits(void);
+	void faces_status(void);
 
 private:
 //	CURL* easy_handle;
@@ -59,7 +51,6 @@ private:
 	void tags_remove(std::string&);
 	void tags_save(std::string&, std::string&);
 	unsigned select_face(Json::Value& decoded_response);
-	game_id_t games;
 };
 
 #endif // IMAGERECOGNITIONHELPER_H

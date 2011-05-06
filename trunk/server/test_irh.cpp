@@ -59,6 +59,16 @@ static void users_test() {
 			  << std::endl;
 }
 
+static void status_test() {
+	clock_t start = clock();
+	test_irh.faces_status();
+	clock_t end = clock();
+	std::cout << "status: "
+			  << (end-start)/(CLOCKS_PER_SEC/1000)
+			  << " ms"
+			  << std::endl;
+}
+
 static void match_test(std::string& picture, std::vector<std::string>& uids) {
 	clock_t start = clock();
 	std::cout << "matching picture to users" << std::endl;
@@ -135,9 +145,12 @@ int dummy(int argc, char *argv[])
 		} else if (!argv1.compare("users")) {
 			users_test();
 			return 0;
+		} else if (!argv1.compare("status")) {
+			status_test();
+			return 0;
 		}
 	}
-	std::cout << "valid command line arguments: register, match, users" << std::endl;
+	std::cout << "valid command line arguments: register, match, users, status" << std::endl;
 	return 0;
 
 	// deprecated stuff
