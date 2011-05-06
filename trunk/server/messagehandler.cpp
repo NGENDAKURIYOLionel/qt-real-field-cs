@@ -22,6 +22,7 @@ void MessageHandler::sendMessage(QString message){
 //    qDebug() << "message: " << message;
 //    qDebug() << "size: " << block.size() - sizeof(quint32);
     tcpsocket->write(block);
+    tcpsocket->flush();
 
 }
 
@@ -126,6 +127,11 @@ void MessageHandler::readMessage(){
             }
             if (messageParts[1]=="LOGOUT"){
                 user->logout((messageParts[0]));
+
+            }
+            if (messageParts[1]=="TIMEOVER"){
+                user->timeover();
+
             }
             if (messageParts[1]=="CREATEGAME"){
                 if (messageParts.length()==6){

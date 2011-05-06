@@ -32,6 +32,7 @@ public:
 	unsigned teamAplayers;
 	unsigned teamBplayers;
 public slots:
+    void update();
     void startGame();
     void endGame();
     void cancelGame();

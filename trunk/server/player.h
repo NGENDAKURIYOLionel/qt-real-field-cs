@@ -70,7 +70,7 @@ public slots:
     void hit(QString shooter, QString target, int damage);
     void gameUpdate(int nofAliveA, int totalA, int nofAliveB, int totalB, QString shooter,
                     QString target, int health, bool alive);
-
+    void timeover();
 
 private:
     void clearGameData();
