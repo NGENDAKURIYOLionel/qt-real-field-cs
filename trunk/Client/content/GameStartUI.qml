@@ -25,11 +25,13 @@ Item {
     Connections {
             target: client
             onGameList: {
-                appModel.clear()
-                appModel.append( { name: "New"  ,icon: "pics/numberIcon.png" })
-                for (var i =0; i < size; i++)
+                for (var i=1; i < appModel.count; i++)
+                    appModel.remove(i);
+                for (var i =0; i < size; i++){
              // Qt.createQmlObject('import Qt 4.7; ListElement { name: "' + list[i] + '"; icon:""pics/numberIcon.png" }', parent, "somefile"
                    appModel.append( { name: list[i]  ,icon: "pics/numberIcon.png" })
+
+                }
             }
     }
 
