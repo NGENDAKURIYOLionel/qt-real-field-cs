@@ -137,6 +137,7 @@ Rectangle {
                             joinTeamB.opacity = 1.0
                             listUser.text = ""
 
+                            itemClicked()
                             rotation.angle = 0;
                         }
                 }
@@ -207,20 +208,20 @@ Rectangle {
                 }
 
 
-//                Connections {
-//                        target: client
-//                        onGameAbort: {
-//                                listGameViewForCreator.visible = false
-//                                hostGameView.visible = false
-//                                joinTeamAForCreator.enabled = true
-//                                joinTeamAForCreator.opacity = 1
-//                                joinTeamBForCreator.enabled = true
-//                                joinTeamBForCreator.opacity = 1
-//                                gameReadyForCreator.enabled = true
-//                                gameReadyForCreator.opacity = 1
-//                                itemClicked()
-//                        }
-//                }
+                Connections {
+                        target: client
+                        onGameAbort: {
+                                listGameViewForCreator.visible = false
+                                hostGameView.visible = false
+                                joinTeamAForCreator.enabled = true
+                                joinTeamAForCreator.opacity = 1
+                                joinTeamBForCreator.enabled = true
+                                joinTeamBForCreator.opacity = 1
+                                gameReadyForCreator.enabled = true
+                                gameReadyForCreator.opacity = 1
+                                itemClicked()
+                        }
+                }
 
                 Connections {
                     target: client

@@ -206,22 +206,25 @@ void Client::readMessage()
            emit showResult("Game Aborted");
       }
       if (message[1] == "USERJOIN"){// && message.size() == 6) {
-
-		  QString readableTime;
+          QString readableTime;
           readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
           emit joinGameInfo(_gameId, readableTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
       if (message[1] == "USERLEAVE"){// && message.size() == 6) {
-
-		  QString readableTime;
+          QString readableTime;
           readableTime.sprintf("%02d:%02d", _gameTime / 60, _gameTime % 60);
           emit leaveGameInfo(_gameId, readableTime, message[2], message[3], message[4],  _gameList.contains(_gameId));
       }
       if (message[1] == "GAMEUPDATE"){// && message.size() == 10) {
           qDebug() << "gameupdate";
-          if (message[5] == _userName && message[6].toInt() == 0)
+          int remainingHealth;
+          if (message[5] == _userName && message[6].toInt() <= 0) {
               _alive = "false";
-          emit gameUpdate(message[2], message[3], message[4], message[5], message[6].toInt(), _alive);
+              remainingHealth = 0;
+          }
+          else
+              remainingHealth = message[6].toInt();
+          emit gameUpdate(message[2], message[3], message[4], message[5], remainingHealth, _alive);
       }
       if (message[1] == "ONTARGET"){
           if (message[2] == "true")
