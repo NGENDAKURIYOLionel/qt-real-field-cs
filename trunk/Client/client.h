@@ -87,6 +87,7 @@ private:
 
     QByteArray resize(QString path);
     quint32 nextBlockSize;
+    bool _isCreator;
 };
 
 #endif
