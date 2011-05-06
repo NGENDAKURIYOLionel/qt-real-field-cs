@@ -48,7 +48,7 @@ DataBaseHelper::DataBaseHelper() {
 }
 
 void DataBaseHelper::insertDummy() {
-    if(insertValues("karthik","123",0,0,0,"images.jpeg"))
+    if(insertValues("karthik","1234",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
@@ -57,14 +57,22 @@ void DataBaseHelper::insertDummy() {
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    /*if(insertValues("test3","test3",0,0,0,"images.jpeg"))
+    if(insertValues("le","1234",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
          cout<<"method dint work"<<endl;
-    if(insertValues("test4","test4",0,0,0,"images.jpeg"))
+    if(insertValues("liang","1234",0,0,0,"images.jpeg"))
         cout<<"method works"<<endl;
     else
-         cout<<"method dint work"<<endl;*/
+         cout<<"method dint work"<<endl;
+    if(insertValues("jari","1234",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
+    if(insertValues("sten","1234",0,0,0,"images.jpeg"))
+        cout<<"method works"<<endl;
+    else
+         cout<<"method dint work"<<endl;
 }
 
 bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Score,int Deaths,QString imagePath) {
