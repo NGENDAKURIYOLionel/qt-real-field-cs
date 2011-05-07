@@ -218,14 +218,19 @@ void Client::readMessage()
       }
       if (message[1] == "GAMEUPDATE"){// && message.size() == 10) {
           qDebug() << "gameupdate";
+          qDebug() << message[2] << message[3] << message[4] << message[5] << message[6] << message[7] << message[8];
           int remainingHealth;
-          if (message[5] == _userName && message[6].toInt() <= 0) {
+          if (message[7] == _userName && message[8].toInt() <= 0) {
               _alive = "false";
               remainingHealth = 0;
           }
           else
-              remainingHealth = message[6].toInt();
-          emit gameUpdate(message[2], message[3], message[4], message[5], remainingHealth, _alive);
+              remainingHealth = message[8].toInt();
+          QString noTeamALeft = "%1/%2";
+          QString noTeamBLeft = "%1/%2";
+          noTeamALeft.arg(message[2]).arg(message[3]);
+          noTeamBLeft.arg(message[4]).arg(message[5]);
+          emit gameUpdate(noTeamALeft, noTeamBLeft, message[6], message[7], remainingHealth, _alive);
       }
       if (message[1] == "ONTARGET"){
           if (message[2] == "true")

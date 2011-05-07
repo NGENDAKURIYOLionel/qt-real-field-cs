@@ -45,12 +45,12 @@ Item {
                 if (isSelfKilled == "true") {
                    battleInfo.text = "Battle Info: " + " TeamA: " + noOfTeamALeft
                                    + " TeamB: " + noOfTeamBLeft + "   " + shooter  + " shot at "
-                                   + beShotOne + "(" + health + ")" + " Your Status: " + "alive"
+                                   + beShotOne + " Health:" + health + " Your Status: " + "alive"
                 }
                 else {
                     battleInfo.text = "Battle Info: " + " TeamA: " + noOfTeamALeft
                                     + " TeamB: " + noOfTeamBLeft + "   " + shooter  + " shot at "
-                                    + beShotOne + "(" + health + ")" + " Your Status: " + "dead"
+                                    + beShotOne + " Health:" + health + " Your Status: " + "dead"
                     aiming.enabled = false
                     aiming.opacity = 0.15
                     trigger.enabled = false

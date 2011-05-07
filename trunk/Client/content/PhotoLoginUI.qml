@@ -83,7 +83,7 @@ Item {
                LineEdit {
                    id: userNameLineEdit
                    fontSize: 22
-                   text: "    Your Email"
+                   text: "    Your Username"
                    echoMode: TextInput.Normal
                }
     }
