@@ -13,7 +13,7 @@ Column {
                 LineEdit {
                     id: emailLineEdit
                     fontSize: 22
-                    text: "    Your Email"
+                    text: "    Your Username"
                     echoMode: TextInput.Normal
                 }
     }
