@@ -49,5 +49,17 @@
 	improve ImageDetectionHelper
 2011-05-03 15:00-19:00
 	integration bug fixing
-2011-05-06 14:15-
+2011-05-06 14:15-19:15
 	integration bug fixing
+2011-05-08 17:30-
+	improve ImageDetectionHelper
+	separated cmdirh from server
+	write report
+
+regular meetings:
+28.1.
+12.2.
+03.3.
+16.3.
+31.3.
+16.4.
