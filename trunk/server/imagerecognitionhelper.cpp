@@ -144,7 +144,6 @@ unsigned ImageRecognitionHelper::select_face(Json::Value& decoded_response) {
 //	std::cout << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	unsigned faces = decoded_response["photos"][0u]["tags"].size();
 	if (faces < 1) {
-                std::cout << "FYI: face.com found no face in the picture" << std::endl;
 		throw IRH_ERROR_PHOTO_HAS_NO_FACES;
 	}
 	unsigned target_face = 0;
@@ -181,24 +180,24 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "api_key",
-	             CURLFORM_COPYCONTENTS, API_KEY,
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "api_key",
+				 CURLFORM_COPYCONTENTS, API_KEY,
+				 CURLFORM_END);
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "api_secret",
-	             CURLFORM_COPYCONTENTS, API_SECRET,
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "api_secret",
+				 CURLFORM_COPYCONTENTS, API_SECRET,
+				 CURLFORM_END);
 //	curl_formadd(&post_data, &last,
 //	             CURLFORM_COPYNAME, "detector",
 //	             CURLFORM_COPYCONTENTS, "Aggressive",
 //	             CURLFORM_END);
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "file",
-	             CURLFORM_CONTENTTYPE, "image/jpeg",
-	             CURLFORM_BUFFER, "file",
-	             CURLFORM_BUFFERPTR, jpeg_image.data(),
-	             CURLFORM_BUFFERLENGTH, jpeg_image.size(),
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "file",
+				 CURLFORM_CONTENTTYPE, "image/jpeg",
+				 CURLFORM_BUFFER, "file",
+				 CURLFORM_BUFFERPTR, jpeg_image.data(),
+				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
+				 CURLFORM_END);
 	std::string post_url(API_URL FACES_DETECT_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
@@ -238,10 +237,10 @@ void ImageRecognitionHelper::faces_detect(std::string& jpeg_image, std::string& 
 }
 
 void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
-                                             std::string jpeg_image,
-                                             Json::Value& matched_uids,
-                                             double& distance_from_center,
-                                             double& face_tag_size) {
+											 std::string jpeg_image,
+											 Json::Value& matched_uids,
+											 double& distance_from_center,
+											 double& face_tag_size) {
 	std::string uids_comma_separated;
 	if (uids.size() < 1) throw;
 	uids_comma_separated += uids[0];
@@ -254,24 +253,24 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	curl_httppost* post_data = NULL; // gets freed by post_multipart
 	curl_httppost* last = NULL;
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "api_key",
-	             CURLFORM_COPYCONTENTS, API_KEY,
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "api_key",
+				 CURLFORM_COPYCONTENTS, API_KEY,
+				 CURLFORM_END);
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "api_secret",
-	             CURLFORM_COPYCONTENTS, API_SECRET,
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "api_secret",
+				 CURLFORM_COPYCONTENTS, API_SECRET,
+				 CURLFORM_END);
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "uids",
-	             CURLFORM_COPYCONTENTS, uids_comma_separated.c_str(),
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "uids",
+				 CURLFORM_COPYCONTENTS, uids_comma_separated.c_str(),
+				 CURLFORM_END);
 	curl_formadd(&post_data, &last,
-	             CURLFORM_COPYNAME, "file",
-	             CURLFORM_CONTENTTYPE, "image/jpeg",
-	             CURLFORM_BUFFER, "file",
-	             CURLFORM_BUFFERPTR, jpeg_image.data(),
-	             CURLFORM_BUFFERLENGTH, jpeg_image.size(),
-	             CURLFORM_END);
+				 CURLFORM_COPYNAME, "file",
+				 CURLFORM_CONTENTTYPE, "image/jpeg",
+				 CURLFORM_BUFFER, "file",
+				 CURLFORM_BUFFERPTR, jpeg_image.data(),
+				 CURLFORM_BUFFERLENGTH, jpeg_image.size(),
+				 CURLFORM_END);
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
@@ -289,7 +288,7 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	distance_from_center = sqrt(x*x + y*y);
 	double width = decoded_response["photos"][0u]["tags"][target_face]["width"].asDouble();
 	double height = decoded_response["photos"][0u]["tags"][target_face]["height"].asDouble();
-	face_tag_size = sqrt(width * height);
+	face_tag_size = sqrt(width * height)/2;
 }
 
 void ImageRecognitionHelper::faces_train(std::string& uid) {
@@ -316,8 +315,8 @@ void ImageRecognitionHelper::register_player(std::string& uid, std::string& jpeg
 
 // TODO: estimate distance from tag width & height
 int ImageRecognitionHelper::match(std::string& response,
-                                  std::string& jpeg_image,
-                                  std::vector<std::string>& uids) {
+								  std::string& jpeg_image,
+								  std::vector<std::string>& uids) {
 	if (uids.size() < 1) throw;
 	if (jpeg_image.size() < 1) throw;
 	std::vector<std::string> uids_with_namespace(uids);
@@ -329,20 +328,20 @@ int ImageRecognitionHelper::match(std::string& response,
 		double distance_from_center;
 		double face_tag_size;
 		faces_recognize(uids_with_namespace,
-		                jpeg_image,
-		                uids_response,
-		                distance_from_center,
-		                face_tag_size);
+						jpeg_image,
+						uids_response,
+						distance_from_center,
+						face_tag_size);
 //		std::cout << uids_response << std::endl; // DEBUG
 //		std::cout << "returned uids: " << uids_response << std::endl; // DEBUG
 //		std::cout << face_tag_size << std::endl; // DEBUG
 		if (distance_from_center > face_tag_size) {
 			// closest face too far from center
 			std::cout << "FYI: missed, distance "
-			          << distance_from_center
-			          << ", size "
-			          << face_tag_size
-			          << std::endl; // DEBUG
+					  << distance_from_center
+					  << ", size "
+					  << face_tag_size
+					  << std::endl; // DEBUG
 			return -1;
 		}
 		unsigned matched_uids = uids_response.size();
@@ -413,19 +412,32 @@ int ImageRecognitionHelper::match(std::string& response,
 		response.assign(best_uid);
 		// TODO: calculate damage based on distance
 		// returned damage range: 0...MAXIMUM_DAMAGE
-		std::cout << "FYI: hit and returning damage" << std::endl;
+		std::cout << "FYI: hit "
+		          << best_uid
+		          << " and returning damage, size "
+		          << face_tag_size
+		          << ", distance "
+		          << distance_from_center
+		          << std::endl;
 		return (int)(MAXIMUM_DAMAGE*(face_tag_size - distance_from_center)/(face_tag_size));
 	} catch (errors_e e) {
 		switch (e) {
-		case IRH_ERROR_PHOTO_HAS_NO_FACES: return -1;
-		default: throw e;
+		case IRH_ERROR_PHOTO_HAS_NO_FACES: {
+			std::cout << "FYI: face.com detected nothing" << std::endl;
+			return -1;
+		}
+		default: {
+			std::cout << "FYI: throwing some other error" << std::endl;
+			throw e;
+		}
 		}
 	}
+	std::cout << "FYI: this shouldn't have happened" << std::endl;
 	return -1; // shouldn't be reachable
 }
 
 int ImageRecognitionHelper::match_all(std::string& response,
-                                      std::string& jpeg_image) {
+									  std::string& jpeg_image) {
 	std::vector<std::string> temp_uids;
 	std::string temp_uid("all");
 	temp_uids.push_back(temp_uid);
