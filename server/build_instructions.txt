@@ -1,6 +1,6 @@
 ImageRecognitionHelper needs libcurl to build. On Windows with Qt
-Creator (MingW), you need to download the prebuilt library and headers
-*. Extract the ZIP to a temporary location. Copy the headers from
+Creator (MingW), you need to download the prebuilt library and headers*.
+Extract the ZIP to a temporary location. Copy the headers from
 include/curl/ (*.h) to the curl directory under the server project
 directory. Also copy libcurldll.a from the lib directory to the curl
 directory. Now the project should build on Windows. In order to run the
