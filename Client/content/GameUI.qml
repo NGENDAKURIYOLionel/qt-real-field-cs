@@ -73,6 +73,7 @@ Item {
             onGameEnd: {
                 gameUI.visible = false
                 gameEndUI.visible = true
+                battleInfo.text = "Battle Info: "
                 cameraShoot.stop
             }
     }
