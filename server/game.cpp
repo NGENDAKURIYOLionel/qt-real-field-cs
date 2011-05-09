@@ -248,7 +248,7 @@ void game::shot(QByteArray* image, QString player){
             PlayerFactory::getPlayer(_players->keys().at(i))->miss(player);
             }
         }
-    }catch(errors_e *e){
+    }catch(errors_e e){
         std::cout << "ERROR MESSAGE: " << __FUNCTION__ << " : ImageRecognitionHelper raised an error: " << e << '\n';
         for(int i=0;i<_players->size();i++){
         PlayerFactory::getPlayer(_players->keys().at(i))->miss(player);
