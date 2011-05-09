@@ -229,7 +229,7 @@ void Client::readMessage()
 
           QString noTeamALeft, noTeamBLeft;
           noTeamALeft.append(message[2]).append("/").append(message[3]);
-          noTeamALeft.append(message[4]).append("/").append(message[5]);
+          noTeamBLeft.append(message[4]).append("/").append(message[5]);
           emit gameUpdate(noTeamALeft, noTeamBLeft, message[6], message[7], remainingHealth, _alive);
       }
       if (message[1] == "ONTARGET"){
