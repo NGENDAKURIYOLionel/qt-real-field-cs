@@ -45,6 +45,7 @@ public:
         void testfunction();
         void getPlayers(vector<string> *);
         string getImagePath(string);
+        bool isUser(string);
 
 
 private:
