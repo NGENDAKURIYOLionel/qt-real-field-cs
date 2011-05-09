@@ -97,13 +97,13 @@ void MessageHandler::readMessage(){
                 in >> image;
 				qDebug() << __FILE__ << __LINE__ << __func__ << "recv SHOOT, image size " << image.size();
                 user->shoot((messageParts[0]), &image);
-    //            // This is how to save received file to image
-    //            QFile file("~/resized.jpg"); //write image to file image.jpg
-    //            if (!file.open(QIODevice::WriteOnly))
-    //                qDebug("can not save photo image");
-    //            if(file.write(image) == -1)
-    //                qDebug("saving image failed");
-    //            file.close();
+                // This is how to save received file to image
+//                QFile file("~/resized.jpg"); //write image to file image.jpg
+//                if (!file.open(QIODevice::WriteOnly))
+//                    qDebug("can not save photo image");
+//                if(file.write(image) == -1)
+//                    qDebug("saving image failed");
+//                file.close();
 
             }
             if (messageParts[1] == "LOGINPHOTO") {

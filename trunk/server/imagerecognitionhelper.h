@@ -6,7 +6,7 @@
 #include "json/json.h"
 #include <QString>
 #include <QVector>
-#define NAMESPACE_NAME "20110429_2"
+#define NAMESPACE_NAME "20110509"
 #define MAXIMUM_DAMAGE 100.0
 
 typedef enum {
