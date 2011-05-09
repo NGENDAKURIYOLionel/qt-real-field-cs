@@ -239,8 +239,7 @@ void Client::readMessage()
              emit onTarget(false, "");
       }
       if (message[1] == "GAMEEND"){
-          if (_isCreator)
-            stopGameTimer();
+          stopGameTimer();
           emit gameEnd();
           if (message[2] == "tie")
             emit showResult("Draw. Try again?");
