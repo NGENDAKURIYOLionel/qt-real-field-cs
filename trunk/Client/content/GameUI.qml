@@ -14,7 +14,7 @@ Item {
 
     Text {
         id: battleInfo
-        font.pixelSize: 16
+        font.pixelSize: 18
         anchors.bottom: parent.bottom
         text: "Battle Info: "
         color: "blue"
@@ -22,7 +22,7 @@ Item {
 
     Text {
         id: gameTime
-        font.pixelSize: 20
+        font.pixelSize: 18
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         text: "Time: "
