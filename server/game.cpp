@@ -293,10 +293,19 @@ void game::onDelete(){
 QString game::getWinningTeam(){
     QHash<QString, int> *hash= _change_hash;
     QList<QString> list = _players->values();
-    for(QList<QString>::const_iterator i = list.begin(); i != list.end();i++){
-        int val = hash->value((*i));
-        hash->insert((*i), (val+ 1));
+    QList<QString> listKeys = _players->keys();
+    for (int i = 0; i < list.size(); i++) {
+        if (PlayerFactory::getPlayer(listKeys.at(i))->health > 0) {
+            int val = hash->value(list.at(i));
+            hash->insert(list.at(i), (val+ 1));
+        }
+
     }
+
+//    for(QList<QString>::const_iterator i = list.begin; i != list.end();i++){
+//        int val = hash->value((*i));
+//        hash->insert((*i), (val+ 1));
+//    }
     list = hash->keys();
     QString team("tie");
     int alive = 0;

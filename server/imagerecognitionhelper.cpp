@@ -274,7 +274,7 @@ void ImageRecognitionHelper::faces_recognize(std::vector<std::string>& uids,
 	std::string post_url(API_URL FACES_RECOGNIZE_URL);
 	Json::Value decoded_response;
 	post_multipart(post_data, post_url, decoded_response);
-//	std::cout << "DEBUG: " << std::endl << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
+        std::cout << "DEBUG: " << std::endl << decoded_response["photos"][0u]["tags"] << std::endl; // DEBUG
 	if (decoded_response["status"].asString().compare("success")) {
 		std::cout << "ImageRecognitionHelper: face.com status failure" << std::endl;
 		throw IRH_ERROR_FACE_DOT_COM;
