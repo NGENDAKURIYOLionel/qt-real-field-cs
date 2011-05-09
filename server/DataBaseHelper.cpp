@@ -91,6 +91,19 @@ bool DataBaseHelper::insertValues(QString UID,QString Password,int Kills,int Sco
         return false;
 }
 
+bool DataBaseHelper::isUser(string userId) {
+
+    for(vector<PlayerInfo *>::iterator it = playerVector.begin();it < playerVector.end();it++) {
+            if((*it)->getUID() == userId) {
+                    return true;
+            }
+
+    }
+
+    return false;
+
+}
+
 bool DataBaseHelper::writeToDataBase() {
     if(db.open()) {
         QSqlQuery query(db);
