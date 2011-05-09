@@ -14,7 +14,7 @@ Item {
 
     Text {
         id: battleInfo
-        font.pixelSize: 20
+        font.pixelSize: 16
         anchors.bottom: parent.bottom
         text: "Battle Info: "
         color: "blue"

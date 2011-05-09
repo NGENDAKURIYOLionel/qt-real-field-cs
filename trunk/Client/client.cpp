@@ -220,16 +220,16 @@ void Client::readMessage()
           qDebug() << "gameupdate";
           qDebug() << message[2] << message[3] << message[4] << message[5] << message[6] << message[7] << message[8];
           int remainingHealth;
-          if (message[7] == _userName && message[8].toInt() <= 0) {
-              _alive = "false";
+          if (message[8].toInt() <= 0)
               remainingHealth = 0;
-          }
           else
               remainingHealth = message[8].toInt();
-          QString noTeamALeft = "%1/%2";
-          QString noTeamBLeft = "%1/%2";
-          noTeamALeft.arg(message[2]).arg(message[3]);
-          noTeamBLeft.arg(message[4]).arg(message[5]);
+          if (message[7] == _userName && remainingHealth == 0)
+              _alive = "false";
+
+          QString noTeamALeft, noTeamBLeft;
+          noTeamALeft.append(message[2]).append("/").append(message[3]);
+          noTeamALeft.append(message[4]).append("/").append(message[5]);
           emit gameUpdate(noTeamALeft, noTeamBLeft, message[6], message[7], remainingHealth, _alive);
       }
       if (message[1] == "ONTARGET"){
