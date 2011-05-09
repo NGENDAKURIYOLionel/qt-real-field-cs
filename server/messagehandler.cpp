@@ -21,8 +21,11 @@ void MessageHandler::sendMessage(QString message){
     out << quint32(block.size() - sizeof(quint32));
 //    qDebug() << "message: " << message;
 //    qDebug() << "size: " << block.size() - sizeof(quint32);
+    qDebug()<<"send message before write";
     tcpsocket->write(block);
+    qDebug()<<"send message after write";
     tcpsocket->flush();
+    qDebug()<<"send message after flush";
 
 }
 

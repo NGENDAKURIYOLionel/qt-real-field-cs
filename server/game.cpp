@@ -154,6 +154,7 @@ void game::endGame(){
     _timer->stop();
     _ended = true;
     QString win_team = getWinningTeam();
+
     QList<QString> players = _players->keys();
     for(int i=0;i<_players->size();i++){
     PlayerFactory::getPlayer(_players->keys().at(i))->gameEnded(win_team,&players);
@@ -243,7 +244,11 @@ void game::shot(QByteArray* image, QString player){
                 PlayerFactory::getPlayer(_players->keys().at(i))->gameUpdate(aAlive, aTotal, bAlive, bTotal, player, victim,
                                 PlayerFactory::getPlayer(victim)->health, false);
                 }
-        } else {
+            if(aAlive ==0 || bAlive ==0) {
+                endGame();
+            }
+        }
+        else {
             for(int i=0;i<_players->size();i++){
             PlayerFactory::getPlayer(_players->keys().at(i))->miss(player);
             }
@@ -293,14 +298,23 @@ QString game::getWinningTeam(){
         hash->insert((*i), (val+ 1));
     }
     list = hash->keys();
-    QString team("teamA");
+    QString team("tie");
     int alive = 0;
     for(QList<QString>::const_iterator i = list.begin();i != list.end();i++){
         int tmp = hash->value(*i);
-        if(tmp > alive){
+        qDebug()<<"before tmp == alive:"<<*i;
+        qDebug()<<"before tmp == alive tmp:"<<tmp;
+        if(tmp == alive){
+            //alive = tmp;
+            team = "tie";
+        }
+        else if(tmp > alive){
+
             alive = tmp;
             team = *i;
         }
+
+
     }
     return team;
 }
