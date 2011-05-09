@@ -242,7 +242,10 @@ void Client::readMessage()
           if (!_isCreator)
             stopGameTimer();
           emit gameEnd();
-          emit showResult(message[2].append(" Won"));
+          if (message[2] == "tie")
+            emit showResult("Draw. Try again?");
+          else
+            emit showResult(message[2].append(" Won"));
       }
       }
 }
