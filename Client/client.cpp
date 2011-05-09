@@ -239,7 +239,7 @@ void Client::readMessage()
              emit onTarget(false, "");
       }
       if (message[1] == "GAMEEND"){
-          if (!_isCreator)
+          if (_isCreator)
             stopGameTimer();
           emit gameEnd();
           if (message[2] == "tie")
